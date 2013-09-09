@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="John Smith">
+
+    <title>Project with Table</title>
+    
+    <!--The <link> tag defines the relationship between a document and an external resource. 
+        The <link> tag is most used to link to style sheets.-->
+    
+    <!-- Bootstrap core CSS -->
+    <link href="./css/bootstrap.css" rel="stylesheet"> <!--The href attribute specifies the destination of a link.-->
+
+    <!-- Custom styles -->
+    <link href="./css/main.css" rel="stylesheet">
+	<link href="./css/datatables.css" rel="stylesheet">
+  </head>
+
+<!--this is a comment-->
+
+  <body>
+
+    <div class="navbar navbar-inverse navbar-fixed-top">
+	      <div class="container">
+	        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+	          <span class="icon-bar"></span>
+	          <span class="icon-bar"></span>
+	          <span class="icon-bar"></span>
+	        </button>
+	        <a class="navbar-brand" href="#">Project name</a>
+	        <div class="nav-collapse collapse">
+	          <ul class="nav navbar-nav">
+	            <li class="active"><a href="#">Home</a></li>
+	            <li><a href="#about">About</a></li>
+	            <li><a href="#contact">Contact</a></li>
+	          </ul>
+	        </div><!--/.nav-collapse -->
+	      </div>
+	    </div>
+
+ 
+	<div class="container"> <!--puts the tabel in a container-->
+	
+		
+   	<table id="project_table" class="table table-striped table-bordered" cellpadding="0" cellspacing="0" border="0" >
+   	
+	    <thead>
+	    
+	        <tr>
+			<th>PLATE</th>
+			<th>TILEID</th>
+			<th>MJD</th>
+			<th>RUN2D</th>
+			<th>RUN1D</th>
+			<th>RACEN</th>
+			<th>DECCEN</th>
+			<th>EPOCH</th>
+			<th>CARTID</th>
+			<th>TAI</th>
+			<th>TAI_BEG</th>
+			<th>TAI_END</th>
+			<th>AIRMASS</th>
+			<th>EXPTIME</th>
+			<th>MAPNAME</th>
+			<th>SURVEY</th>
+			<th>PROGRAMNAME</th>
+			<th>CHUNK</th>
+			<th>PLATEQUALITY</th>
+			<th>PLATESN2</th>
+			<th>DEREDSN2</th>
+			<th>QSURVEY</th>
+			<th>MJDLIST</th>
+			<th>NEXP</th>
+			<th>NEXP_B1</th>
+			<th>NEXP_B2</th>
+			<th>NEXP_R1</th>
+			<th>NEXP_R2</th>
+			<th>EXPT_B1</th>
+			<th>EXPT_B2</th>
+			<th>EXPT_R1</th>
+			<th>EXPT_R2</th>
+			<th>SN2_G1</th>
+			<th>SN2_R1</th>
+			<th>SN2_I1</th>
+			<th>SN2_G2</th>
+			<th>SN2_R2</th>
+			<th>SN2_I2</th>
+			<th>DERED_SN2_G1</th>
+			<th>DERED_SN2_R1</th>
+			<th>DERED_SN2_I1</th>
+			<th>DERED_SN2_G2</th>
+			<th>DERED_SN2_R2</th>
+			<th>DERED_SN2_I2</th>
+			<th>GOFFSTD</th>
+			<th>GRMSSTD</th>
+			<th>ROFFSTD</th>
+			<th>RRMSSTD</th>
+			<th>IOFFSTD</th>
+			<th>IRMSSTD</th>
+			<th>GROFFSTD</th>
+			<th>GRRMSSTD</th>
+			<th>RIOFFSTD</th>
+			<th>RIRMSSTD</th>
+			<th>GOFFGAL</th>
+			<th>GRMSGAL</th>
+			<th>ROFFGAL</th>
+			<th>RRMSGAL</th>
+			<th>IOFFGAL</th>
+			<th>IRMSGAL</th>
+			<th>GROFFGAL</th>
+			<th>GRRMSGAL</th>
+			<th>RIOFFGAL</th>
+			<th>RIRMSGAL</th>
+			<th>NGUIDE</th>
+			<th>SEEING20</th>
+			<th>SEEING50</th>
+			<th>SEEING80</th>
+			<th>RMSOFF20</th>
+			<th>RMSOFF50</th>
+			<th>RMSOFF80</th>
+			<th>AIRTEMP</th>
+			<th>XSIGMA</th>
+			<th>XSIGMIN</th>
+			<th>XSIGMAX</th>
+			<th>WSIGMA</th>
+			<th>WSIGMIN</th>
+			<th>WSIGMAX</th>
+			<th>XCHI2</th>
+			<th>XCHI2MIN</th>
+			<th>XCHI2MAX</th>
+			<th>SKYCHI2</th>
+			<th>SCHI2MIN</th>
+			<th>SCHI2MAX</th>
+			<th>FBADPIX</th>
+			<th>FBADPIX1</th>
+			<th>FBADPIX2</th>
+			<th>N_TOTAL</th>
+			<th>N_GALAXY</th>
+			<th>N_QSO</th>
+			<th>N_STAR</th>
+			<th>N_UNKNOWN</th>
+			<th>N_SKY</th>
+			<th>N_TARGET_MAIN</th>
+			<th>N_TARGET_LRG1</th>
+			<th>N_TARGET_LRG2</th>
+			<th>N_TARGET_QSO</th>
+			<th>SUCCESS_MAIN</th>
+			<th>SUCCESS_LRG1</th>
+			<th>SUCCESS_LRG2</th>
+			<th>SUCCESS_QSO</th>
+			<th>STATUS2D</th>
+			<th>STATUSCOMBINE</th>
+			<th>STATUS1D</th>
+			<th>PUBLIC</th>
+			<th>QUALCOMMENTS</th>
+
+	        </tr>
+	    </thead>
+	    <tbody>
+	    
+	    </tbody>
+	    
+	</table>
+	</div>
+
+	<!-- JavaScript plugins (requires jQuery) -->
+	    <script src="js/jquery.js"></script>
+		<script src="js/jquery.dataTables.js"></script>
+		<script src="js/DT_bootstrap.js"></script>
+		
+	    <!-- Include all compiled plugins (below), or include individual files as needed -->
+	    <script src="js/bootstrap.js"></script>
+	    <script src="js/bootstrap-paginator.js"></script>
+
+
+  </body>
+</html>

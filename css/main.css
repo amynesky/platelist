@@ -1,0 +1,20 @@
+/*this formats the page, stylesheet*/
+
+/* put custom css here */
+body {
+  padding-top: 70px;
+}
+
+/* override boostrap pagination styling */
+.pagination {
+	margin: 0;
+}
+.pagination > li > a, .pagination > li > span {
+	border: none;
+}
+/*li = list item*/
+
+/* give some spacing for sort icons */
+.table thead tr th {
+	padding-right: 15px;
+}
