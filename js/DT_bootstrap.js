@@ -185,7 +185,7 @@ $(document).ready(function() {
 		"bAutoWidth": false,
 		"bSortClasses": false,
 		"bProcessing": true,
-		/*
+		
 		"sAjaxSource": "platelist_original.txt",
         "aoColumns": [
 			{ "mData": "PLATE" },
@@ -295,7 +295,7 @@ $(document).ready(function() {
 			{ "mData": "PUBLIC" },
 			{ "mData": "QUALCOMMENTS" },	
 		]
-		*/
+
 	} );
 	
 	 /*Add a click handler to the rows - this could be used as a callback */
