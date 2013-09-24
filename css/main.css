@@ -1,8 +1,19 @@
 /*this formats the page, stylesheet*/
 
 /* put custom css here */
+#title{
+	font-size: large;
+}
+
+a:link    {color:blue;}
+a:visited {color:purple;}
+a:hover   {font-weight: bold;}
+a:active  {font-weight: bold; color:green;}
+
 body {
-  padding-top: 70px;
+  padding-top: 20px;
+  font-family: Helvetica, sans-serif;
+
 }
 
 /* override boostrap pagination styling */
@@ -18,3 +29,45 @@ body {
 .table thead tr th {
 	padding-right: 15px;
 }
+
+table {
+	border-collapse: collapse;
+}
+
+table th, table td {
+	border: 1px solid #787878;
+	text-align: center;
+}
+/*
+table td:nth-child(20) {
+	text-align: left;
+}
+*/
+
+table tr.odd {
+	background-color: #ddd;
+}
+table tr.even {
+	background-color: white;
+}
+table tr.odd {
+	background-color: #ddd;
+}
+ table td {
+ 	position: center
+ }
+/*search bar*//*
+#project_table_filter {
+	padding-bottom: 10px;
+	padding-right: 10px;
+}*/
+
+#project_table_length{
+	padding-left: 400px;
+	padding-bottom: 20px;
+}
+/*
+#project_table_wrapper{
+	padding-top: 10px;
+}
+*/

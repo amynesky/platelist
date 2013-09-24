@@ -6,184 +6,242 @@
     <meta name="description" content="">
     <meta name="author" content="John Smith">
 
-    <title>Project with Table</title>
+    <title>BOSS</title>
     
     <!--The <link> tag defines the relationship between a document and an external resource. 
         The <link> tag is most used to link to style sheets.-->
     
     <!-- Bootstrap core CSS -->
-    <link href="./css/bootstrap.css" rel="stylesheet"> <!--The href attribute specifies the destination of a link.-->
+    <!-- link href="./css/bootstrap.css" rel="stylesheet" --> <!--The href attribute specifies the destination of a link.-->
 
     <!-- Custom styles -->
     <link href="./css/main.css" rel="stylesheet">
 	<link href="./css/datatables.css" rel="stylesheet">
   </head>
-
-<!--this is a comment-->
+	<style type="text/css">
+		#toggleList li
+		{
+			display: inline;
+			list-style-type: none;
+			padding-right: 20px;
+		}
+	</style>
 
   <body>
 
+  	<h1 id="title">BOSS</h1>
+  	<!--
     <div class="navbar navbar-inverse navbar-fixed-top">
-	      <div class="container">
-	        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
-	          <span class="icon-bar"></span>
-	          <span class="icon-bar"></span>
-	          <span class="icon-bar"></span>
-	        </button>
-	        <a class="navbar-brand" href="#">Project name</a>
-	        <div class="nav-collapse collapse">
-	          <ul class="nav navbar-nav">
-	            <li class="active"><a href="#">Home</a></li>
-	            <li><a href="#about">About</a></li>
-	            <li><a href="#contact">Contact</a></li>
-	          </ul>
-	        </div><!--/.nav-collapse -->
-	      </div>
-	    </div>
+      <div class="container">
+      	
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
 
- 
+        <a id="navbar" class="navbar-brand" href="#">BOSS</a>
+        
+        <div class="nav-collapse collapse">
+          <ul id="toggleList" class="nav navbar-nav">
+            <li class="active"><a href="#">Home</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#contact">Contact</a></li>
+          </ul>
+      
+        </div>        
+      </div>
+    </div>
+	-->
+    
+	<!--
+	<div id="toggleButtons">
+		<ul id="toggleList">
+			<li><a href="javascript:void(0);" onclick="fnShowHide(2);">TILEID</a></li>
+			<li><a href="javascript:void(0);" onclick="fnShowHide(3);">RUN2D</a></li>
+			<li><a href="javascript:void(0);" onclick="fnShowHide(4);">RUN1D</a></li>
+			<li><a href="javascript:void(0);" onclick="fnShowHide(5);">RACEN</a></li>
+			<li><a href="javascript:void(0);" onclick="fnShowHide(6);">DECCEN</a></li>
+			<li><a href="javascript:void(0);" onclick="fnShowHide(15);">SURVEY</a></li>
+			<li><a href="javascript:void(0);" onclick="fnShowHide(16);">PROGRAMNAME</a></li>
+			<li><a href="javascript:void(0);" onclick="fnShowHide(17);">CHUNK</a></li>
+			<li><a href="javascript:void(0);" onclick="fnShowHide(18);">PLATEQUALITY</a></li>
+			<li><a href="javascript:void(0);" onclick="fnShowHide(19);">PLATESN2</a></li>
+			<li><a href="javascript:void(0);" onclick="fnShowHide(38);">DERED_SN2_G1<br></a></li>
+			<li><a href="javascript:void(0);" onclick="fnShowHide(40);">DERED_SN2_I1</a></li>
+			<li><a href="javascript:void(0);" onclick="fnShowHide(41);">DERED_SN2_G2</a></li>
+			<li><a href="javascript:void(0);" onclick="fnShowHide(43);">DERED_SN2_I2</a></li>
+			<li><a href="javascript:void(0);" onclick="fnShowHide(84);">FBADPIX</a></li>
+			<li><a href="javascript:void(0);" onclick="fnShowHide(90);">N_STAR</a></li>
+			<li><a href="javascript:void(0);" onclick="fnShowHide(91);">N_UNKNOWN</a></li>
+			<li><a href="javascript:void(0);" onclick="fnShowHide(92);">N_SKY</a></li>
+			<li><a href="javascript:void(0);" onclick="fnShowHide(94);">N_TARGET_LRG1</a></li>
+			<li><a href="javascript:void(0);" onclick="fnShowHide(95);">N_TARGET_LRGQ<br></a></li>
+			<li><a href="javascript:void(0);" onclick="fnShowHide(96);">N_TARGET_QSO</a></li>
+			<li><a href="javascript:void(0);" onclick="fnShowHide(98);">SUCCESS_LRG1</a></li>
+			<li><a href="javascript:void(0);" onclick="fnShowHide(99);">SUCCESS_LRG2</a></li>
+			<li><a href="javascript:void(0);" onclick="fnShowHide(100);">SUCCESS_QSO</a></li>
+			<li><a href="javascript:void(0);" onclick="fnShowHide(101);">STATUS2D</a></li>
+			<li><a href="javascript:void(0);" onclick="fnShowHide(102);">STATUSCOMBINE</a></li>
+			<li><a href="javascript:void(0);" onclick="fnShowHide(103);">STATUS1D</a></li>
+			<li><a href="javascript:void(0);" onclick="fnShowHide(104);">PUBLIC</a></li>
+			<li><a href="javascript:void(0);" onclick="fnShowHide(105);">QUALCOMMENTS</a></li>
+		</ul>
+	</div>
+	-->
+	<div id="toggleButtons">
+		<ul id="toggleList">
+		<li><a href="javascript:void(0);" onclick="fnShowColumn(2); fnShowColumn(3); fnShowColumn(4); fnShowColumn(5); fnShowColumn(6); fnShowColumn(15); fnShowColumn(16); fnShowColumn(17); fnShowColumn(18); fnShowColumn(19); fnShowColumn(38); fnShowColumn(40); fnShowColumn(41); fnShowColumn(43); fnShowColumn(84); fnShowColumn(90); fnShowColumn(91); fnShowColumn(92); fnShowColumn(94); fnShowColumn(95); fnShowColumn(96); fnShowColumn(98); fnShowColumn(99); fnShowColumn(100); fnShowColumn(101); fnShowColumn(102); fnShowColumn(103); fnShowColumn(104); fnShowColumn(105);">View All</a></li>
+		<li><a href="javascript:void(0);" onclick="fnShowColumn(2); fnShowColumn(3); fnShowColumn(4); fnShowColumn(5); fnShowColumn(6); fnShowColumn(15); fnShowColumn(16); fnShowColumn(17); fnShowColumn(18); fnShowColumn(19); fnHideColumn(38); fnHideColumn(40); fnHideColumn(41); fnHideColumn(43); fnHideColumn(84); fnShowColumn(90); fnShowColumn(91); fnShowColumn(92); fnShowColumn(94); fnShowColumn(95); fnShowColumn(96); fnHideColumn(98); fnHideColumn(99); fnHideColumn(100); fnHideColumn(101); fnHideColumn(102); fnHideColumn(103); fnShowColumn(104); fnShowColumn(105);">Plate View</a></li>
+		<li><a href="javascript:void(0);" onclick="fnHideColumn(2); fnShowColumn(3); fnShowColumn(4); fnHideColumn(5); fnHideColumn(6); fnHideColumn(15); fnHideColumn(16); fnHideColumn(17); fnShowColumn(18); fnHideColumn(19); fnShowColumn(38); fnShowColumn(40); fnShowColumn(41); fnShowColumn(43); fnShowColumn(84); fnHideColumn(90); fnHideColumn(91); fnHideColumn(92); fnHideColumn(94); fnHideColumn(95); fnHideColumn(96); fnShowColumn(98); fnShowColumn(99); fnShowColumn(100); fnShowColumn(101); fnShowColumn(102); fnShowColumn(103); fnHideColumn(104); fnShowColumn(105);">Plate Quality View</a></li>
+		</ul>
+	</div>
+	
+
 	<div class="container"> <!--puts the tabel in a container-->
 	
-		
-
-
-
-
 	
-   	<table id="project_table" class="table table-striped table-bordered" cellpadding="0" cellspacing="0" border="0" >
+	
+   	<table id="project_table" class="table table-striped table-bordered" cellpadding="0" cellspacing="0" border="0" margin-top: "1000">
    	
 	    <thead>
 	    
-	        <tr>
-			<th>PLATE</th>
-			<th>TILEID</th>
-			<th>MJD</th>
-			<th>RUN2D</th>
-			<th>RUN1D</th>
-			<th>RACEN</th>
-			<th>DECCEN</th>
-			<th>EPOCH</th>
-			<th>CARTID</th>
-			<th>TAI</th>
-			<th>TAI_BEG</th>
-			<th>TAI_END</th>
-			<th>AIRMASS</th>
-			<th>EXPTIME</th>
-			<th>MAPNAME</th>
-			<th>SURVEY</th>
-			<th>PROGRAMNAME</th>
-			<th>CHUNK</th>
-			<th>PLATEQUALITY</th>
-			<th>PLATESN2</th>
-			<th>DEREDSN2</th>
-			<th>QSURVEY</th>
-			<th>MJDLIST</th>
-			<th>NEXP</th>
-			<th>NEXP_B1</th>
-			<th>NEXP_B2</th>
-			<th>NEXP_R1</th>
-			<th>NEXP_R2</th>
-			<th>EXPT_B1</th>
-			<th>EXPT_B2</th>
-			<th>EXPT_R1</th>
-			<th>EXPT_R2</th>
-			<th>SN2_G1</th>
-			<th>SN2_R1</th>
-			<th>SN2_I1</th>
-			<th>SN2_G2</th>
-			<th>SN2_R2</th>
-			<th>SN2_I2</th>
-			<th>DERED_SN2_G1</th>
-			<th>DERED_SN2_R1</th>
-			<th>DERED_SN2_I1</th>
-			<th>DERED_SN2_G2</th>
-			<th>DERED_SN2_R2</th>
-			<th>DERED_SN2_I2</th>
-			<th>GOFFSTD</th>
-			<th>GRMSSTD</th>
-			<th>ROFFSTD</th>
-			<th>RRMSSTD</th>
-			<th>IOFFSTD</th>
-			<th>IRMSSTD</th>
-			<th>GROFFSTD</th>
-			<th>GRRMSSTD</th>
-			<th>RIOFFSTD</th>
-			<th>RIRMSSTD</th>
-			<th>GOFFGAL</th>
-			<th>GRMSGAL</th>
-			<th>ROFFGAL</th>
-			<th>RRMSGAL</th>
-			<th>IOFFGAL</th>
-			<th>IRMSGAL</th>
-			<th>GROFFGAL</th>
-			<th>GRRMSGAL</th>
-			<th>RIOFFGAL</th>
-			<th>RIRMSGAL</th>
-			<th>NGUIDE</th>
-			<th>SEEING20</th>
-			<th>SEEING50</th>
-			<th>SEEING80</th>
-			<th>RMSOFF20</th>
-			<th>RMSOFF50</th>
-			<th>RMSOFF80</th>
-			<th>AIRTEMP</th>
-			<th>XSIGMA</th>
-			<th>XSIGMIN</th>
-			<th>XSIGMAX</th>
-			<th>WSIGMA</th>
-			<th>WSIGMIN</th>
-			<th>WSIGMAX</th>
-			<th>XCHI2</th>
-			<th>XCHI2MIN</th>
-			<th>XCHI2MAX</th>
-			<th>SKYCHI2</th>
-			<th>SCHI2MIN</th>
-			<th>SCHI2MAX</th>
-			<th>FBADPIX</th>
-			<th>FBADPIX1</th>
-			<th>FBADPIX2</th>
-			<th>N_TOTAL</th>
-			<th>N_GALAXY</th>
-			<th>N_QSO</th>
-			<th>N_STAR</th>
-			<th>N_UNKNOWN</th>
-			<th>N_SKY</th>
-			<th>N_TARGET_MAIN</th>
-			<th>N_TARGET_LRG1</th>
-			<th>N_TARGET_LRG2</th>
-			<th>N_TARGET_QSO</th>
-			<th>SUCCESS_MAIN</th>
-			<th>SUCCESS_LRG1</th>
-			<th>SUCCESS_LRG2</th>
-			<th>SUCCESS_QSO</th>
-			<th>STATUS2D</th>
-			<th>STATUSCOMBINE</th>
-			<th>STATUS1D</th>
-			<th>PUBLIC</th>
-			<th>QUALCOMMENTS</th>
-
+	        <tr>		    
+				<th style="background-color:white">Plate</th>
+				<th style="background-color:white">MJD</th>
+				<th>TileID</th>
+				<th>RUN2D</th>
+				<th>RUN1D</th>
+				<th>RA</th>
+				<th>DEC</th>
+				<th>EPOCH</th>
+				<th>CARTID</th>
+				<th>TAI</th>
+				<th>TAI_BEG</th>
+				<th>TAI_END</th>
+				<th>AIRMASS</th>
+				<th>EXPTIME</th>
+				<th>MAPNAME</th>
+				<th>Survey</th>
+				<th>Program</th>
+				<th>Chunk</th>
+				<th>Quality</th>
+				<th>SN^2</th>
+				<th>DEREDSN2</th>
+				<th>QSURVEY</th>
+				<th>MJDLIST</th>
+				<th>NEXP</th>
+				<th>NEXP_B1</th>
+				<th>NEXP_B2</th>
+				<th>NEXP_R1</th>
+				<th>NEXP_R2</th>
+				<th>EXPT_B1</th>
+				<th>EXPT_B2</th>
+				<th>EXPT_R1</th>
+				<th>EXPT_R2</th>
+				<th>SN2_G1</th>
+				<th>SN2_R1</th>
+				<th>SN2_I1</th>
+				<th>SN2_G2</th>
+				<th>SN2_R2</th>
+				<th>SN2_I2</th>
+				<th>SN2_G1</th>
+				<th>SN2_R1</th>
+				<th>SN2_I1</th>
+				<th>SN2_G2</th>
+				<th>SN2_R2</th>
+				<th>SN2_I2</th>
+				<th>GOFFSTD</th>
+				<th>GRMSSTD</th>
+				<th>ROFFSTD</th>
+				<th>RRMSSTD</th>
+				<th>IOFFSTD</th>
+				<th>IRMSSTD</th>
+				<th>GROFFSTD</th>
+				<th>GRRMSSTD</th>
+				<th>RIOFFSTD</th>
+				<th>RIRMSSTD</th>
+				<th>GOFFGAL</th>
+				<th>GRMSGAL</th>
+				<th>ROFFGAL</th>
+				<th>RRMSGAL</th>
+				<th>IOFFGAL</th>
+				<th>IRMSGAL</th>
+				<th>GROFFGAL</th>
+				<th>GRRMSGAL</th>
+				<th>RIOFFGAL</th>
+				<th>RIRMSGAL</th>
+				<th>NGUIDE</th>
+				<th>SEEING20</th>
+				<th>SEEING50</th>
+				<th>SEEING80</th>
+				<th>RMSOFF20</th>
+				<th>RMSOFF50</th>
+				<th>RMSOFF80</th>
+				<th>AIRTEMP</th>
+				<th>XSIGMA</th>
+				<th>XSIGMIN</th>
+				<th>XSIGMAX</th>
+				<th>WSIGMA</th>
+				<th>WSIGMIN</th>
+				<th>WSIGMAX</th>
+				<th>XCHI2</th>
+				<th>XCHI2MIN</th>
+				<th>XCHI2MAX</th>
+				<th>SKYCHI2</th>
+				<th>SCHI2MIN</th>
+				<th>SCHI2MAX</th>
+				<th>Badpix</th>
+				<th>FBADPIX1</th>
+				<th>FBADPIX2</th>
+				<th>N_TOTAL</th>
+				<th>N_GALAXY</th>
+				<th>N_QSO</th>
+				<th>#Star</th>
+				<th>#Unknown</th>
+				<th>#Sky</th>
+				<th>N_TARGET_MAIN</th>
+				<th>#LRG1</th>
+				<th>#LRG2</th>
+				<th>#QSO</th>
+				<th>SUCCESS_MAIN</th>
+				<th>%LRG1</th>
+				<th>%LRG2</th>
+				<th>%QSO</th>
+				<th>2D</th>
+				<th>Combine</th>
+				<th>1D</th>
+				<th>Public</th>
+				<th>Comments</th>
+			
+				
 	        </tr>
+
+
+
 	    </thead>
 	    <tbody>
 	    
-	    </tbody>   
+	    </tbody> 
+	     
 	</table>
-
-
-
+	<!--
+	<p> Note: When resizing the window, please be sure to refresh the page.</p>
+	-->
 
 
 
 	</div>
 
-	<!-- JavaScript plugins (requires jQuery) -->
 	    <script src="js/jquery.js"></script>
 		<script src="js/jquery.dataTables.js"></script>
 		<script src="js/DT_bootstrap.js"></script>
+
 		
 	    <!-- Include all compiled plugins (below), or include individual files as needed -->
-	    <script src="js/bootstrap.js"></script>
-	    <script src="js/bootstrap-paginator.js"></script>
+	   <!-- <script src="js/bootstrap.js"></script>
+	    <script src="js/bootstrap-paginator.js"></script> -->
+	    <script src="js/FixedColumns.js"></script>
 
 
   </body>

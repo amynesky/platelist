@@ -3,9 +3,10 @@ $.extend( true, $.fn.dataTable.defaults, {
 	"sDom": "<'row'<'col-lg-6'l><'col-lg-6'f>r>t<'row'<'col-lg-6'i><'col-lg-6'p>>",
 	"sPaginationType": "bootstrap",
 	/*"sPaginationType": "full_numbers",*/
-	"iDisplayLength": 5000,  /*default number of rows*/
+	//"iDisplayLength": 50,  /*default number of rows per page*/
 	"oLanguage": {
-	"sLengthMenu": "_MENU_ records per page"
+	"sLengthMenu": "_MENU_ records per page",
+	
 	}
 } );
 
@@ -18,8 +19,17 @@ $.extend( $.fn.dataTableExt.oStdClasses, {
  
  
 /* API method to get paging information */
-$.fn.dataTableExt.oApi.fnPagingInfo = function ( oSettings )
-{
+$.fn.dataTableExt.oApi.fnPagingInfo = function ( oSettings ){
+	
+	/*this makes the search bar respond to the enter key*/
+    $('#project_table_filter input').unbind('keypress keyup');
+   	$('#project_table_filter input').bind('keypress keyup', function(e) {
+   		//if ($(this).val().length < 3 && e.keyCode != 13) return;	
+       	if(e.keyCode == 13) {
+        	oTable.fnFilter($(this).val());   
+    	}
+    		
+    });
     return {
         "iStart":         oSettings._iDisplayStart,
         "iEnd":           oSettings.fnDisplayEnd(),
@@ -39,7 +49,7 @@ $.fn.dataTableExt.oApi.fnPagingInfo = function ( oSettings )
     */
 }
 
-/* Bootstrap style pagination control */
+/* pagination control */
 $.extend( $.fn.dataTableExt.oPagination, {
     "bootstrap": {
         "fnInit": function( oSettings, nPaging, fnDraw ) {
@@ -52,7 +62,7 @@ $.extend( $.fn.dataTableExt.oPagination, {
             };
  
             $(nPaging).addClass('pagination pagination-right').append(
-                '<ul>' +
+                '<ul id="toggleList">' +
                     '<li class="prev disabled"><a href="#">&larr; ' + oLang.sFirst + '</a></li>' +
                     '<li class="prev disabled"><a href="#">&larr; '+oLang.sPrevious+'</a></li>'+
                     '<li class="next disabled"><a href="#">' + oLang.sNext + ' &rarr; </a></li>' +
@@ -164,153 +174,192 @@ if ( $.fn.DataTable.TableTools ) {
 var oTable;
 
 
+function fnShowHide( iCol ){
+	/* Get the DataTables object again - this is not a recreation, just a get of the object */
+	var oTable = $('#project_table').dataTable();
+	
+	var bVis = oTable.fnSettings().aoColumns[iCol].bVisible;
+	oTable.fnSetColumnVis( iCol, bVis ? false : true );
+}
+
+function fnShowColumn( iCol ){
+	/* Get the DataTables object again - this is not a recreation, just a get of the object */
+	var oTable = $('#project_table').dataTable();
+	
+	var bVis = oTable.fnSettings().aoColumns[iCol].bVisible;
+	oTable.fnSetColumnVis( iCol, true );
+}
+
+function fnHideColumn( iCol ){
+	/* Get the DataTables object again - this is not a recreation, just a get of the object */
+	var oTable = $('#project_table').dataTable();
+	
+	var bVis = oTable.fnSettings().aoColumns[iCol].bVisible;
+	oTable.fnSetColumnVis( iCol, false );
+}
+
 
 $(document).ready(function() {
-	$('#example').dataTable( {
-		"sScrollY": "200px",
-		"bPaginate": false
-	} );
-} );
-
-$(document).ready(function() {
+	var queryString = window.location.search;
+	if (queryString === "") {
+		$.extend( $.fn.dataTable.defaults, {
+			"iDisplayLength": 100,  /*default number of rows per page*/
+    	} );
+	} else {
+		$.extend( $.fn.dataTable.defaults, {
+			"iDisplayLength": -1,  /*default number of rows per page*/
+    	} );
+	}
 	oTable = $('#project_table').dataTable( {
 		"sDom": "<'row'<'col-lg-6'f><'col-lg-6'l>r>t<'row'<'col-lg-6'i><'col-lg-6'p>>",
 		"sPaginationType": "bootstrap",
 		"bPaginate": true,
-		"bLengthChange": false,
-		"bDeferRender": true, /*defers rendeing till after.. what?*/
+		"bLengthChange": true, /*records per page drop down*/
+		"bDeferRender": true, /*defers rendering till after.. what?*/
+		"sScrollY": "600px",
+		"sScrollX": "100%",
+		"sScrollXInner": "225%",
+		"bScrollCollapse": true,
 		"bFilter": true,
 		"bSort": true,
-		"bInfo": false,
+		"bInfo": true, /*Showing 1 to 2,194 of 2,194 entries*/
 		"bAutoWidth": false,
 		"bSortClasses": false,
 		"bProcessing": true,
-		
 		"sAjaxSource": "platelist_original.txt",
-        "aoColumns": [
-			{ "mData": "PLATE" },
-			{ "mData": "TILEID" },
-			{ "mData": "MJD" },
-			{ "mData": "RUN2D" },
-			{ "mData": "RUN1D" },
-			{ "mData": "RACEN" },
-			{ "mData": "DECCEN" },
-			{ "mData": "EPOCH" },
-			{ "mData": "CARTID" },
-			{ "mData": "TAI" },
-			{ "mData": "TAI_BEG" },
-			{ "mData": "TAI_END" },
-			{ "mData": "AIRMASS" },
-			{ "mData": "EXPTIME" },
-			{ "mData": "MAPNAME" },
-			{ "mData": "SURVEY" },
-			{ "mData": "PROGRAMNAME" },
-			{ "mData": "CHUNK" },
-			{ "mData": "PLATEQUALITY" },
-			{ "mData": "PLATESN2" },
-			{ "mData": "DEREDSN2" },
-			{ "mData": "QSURVEY" },
-			{ "mData": "MJDLIST" },
-			{ "mData": "NEXP" },
-			{ "mData": "NEXP_B1" },
-			{ "mData": "NEXP_B2" },
-			{ "mData": "NEXP_R1" },
-			{ "mData": "NEXP_R2" },
-			{ "mData": "EXPT_B1" },
-			{ "mData": "EXPT_B2" },
-			{ "mData": "EXPT_R1" },
-			{ "mData": "EXPT_R2" },
-			{ "mData": "SN2_G1" },
-			{ "mData": "SN2_R1" },
-			{ "mData": "SN2_I1" },
-			{ "mData": "SN2_G2" },
-			{ "mData": "SN2_R2" },
-			{ "mData": "SN2_I2" },
-			{ "mData": "DERED_SN2_G1" },
-			{ "mData": "DERED_SN2_R1" },
-			{ "mData": "DERED_SN2_I1" },
-			{ "mData": "DERED_SN2_G2" },
-			{ "mData": "DERED_SN2_R2" },
-			{ "mData": "DERED_SN2_I2" },
-			{ "mData": "GOFFSTD" },
-			{ "mData": "GRMSSTD" },
-			{ "mData": "ROFFSTD" },
-			{ "mData": "RRMSSTD" },
-			{ "mData": "IOFFSTD" },
-			{ "mData": "IRMSSTD" },
-			{ "mData": "GROFFSTD" },
-			{ "mData": "GRRMSSTD" },
-			{ "mData": "RIOFFSTD" },
-			{ "mData": "RIRMSSTD" },
-			{ "mData": "GOFFGAL" },
-			{ "mData": "GRMSGAL" },
-			{ "mData": "ROFFGAL" },
-			{ "mData": "RRMSGAL" },
-			{ "mData": "IOFFGAL" },
-			{ "mData": "IRMSGAL" },
-			{ "mData": "GROFFGAL" },
-			{ "mData": "GRRMSGAL" },
-			{ "mData": "RIOFFGAL" },
-			{ "mData": "RIRMSGAL" },
-			{ "mData": "NGUIDE" },
-			{ "mData": "SEEING20" },
-			{ "mData": "SEEING50" },
-			{ "mData": "SEEING80" },
-			{ "mData": "RMSOFF20" },
-			{ "mData": "RMSOFF50" },
-			{ "mData": "RMSOFF80" },
-			{ "mData": "AIRTEMP" },
-			{ "mData": "XSIGMA" },
-			{ "mData": "XSIGMIN" },
-			{ "mData": "XSIGMAX" },
-			{ "mData": "WSIGMA" },
-			{ "mData": "WSIGMIN" },
-			{ "mData": "WSIGMAX" },
-			{ "mData": "XCHI2" },
-			{ "mData": "XCHI2MIN" },
-			{ "mData": "XCHI2MAX" },
-			{ "mData": "SKYCHI2" },
-			{ "mData": "SCHI2MIN" },
-			{ "mData": "SCHI2MAX" },
-			{ "mData": "FBADPIX" },
-			{ "mData": "FBADPIX1" },
-			{ "mData": "FBADPIX2" },
-			{ "mData": "N_TOTAL" },
-			{ "mData": "N_GALAXY" },
-			{ "mData": "N_QSO" },
-			{ "mData": "N_STAR" },
-			{ "mData": "N_UNKNOWN" },
-			{ "mData": "N_SKY" },
-			{ "mData": "N_TARGET_MAIN" },
-			{ "mData": "N_TARGET_LRG1" },
-			{ "mData": "N_TARGET_LRG2" },
-			{ "mData": "N_TARGET_QSO" },
-			{ "mData": "SUCCESS_MAIN" },
-			{ "mData": "SUCCESS_LRG1" },
-			{ "mData": "SUCCESS_LRG2" },
-			{ "mData": "SUCCESS_QSO" },
-			{ "mData": "STATUS2D" },
-			{ "mData": "STATUSCOMBINE" },
-			{ "mData": "STATUS1D" },
-			{ "mData": "PUBLIC" },
-			{ "mData": "QUALCOMMENTS" },	
-		]
+		"aLengthMenu": [[ 50, 100, 500, 1000, -1], [ 50, 100, 500, 1000, "All"]], /*records per page drop down*/
+   		"aoColumns": [
+			{ "mData": "PLATE", "sWidth": "75px"},
+			{ "mData": "MJD", "sWidth": "75px"},      
+			{ "mData": "TILEID" , "sWidth": "75px"},  
+			{ "mData": "RUN2D" ,"bSearchable": false, "sWidth": "75px"}, 
+			{ "mData": "RUN1D" ,"bSearchable": false, "sWidth": "75px"}, 
+			{ "mData": "RACEN" ,"bSearchable": false, "sWidth": "50px"}, /*5*/
+			{ "mData": "DECCEN" ,"bSearchable": false, "sWidth": "75px"},
+			{ "mData": "EPOCH" ,"bSearchable": false, "bVisible": false},
+			{ "mData": "CARTID" ,"bSearchable": false, "bVisible": false},
+			{ "mData": "TAI" ,"bSearchable": false, "bVisible": false},
+			{ "mData": "TAI_BEG" ,"bSearchable": false, "bVisible": false}, /*10*/
+			{ "mData": "TAI_END" ,"bSearchable": false, "bVisible": false},
+			{ "mData": "AIRMASS" ,"bSearchable": false, "bVisible": false},
+			{ "mData": "EXPTIME" ,"bSearchable": false, "bVisible": false},
+			{ "mData": "MAPNAME" ,"bSearchable": false, "bVisible": false},
+			{ "mData": "SURVEY" , "sWidth": "65px"},  /*15*/
+			{ "mData": "PROGRAMNAME" , "sWidth": "125px"}, 
+			{ "mData": "CHUNK" , "sWidth": "75px"},
+			{ "mData": "PLATEQUALITY" , "sWidth": "75px"},
+			{ "mData": "PLATESN2" , "sWidth": "75px"}, 
+			{ "mData": "DEREDSN2" ,"bSearchable": false, "bVisible": false}, /*20*/
+			{ "mData": "QSURVEY" ,"bSearchable": false, "bVisible": false},
+			{ "mData": "MJDLIST" ,"bSearchable": false, "bVisible": false},
+			{ "mData": "NEXP" ,"bSearchable": false, "bVisible": false},
+			{ "mData": "NEXP_B1" ,"bSearchable": false, "bVisible": false},
+			{ "mData": "NEXP_B2" ,"bSearchable": false, "bVisible": false}, /*25*/
+			{ "mData": "NEXP_R1" ,"bSearchable": false, "bVisible": false},
+			{ "mData": "NEXP_R2" ,"bSearchable": false, "bVisible": false},
+			{ "mData": "EXPT_B1" ,"bSearchable": false, "bVisible": false},
+			{ "mData": "EXPT_B2" ,"bSearchable": false, "bVisible": false},
+			{ "mData": "EXPT_R1" ,"bSearchable": false, "bVisible": false}, /*30*/
+			{ "mData": "EXPT_R2" ,"bSearchable": false, "bVisible": false},
+			{ "mData": "SN2_G1" ,"bSearchable": false, "bVisible": false},
+			{ "mData": "SN2_R1" ,"bSearchable": false, "bVisible": false},
+			{ "mData": "SN2_I1" ,"bSearchable": false, "bVisible": false},
+			{ "mData": "SN2_G2" ,"bSearchable": false, "bVisible": false}, /*35*/
+			{ "mData": "SN2_R2" ,"bSearchable": false, "bVisible": false},
+			{ "mData": "SN2_I2" ,"bSearchable": false, "bVisible": false},
+			{ "mData": "DERED_SN2_G1" ,"bSearchable": false, "sWidth": "75px"}, 
+			{ "mData": "DERED_SN2_R1" ,"bSearchable": false, "bVisible": false},
+			{ "mData": "DERED_SN2_I1" ,"bSearchable": false, "sWidth": "75px"}, /*40*/
+			{ "mData": "DERED_SN2_G2" ,"bSearchable": false, "sWidth": "75px"},
+			{ "mData": "DERED_SN2_R2" ,"bSearchable": false, "bVisible": false}, 
+			{ "mData": "DERED_SN2_I2" ,"bSearchable": false, "sWidth": "75px"},
+			{ "mData": "GOFFSTD" ,"bSearchable": false, "bVisible": false},
+			{ "mData": "GRMSSTD" ,"bSearchable": false, "bVisible": false}, /*45*/
+			{ "mData": "ROFFSTD" ,"bSearchable": false, "bVisible": false},
+			{ "mData": "RRMSSTD" ,"bSearchable": false, "bVisible": false},
+			{ "mData": "IOFFSTD" ,"bSearchable": false, "bVisible": false},
+			{ "mData": "IRMSSTD" ,"bSearchable": false, "bVisible": false},
+			{ "mData": "GROFFSTD" ,"bSearchable": false, "bVisible": false}, /*50*/
+			{ "mData": "GRRMSSTD" ,"bSearchable": false, "bVisible": false},
+			{ "mData": "RIOFFSTD" ,"bSearchable": false, "bVisible": false},
+			{ "mData": "RIRMSSTD" ,"bSearchable": false, "bVisible": false},
+			{ "mData": "GOFFGAL" ,"bSearchable": false, "bVisible": false},
+			{ "mData": "GRMSGAL" ,"bSearchable": false, "bVisible": false}, /*55*/
+			{ "mData": "ROFFGAL" ,"bSearchable": false, "bVisible": false},
+			{ "mData": "RRMSGAL" ,"bSearchable": false, "bVisible": false},
+			{ "mData": "IOFFGAL" ,"bSearchable": false, "bVisible": false},
+			{ "mData": "IRMSGAL" ,"bSearchable": false, "bVisible": false},
+			{ "mData": "GROFFGAL" ,"bSearchable": false, "bVisible": false}, /*60*/
+			{ "mData": "GRRMSGAL" ,"bSearchable": false, "bVisible": false},
+			{ "mData": "RIOFFGAL" ,"bSearchable": false, "bVisible": false},
+			{ "mData": "RIRMSGAL" ,"bSearchable": false, "bVisible": false},
+			{ "mData": "NGUIDE" ,"bSearchable": false, "bVisible": false},
+			{ "mData": "SEEING20" ,"bSearchable": false, "bVisible": false}, /*65*/
+			{ "mData": "SEEING50" ,"bSearchable": false, "bVisible": false},
+			{ "mData": "SEEING80" ,"bSearchable": false, "bVisible": false},
+			{ "mData": "RMSOFF20" ,"bSearchable": false, "bVisible": false},
+			{ "mData": "RMSOFF50" ,"bSearchable": false, "bVisible": false},
+			{ "mData": "RMSOFF80" ,"bSearchable": false, "bVisible": false}, /*70*/
+			{ "mData": "AIRTEMP" ,"bSearchable": false, "bVisible": false},
+			{ "mData": "XSIGMA" ,"bSearchable": false, "bVisible": false},
+			{ "mData": "XSIGMIN" ,"bSearchable": false, "bVisible": false},
+			{ "mData": "XSIGMAX" ,"bSearchable": false, "bVisible": false}, 
+			{ "mData": "WSIGMA" ,"bSearchable": false, "bVisible": false}, /*75*/
+			{ "mData": "WSIGMIN" ,"bSearchable": false, "bVisible": false},
+			{ "mData": "WSIGMAX" ,"bSearchable": false, "bVisible": false},
+			{ "mData": "XCHI2" ,"bSearchable": false, "bVisible": false},
+			{ "mData": "XCHI2MIN" ,"bSearchable": false, "bVisible": false}, 
+			{ "mData": "XCHI2MAX" ,"bSearchable": false, "bVisible": false}, /*80*/
+			{ "mData": "SKYCHI2" ,"bSearchable": false, "bVisible": false},
+			{ "mData": "SCHI2MIN" ,"bSearchable": false, "bVisible": false},
+			{ "mData": "SCHI2MAX" ,"bSearchable": false, "bVisible": false},
+			{ "mData": "FBADPIX" ,"bSearchable": false, "sWidth": "75px"}, 
+			{ "mData": "FBADPIX1" ,"bSearchable": false, "bVisible": false}, /*85*/
+			{ "mData": "FBADPIX2" ,"bSearchable": false, "bVisible": false},
+			{ "mData": "N_TOTAL" ,"bSearchable": false, "bVisible": false},
+			{ "mData": "N_GALAXY" ,"bSearchable": false, "bVisible": false},
+			{ "mData": "N_QSO" ,"bSearchable": false, "bVisible": false}, 
+			{ "mData": "N_STAR" ,"bSearchable": false, "sWidth": "50px"}, /*90*/
+			{ "mData": "N_UNKNOWN" ,"bSearchable": false, "sWidth": "75px"},
+			{ "mData": "N_SKY" ,"bSearchable": false, "sWidth": "50px"},
+			{ "mData": "N_TARGET_MAIN" ,"bSearchable": false, "bVisible": false},
+			{ "mData": "N_TARGET_LRG1" ,"bSearchable": false, "sWidth": "50px"}, 
+			{ "mData": "N_TARGET_LRG2" ,"bSearchable": false, "sWidth": "50px"}, /*95*/
+			{ "mData": "N_TARGET_QSO" ,"bSearchable": false, "sWidth": "50px"},
+			{ "mData": "SUCCESS_MAIN" ,"bSearchable": false, "bVisible": false}, 
+			{ "mData": "SUCCESS_LRG1" ,"bSearchable": false, "sWidth": "75px"}, 
+			{ "mData": "SUCCESS_LRG2" ,"bSearchable": false, "sWidth": "75px"},  
+			{ "mData": "SUCCESS_QSO" ,"bSearchable": false, "sWidth": "75px"}, /*100*/
+			{ "mData": "STATUS2D" , "sWidth": "50px"}, 
+			{ "mData": "STATUSCOMBINE" , "sWidth": "75px"}, 
+			{ "mData": "STATUS1D" , "sWidth": "50px"}, 
+			{ "mData": "PUBLIC" , "sWidth": "75px"}, 
+			{ "mData": "QUALCOMMENTS" }, /*105*/	
+		],
 
+		/*makes cells content sensitive*/
+		"fnRowCallback": function( nRow, aData, iDisplayIndex,iDisplayIndexFull) {
+	        $(nRow).children().each(function(index, td) {
+				if(index ==10)  {
+		            if ($(td).html() === "bad") {
+		                $(td).css("background-color", "#FF3229");
+		            } 
+		        }
+		    });                        
+		    return nRow;
+	    },
 	} );
-	
-	 /*Add a click handler to the rows - this could be used as a callback */
-    $("#project_table tbody tr").click( function( e ) {
-        if ( $(this).hasClass('row_selected') ) {
-            $(this).removeClass('row_selected');
-        }
-        else {
-            oTable.$('tr.row_selected').removeClass('row_selected').removeClass('warning');
-            $(this).addClass('row_selected');
-			$(this).addClass('warning');
-		    $('.btn-project').removeAttr("disabled");   
-		
-        }
-    });
+	new FixedColumns(oTable);
+
+	//, {
+		//"iLeftColumns": 2,
+		//"sLeftWidth": 'relative',
+		//"iLeftWidth": 160
+	//} );
+
+	$(window).resize( function () {
+  		oTable.fnAdjustColumnSizing();
+	} );
 } );
 
 			
