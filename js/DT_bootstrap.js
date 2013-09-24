@@ -218,7 +218,7 @@ $(document).ready(function() {
 		"bDeferRender": true, /*defers rendering till after.. what?*/
 		"sScrollY": "600px",
 		"sScrollX": "100%",
-		"sScrollXInner": "225%",
+		"sScrollXInner": "250%",
 		"bScrollCollapse": true,
 		"bFilter": true,
 		"bSort": true,
