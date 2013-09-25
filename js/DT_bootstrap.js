@@ -216,9 +216,9 @@ $(document).ready(function() {
 		"bPaginate": true,
 		"bLengthChange": true, /*records per page drop down*/
 		"bDeferRender": true, /*defers rendering till after.. what?*/
-		"sScrollY": "600px",
+		"sScrollY": "500px",
 		"sScrollX": "100%",
-		"sScrollXInner": "250%",
+		"sScrollXInner": "275%",
 		"bScrollCollapse": true,
 		"bFilter": true,
 		"bSort": true,
@@ -226,16 +226,16 @@ $(document).ready(function() {
 		"bAutoWidth": false,
 		"bSortClasses": false,
 		"bProcessing": true,
-		"sAjaxSource": "platelist_original.txt",
+		"sAjaxSource": "data/platelist_original.json",
 		"aLengthMenu": [[ 50, 100, 500, 1000, -1], [ 50, 100, 500, 1000, "All"]], /*records per page drop down*/
    		"aoColumns": [
-			{ "mData": "PLATE", "sWidth": "75px"},
-			{ "mData": "MJD", "sWidth": "75px"},      
-			{ "mData": "TILEID" , "sWidth": "75px"},  
-			{ "mData": "RUN2D" ,"bSearchable": false, "sWidth": "75px"}, 
-			{ "mData": "RUN1D" ,"bSearchable": false, "sWidth": "75px"}, 
-			{ "mData": "RACEN" ,"bSearchable": false, "sWidth": "50px"}, /*5*/
-			{ "mData": "DECCEN" ,"bSearchable": false, "sWidth": "75px"},
+			{ "mData": "PLATE", "sWidth": "50px"},
+			{ "mData": "MJD", "sWidth": "50px"},      
+			{ "mData": "TILEID" , "sWidth": "55px"},  
+			{ "mData": "RUN2D" ,"bSearchable": false, "sWidth": "65px"}, 
+			{ "mData": "RUN1D" ,"bSearchable": false, "sWidth": "65px"}, 
+			{ "mData": "RACEN" ,"bSearchable": false, "sWidth": "40px"}, /*5*/
+			{ "mData": "DECCEN" ,"bSearchable": false, "sWidth": "65px"},
 			{ "mData": "EPOCH" ,"bSearchable": false, "bVisible": false},
 			{ "mData": "CARTID" ,"bSearchable": false, "bVisible": false},
 			{ "mData": "TAI" ,"bSearchable": false, "bVisible": false},
@@ -245,10 +245,10 @@ $(document).ready(function() {
 			{ "mData": "EXPTIME" ,"bSearchable": false, "bVisible": false},
 			{ "mData": "MAPNAME" ,"bSearchable": false, "bVisible": false},
 			{ "mData": "SURVEY" , "sWidth": "65px"},  /*15*/
-			{ "mData": "PROGRAMNAME" , "sWidth": "125px"}, 
-			{ "mData": "CHUNK" , "sWidth": "75px"},
-			{ "mData": "PLATEQUALITY" , "sWidth": "75px"},
-			{ "mData": "PLATESN2" , "sWidth": "75px"}, 
+			{ "mData": "PROGRAMNAME" , "sWidth": "100px"}, 
+			{ "mData": "CHUNK" , "sWidth": "60px"},
+			{ "mData": "PLATEQUALITY" , "sWidth": "60px"},
+			{ "mData": "PLATESN2" , "sWidth": "50px"}, 
 			{ "mData": "DEREDSN2" ,"bSearchable": false, "bVisible": false}, /*20*/
 			{ "mData": "QSURVEY" ,"bSearchable": false, "bVisible": false},
 			{ "mData": "MJDLIST" ,"bSearchable": false, "bVisible": false},
@@ -267,12 +267,12 @@ $(document).ready(function() {
 			{ "mData": "SN2_G2" ,"bSearchable": false, "bVisible": false}, /*35*/
 			{ "mData": "SN2_R2" ,"bSearchable": false, "bVisible": false},
 			{ "mData": "SN2_I2" ,"bSearchable": false, "bVisible": false},
-			{ "mData": "DERED_SN2_G1" ,"bSearchable": false, "sWidth": "75px"}, 
+			{ "mData": "DERED_SN2_G1" ,"bSearchable": false, "sWidth": "60px"}, 
 			{ "mData": "DERED_SN2_R1" ,"bSearchable": false, "bVisible": false},
-			{ "mData": "DERED_SN2_I1" ,"bSearchable": false, "sWidth": "75px"}, /*40*/
-			{ "mData": "DERED_SN2_G2" ,"bSearchable": false, "sWidth": "75px"},
+			{ "mData": "DERED_SN2_I1" ,"bSearchable": false, "sWidth": "60px"}, /*40*/
+			{ "mData": "DERED_SN2_G2" ,"bSearchable": false, "sWidth": "60px"},
 			{ "mData": "DERED_SN2_R2" ,"bSearchable": false, "bVisible": false}, 
-			{ "mData": "DERED_SN2_I2" ,"bSearchable": false, "sWidth": "75px"},
+			{ "mData": "DERED_SN2_I2" ,"bSearchable": false, "sWidth": "60px"},
 			{ "mData": "GOFFSTD" ,"bSearchable": false, "bVisible": false},
 			{ "mData": "GRMSSTD" ,"bSearchable": false, "bVisible": false}, /*45*/
 			{ "mData": "ROFFSTD" ,"bSearchable": false, "bVisible": false},
@@ -319,21 +319,21 @@ $(document).ready(function() {
 			{ "mData": "N_TOTAL" ,"bSearchable": false, "bVisible": false},
 			{ "mData": "N_GALAXY" ,"bSearchable": false, "bVisible": false},
 			{ "mData": "N_QSO" ,"bSearchable": false, "bVisible": false}, 
-			{ "mData": "N_STAR" ,"bSearchable": false, "sWidth": "50px"}, /*90*/
-			{ "mData": "N_UNKNOWN" ,"bSearchable": false, "sWidth": "75px"},
-			{ "mData": "N_SKY" ,"bSearchable": false, "sWidth": "50px"},
+			{ "mData": "N_STAR" ,"bSearchable": false, "sWidth": "40px"}, /*90*/
+			{ "mData": "N_UNKNOWN" ,"bSearchable": false, "sWidth": "60px"},
+			{ "mData": "N_SKY" ,"bSearchable": false, "sWidth": "40px"},
 			{ "mData": "N_TARGET_MAIN" ,"bSearchable": false, "bVisible": false},
-			{ "mData": "N_TARGET_LRG1" ,"bSearchable": false, "sWidth": "50px"}, 
-			{ "mData": "N_TARGET_LRG2" ,"bSearchable": false, "sWidth": "50px"}, /*95*/
-			{ "mData": "N_TARGET_QSO" ,"bSearchable": false, "sWidth": "50px"},
+			{ "mData": "N_TARGET_LRG1" ,"bSearchable": false, "sWidth": "40px"}, 
+			{ "mData": "N_TARGET_LRG2" ,"bSearchable": false, "sWidth": "40px"}, /*95*/
+			{ "mData": "N_TARGET_QSO" ,"bSearchable": false, "sWidth": "40px"},
 			{ "mData": "SUCCESS_MAIN" ,"bSearchable": false, "bVisible": false}, 
-			{ "mData": "SUCCESS_LRG1" ,"bSearchable": false, "sWidth": "75px"}, 
-			{ "mData": "SUCCESS_LRG2" ,"bSearchable": false, "sWidth": "75px"},  
-			{ "mData": "SUCCESS_QSO" ,"bSearchable": false, "sWidth": "75px"}, /*100*/
-			{ "mData": "STATUS2D" , "sWidth": "50px"}, 
-			{ "mData": "STATUSCOMBINE" , "sWidth": "75px"}, 
-			{ "mData": "STATUS1D" , "sWidth": "50px"}, 
-			{ "mData": "PUBLIC" , "sWidth": "75px"}, 
+			{ "mData": "SUCCESS_LRG1" ,"bSearchable": false, "sWidth": "60px"}, 
+			{ "mData": "SUCCESS_LRG2" ,"bSearchable": false, "sWidth": "60px"},  
+			{ "mData": "SUCCESS_QSO" ,"bSearchable": false, "sWidth": "60px"}, /*100*/
+			{ "mData": "STATUS2D" , "sWidth": "30px"}, 
+			{ "mData": "STATUSCOMBINE" , "sWidth": "60px"}, 
+			{ "mData": "STATUS1D" , "sWidth": "30px"}, 
+			{ "mData": "PUBLIC" , "sWidth": "60px"}, 
 			{ "mData": "QUALCOMMENTS" }, /*105*/	
 		],
 
@@ -360,7 +360,51 @@ $(document).ready(function() {
 	$(window).resize( function () {
   		oTable.fnAdjustColumnSizing();
 	} );
+	
+			var dataset;
+			d3.json("data/platelist_original.json", function(error, json){
+				if(error){
+					console.log(error);
+				}else{
+					dataset = json;
+					//console.log(dataset);
+
+					//Width and height
+					var w = 600;
+					var h = 600;
+
+					//Create SVG element
+					var svg = d3.select("body")
+								.append("svg")
+								.attr({
+									width: w,
+									height: h,
+								});
+								
+					//scatter plot
+					svg.selectAll("circle")
+					    .data(dataset.aaData)
+					    .enter()
+					    .append("circle")
+					    .attr({
+					   		cx: function(d) {
+					   			var x= d.SUCCESS_LRG1 *5; 
+					   			//console.log(x);
+					   			return x;
+					   		},
+					   		cy: function(d) {				   			
+					   			var y= h - d.SUCCESS_LRG2*5; 
+					   			//console.log(""+ y); 
+					   			return y;
+					   		},
+					   		r: 3,
+						});
+				}
+			});
+	
 } );
+
+	
 
 			
 

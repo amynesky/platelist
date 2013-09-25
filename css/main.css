@@ -11,11 +11,20 @@ a:hover   {font-weight: bold;}
 a:active  {font-weight: bold; color:green;}
 
 body {
-  padding-top: 20px;
+  padding-top: 0px;
   font-family: Helvetica, sans-serif;
 
 }
+#project_table_length{
+	padding-left: 400px;
+	padding-bottom: 20px;
+}
 
+#toggleList li{
+	display: inline;
+	list-style-type: none;
+	padding-right: 20px;
+}
 /* override boostrap pagination styling */
 .pagination {
 	margin: 0;
@@ -23,7 +32,6 @@ body {
 .pagination > li > a, .pagination > li > span {
 	border: none;
 }
-/*li = list item*/
 
 /* give some spacing for sort icons */
 .table thead tr th {
@@ -37,39 +45,18 @@ table {
 table th, table td {
 	border: 1px solid #787878;
 	text-align: left;
+	padding-left: 3px;
+	padding-top: 1px;
+	padding-bottom: 1px;
+	padding-right: 1px;
 }
 
+table td{font-size: small;}
+table td:nth-child(2) {padding-left: 5px;}
+table tr.odd {background-color: #ddd;}
+table tr.even {background-color: white;}
 
-table td:nth-child(2) {
-	/*text-align: left;*/
-	padding-left: 5px;
-}
 
-
-table tr.odd {
-	background-color: #ddd;
+svg {
+	border: 1px solid #787878;
 }
-table tr.even {
-	background-color: white;
-}
-table tr.odd {
-	background-color: #ddd;
-}
- table td {
- 	position: center
- }
-/*search bar*//*
-#project_table_filter {
-	padding-bottom: 10px;
-	padding-right: 10px;
-}*/
-
-#project_table_length{
-	padding-left: 400px;
-	padding-bottom: 20px;
-}
-/*
-#project_table_wrapper{
-	padding-top: 10px;
-}
-*/
