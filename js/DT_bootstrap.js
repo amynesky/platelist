@@ -370,8 +370,8 @@ $(document).ready(function() {
 			//console.log(dataset);
 
 			//Width and height
-			var w = 300;
-			var h = 300;
+			var w = 360;
+			var h = 200;
 			var padding = 10;
 
 		//Create SVG element for %LRG1v%LRG2
@@ -576,9 +576,6 @@ $(document).ready(function() {
 
 
 
-
-
-
 		//Create SVG element for SN2_G1vSN2_I1 on top of SN2_G2vSN2_I2
 		    var svg = d3.select("#plots")
 					.append("svg")
@@ -587,14 +584,14 @@ $(document).ready(function() {
 						height: h,
 					});
 
-			var xMin = d3.min([d3.min(dataset.aaData, function(d){return d.SN2_G1;}), 
-							  d3.min(dataset.aaData, function(d){return d.SN2_G2;})]);
-			var xMax = d3.max([d3.max(dataset.aaData, function(d){return d.SN2_G1;}), 
-							  d3.max(dataset.aaData, function(d){return d.SN2_G2;})]);
-			var yMin = d3.min([d3.min(dataset.aaData, function(d){return d.SN2_I1;}), 
-							  d3.min(dataset.aaData, function(d){return d.SN2_I2;})]);
-			var yMax = d3.max([d3.max(dataset.aaData, function(d){return d.SN2_I1;}), 
-							  d3.max(dataset.aaData, function(d){return d.SN2_I2;})]);
+			var xMin = d3.min([d3.min(dataset.aaData, function(d){return d.DERED_SN2_G1;}), 
+							  d3.min(dataset.aaData, function(d){return d.DERED_SN2_G2;})]);
+			var xMax = d3.max([d3.max(dataset.aaData, function(d){return d.DERED_SN2_G1;}), 
+							  d3.max(dataset.aaData, function(d){return d.DERED_SN2_G2;})]);
+			var yMin = d3.min([d3.min(dataset.aaData, function(d){return d.DERED_SN2_I1;}), 
+							  d3.min(dataset.aaData, function(d){return d.DERED_SN2_I2;})]);
+			var yMax = d3.max([d3.max(dataset.aaData, function(d){return d.DERED_SN2_I1;}), 
+							  d3.max(dataset.aaData, function(d){return d.DERED_SN2_I2;})]);
 
 			var xScale = d3.scale.linear()
 								 .domain([xMin,xMax])
@@ -677,17 +674,17 @@ $(document).ready(function() {
 			    .append("circle")
 			    .attr({
 			   		cx: function(d) {
-			   			var x= xScale(d.SN2_G1); 
+			   			var x= xScale(d.DERED_SN2_G1); 
 			   			//console.log(x);
 			   			return x;
 			   		},
 			   		cy: function(d) {				   			
-			   			var y= yScale(d.SN2_I1); 
+			   			var y= yScale(d.DERED_SN2_I1); 
 			   			//console.log(""+ y); 
 			   			return y;
 			   		},
-			   		r: 1,
-			   		fill: "blue"
+			   		r: 2,
+			   		fill: "rgba(0, 0, 255, 0.85)"
 				});
 			    
 			
@@ -697,22 +694,26 @@ $(document).ready(function() {
 			    .append("ellipse")
 			    .attr({
 			   		cx: function(d) {
-			   			var x= xScale(d.SN2_G2); 
+			   			var x= xScale(d.DERED_SN2_G2); 
 			   			//console.log(x);
 			   			return x;
 			   		},
 			   		cy: function(d) {				   			
-			   			var y= yScale(d.SN2_I2); 
+			   			var y= yScale(d.DERED_SN2_I2); 
 			   			//console.log(""+ y); 
 			   			return y;
 			   		},
-			   		rx: 1,
-			   		ry:1,
-			   		fill: "orange"
+			   		rx: 2,
+			   		ry:2,
+			   		fill: "rgba(255, 145, 0, 0.85)"
 				});
 				
 
 
+			d3.select("#project_table_filter input")
+			  .on("keypress keyup", function(){
+			  	console.log("successfully communicating with d3");
+			  });
 
 		}
 	});
