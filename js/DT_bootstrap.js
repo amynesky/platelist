@@ -374,7 +374,7 @@ $(document).ready(function() {
 			var h = 300;
 			var padding = 10;
 
-			//Create SVG element
+		//Create SVG element for %LRG1v%LRG2
 			var svg = d3.select("#plots")
 						.append("svg")
 						.attr({
@@ -389,18 +389,56 @@ $(document).ready(function() {
 
 			var xScale = d3.scale.linear()
 								 .domain([xMin,xMax])
-								 .range([3 * padding,w-padding]);
+								 .range([4.5 * padding,w-padding]);
 			var yScale = d3.scale.linear()
 								 .domain([yMin,yMax])
-								 .range([h-(2 * padding),padding]);
+								 .range([h-(3.5 * padding),padding]);
 			var xAxis= d3.svg.axis()
 							 .scale(xScale)
 							 .orient("bottom");
 			var yAxis= d3.svg.axis()
 						 .scale(yScale)
 						 .orient("left");
+		/*axis*/
+			svg.append("g")
+			   .attr({
+			   		class: "axis",
+			   		transform: "translate(0," + (h-(3.5 * padding)) + ")",
+				})
+			   .call(xAxis);
+
+			svg.append("g")
+			   .attr({
+			   		class: "axis",
+			   		transform: "translate(" + (4.5 * padding) + ",0)",
+				})
+			   .call(yAxis);
+
+			/*label x-axis*/
+			svg.append("text")
+			   .attr("class", "x label")
+			   .attr("text-anchor", "middle")
+			   .attr("x", w /2 )
+			   .attr("y", h - 6)
+			   .text("%LRG1")
+			   .attr("font-family", "sans-serif")
+			   .attr("font-size", "11px")
+			   .attr("fill", "black");
+
+			/*label y-axis*/
+			svg.append("text")
+			   .attr("class", "y label")
+			   .attr("text-anchor", "middle")
+			   .attr("x", 0- h/2 )
+			   .attr("y", 6)
+			   .attr("dy", ".75em")
+			   .attr("transform", "rotate(-90)")
+			   .text("%LRG2")
+			   .attr("font-family", "sans-serif")
+			   .attr("font-size", "11px")
+			   .attr("fill", "black");
 						
-			//scatter plot
+		//scatter plot
 			svg.selectAll("circle")
 			    .data(dataset.aaData)
 			    .enter()
@@ -418,27 +456,264 @@ $(document).ready(function() {
 			   		},
 			   		r: 2,
 			   		fill: function(d){
-			   			if(d.PLATEQUALITY=="bad"){
-			   				return "red";
-			   			}
 			   			if(d.MJD<55171){
-			   				return "grey";
+			   				return "#b3b3b3";
+			   			}else{
+			   				if(d.PLATEQUALITY=="good"){
+			   					return "green";
+			   				}
+			   				else{
+			   					return "red";
+			   				}
 			   			}
 			   		}
 				});
+
+
+
+
+
+
+
+		//Create SVG element for %LRG2v%QSO
+		    var svg = d3.select("#plots")
+					.append("svg")
+					.attr({
+						width: w,
+						height: h,
+					});
+
+			var xMin = d3.min(dataset.aaData, function(d){return d.SUCCESS_LRG2;});
+			var xMax = d3.max(dataset.aaData, function(d){return d.SUCCESS_LRG2;});
+			var yMin = d3.min(dataset.aaData, function(d){return d.SUCCESS_QSO;});
+			var yMax = d3.max(dataset.aaData, function(d){return d.SUCCESS_QSO;});
+
+			var xScale = d3.scale.linear()
+								 .domain([xMin,xMax])
+								 .range([4.5 * padding,w-padding]);
+			var yScale = d3.scale.linear()
+								 .domain([yMin,yMax])
+								 .range([h-(3.5 * padding),padding]);
+			var xAxis= d3.svg.axis()
+							 .scale(xScale)
+							 .orient("bottom");
+			var yAxis= d3.svg.axis()
+						 .scale(yScale)
+						 .orient("left");
+		/*axis*/
 			svg.append("g")
 			   .attr({
 			   		class: "axis",
-			   		transform: "translate(0," + (h-(2 * padding)) + ")",
+			   		transform: "translate(0," + (h-(3.5 * padding)) + ")",
 				})
 			   .call(xAxis);
 
 			svg.append("g")
 			   .attr({
 			   		class: "axis",
-			   		transform: "translate(" + (3 * padding) + ",0)",
+			   		transform: "translate(" + (4.5 * padding) + ",0)",
 				})
 			   .call(yAxis);
+
+			/*label x-axis*/
+			svg.append("text")
+			   .attr("class", "x label")
+			   .attr("text-anchor", "middle")
+			   .attr("x", w /2 )
+			   .attr("y", h - 6)
+			   .text("%LRG2")
+			   .attr("font-family", "sans-serif")
+			   .attr("font-size", "11px")
+			   .attr("fill", "black");
+
+			/*label y-axis*/
+			svg.append("text")
+			   .attr("class", "y label")
+			   .attr("text-anchor", "middle")
+			   .attr("x", 0- h/2 )
+			   .attr("y", 6)
+			   .attr("dy", ".75em")
+			   .attr("transform", "rotate(-90)")
+			   .text("%QSO")
+			   .attr("font-family", "sans-serif")
+			   .attr("font-size", "11px")
+			   .attr("fill", "black");
+						
+		//scatter plot
+			svg.selectAll("circle")
+			    .data(dataset.aaData)
+			    .enter()
+			    .append("circle")
+			    .attr({
+			   		cx: function(d) {
+			   			var x= xScale(d.SUCCESS_LRG2); 
+			   			//console.log(x);
+			   			return x;
+			   		},
+			   		cy: function(d) {				   			
+			   			var y= yScale(d.SUCCESS_QSO); 
+			   			//console.log(""+ y); 
+			   			return y;
+			   		},
+			   		r: 2,
+			   		fill: function(d){
+			   			if(d.MJD<55171){
+			   				return "#b3b3b3";
+			   			}else{
+			   				if(d.PLATEQUALITY=="good"){
+			   					return "green";
+			   				}
+			   				else{
+			   					return "red";
+			   				}
+			   			}
+			   		}
+				});
+
+
+
+
+
+
+
+
+
+
+		//Create SVG element for SN2_G1vSN2_I1 on top of SN2_G2vSN2_I2
+		    var svg = d3.select("#plots")
+					.append("svg")
+					.attr({
+						width: w,
+						height: h,
+					});
+
+			var xMin = d3.min([d3.min(dataset.aaData, function(d){return d.SN2_G1;}), 
+							  d3.min(dataset.aaData, function(d){return d.SN2_G2;})]);
+			var xMax = d3.max([d3.max(dataset.aaData, function(d){return d.SN2_G1;}), 
+							  d3.max(dataset.aaData, function(d){return d.SN2_G2;})]);
+			var yMin = d3.min([d3.min(dataset.aaData, function(d){return d.SN2_I1;}), 
+							  d3.min(dataset.aaData, function(d){return d.SN2_I2;})]);
+			var yMax = d3.max([d3.max(dataset.aaData, function(d){return d.SN2_I1;}), 
+							  d3.max(dataset.aaData, function(d){return d.SN2_I2;})]);
+
+			var xScale = d3.scale.linear()
+								 .domain([xMin,xMax])
+								 .range([4.5 * padding,w-padding]);
+			var yScale = d3.scale.linear()
+								 .domain([yMin,yMax])
+								 .range([h-(3.5 * padding),padding]);
+			var xAxis= d3.svg.axis()
+							 .scale(xScale)
+							 .orient("bottom");
+			var yAxis= d3.svg.axis()
+						 .scale(yScale)
+						 .orient("left");
+		/*axis*/
+			svg.append("g")
+			   .attr({
+			   		class: "axis",
+			   		transform: "translate(0," + (h-(3.5 * padding)) + ")",
+				})
+			   .call(xAxis);
+
+			svg.append("g")
+			   .attr({
+			   		class: "axis",
+			   		transform: "translate(" + (4.5 * padding) + ",0)",
+				})
+			   .call(yAxis);
+
+			/*label x-axis*/
+			svg.append("text")
+			   .attr("class", "x label")
+			   .attr("text-anchor", "middle")
+			   .attr("x", w /2 -25)
+			   .attr("y", h - 6)
+			   .text("SN2_G1")
+			   .attr("font-family", "sans-serif")
+			   .attr("font-size", "11px")
+			   .attr("fill", "blue");
+
+			svg.append("text")
+			   .attr("class", "x label")
+			   .attr("text-anchor", "middle")
+			   .attr("x", w /2 + 25)
+			   .attr("y", h - 6)
+			   .text("SN2_G2")
+			   .attr("font-family", "sans-serif")
+			   .attr("font-size", "11px")
+			   .attr("fill", "#ff6600");
+
+			/*label y-axis*/
+			svg.append("text")
+			   .attr("class", "y label")
+			   .attr("text-anchor", "middle")
+			   .attr("x", 0- h/2 - 25)
+			   .attr("y", 6)
+			   .attr("dy", ".75em")
+			   .attr("transform", "rotate(-90)")
+			   .text("SN2_I1")
+			   .attr("font-family", "sans-serif")
+			   .attr("font-size", "11px")
+			   .attr("fill", "blue");
+
+			svg.append("text")
+			   .attr("class", "y label")
+			   .attr("text-anchor", "middle")
+			   .attr("x", 0- h/2 + 25)
+			   .attr("y", 6)
+			   .attr("dy", ".75em")
+			   .attr("transform", "rotate(-90)")
+			   .text("SN2_I2")
+			   .attr("font-family", "sans-serif")
+			   .attr("font-size", "11px")
+			   .attr("fill", "#ff6600");
+						
+		//scatter plot
+		
+			svg.selectAll("circle")
+			    .data(dataset.aaData)
+			    .enter()
+			    .append("circle")
+			    .attr({
+			   		cx: function(d) {
+			   			var x= xScale(d.SN2_G1); 
+			   			//console.log(x);
+			   			return x;
+			   		},
+			   		cy: function(d) {				   			
+			   			var y= yScale(d.SN2_I1); 
+			   			//console.log(""+ y); 
+			   			return y;
+			   		},
+			   		r: 1,
+			   		fill: "blue"
+				});
+			    
+			
+			svg.selectAll("ellipse")
+			    .data(dataset.aaData)
+			    .enter()
+			    .append("ellipse")
+			    .attr({
+			   		cx: function(d) {
+			   			var x= xScale(d.SN2_G2); 
+			   			//console.log(x);
+			   			return x;
+			   		},
+			   		cy: function(d) {				   			
+			   			var y= yScale(d.SN2_I2); 
+			   			//console.log(""+ y); 
+			   			return y;
+			   		},
+			   		rx: 1,
+			   		ry:1,
+			   		fill: "orange"
+				});
+				
+
+
+
 		}
 	});
 	

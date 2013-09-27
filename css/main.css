@@ -59,15 +59,9 @@ table tr.even {background-color: white;}
 
 
 svg {
-	/*
-    top:158px;
-    width:843px;
-    height:543px;
-    z-index:1;
-    left: 194px;
-    */
 	display: inline;
 	border: 1px solid #787878;
+	padding-right: 20px;
 }
 
 .axis path, .axis line{
