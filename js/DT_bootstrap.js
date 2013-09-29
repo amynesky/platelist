@@ -361,46 +361,86 @@ $(document).ready(function() {
   		oTable.fnAdjustColumnSizing();
 	} );
 	
-			var dataset;
-			d3.json("data/platelist_original.json", function(error, json){
-				if(error){
-					console.log(error);
-				}else{
-					dataset = json;
-					//console.log(dataset);
+	var dataset;
+	d3.json("data/platelist_original.json", function(error, json){
+		if(error){
+			console.log(error);
+		}else{
+			dataset = json;
+			//console.log(dataset);
 
-					//Width and height
-					var w = 600;
-					var h = 600;
+			//Width and height
+			var w = 300;
+			var h = 300;
+			var padding = 10;
 
-					//Create SVG element
-					var svg = d3.select("body")
-								.append("svg")
-								.attr({
-									width: w,
-									height: h,
-								});
-								
-					//scatter plot
-					svg.selectAll("circle")
-					    .data(dataset.aaData)
-					    .enter()
-					    .append("circle")
-					    .attr({
-					   		cx: function(d) {
-					   			var x= d.SUCCESS_LRG1 *5; 
-					   			//console.log(x);
-					   			return x;
-					   		},
-					   		cy: function(d) {				   			
-					   			var y= h - d.SUCCESS_LRG2*5; 
-					   			//console.log(""+ y); 
-					   			return y;
-					   		},
-					   		r: 3,
+			//Create SVG element
+			var svg = d3.select("#plots")
+						.append("svg")
+						.attr({
+							width: w,
+							height: h,
 						});
-				}
-			});
+
+			var xMin = d3.min(dataset.aaData, function(d){return d.SUCCESS_LRG1;});
+			var xMax = d3.max(dataset.aaData, function(d){return d.SUCCESS_LRG1;});
+			var yMin = d3.min(dataset.aaData, function(d){return d.SUCCESS_LRG2;});
+			var yMax = d3.max(dataset.aaData, function(d){return d.SUCCESS_LRG2;});
+
+			var xScale = d3.scale.linear()
+								 .domain([xMin,xMax])
+								 .range([3 * padding,w-padding]);
+			var yScale = d3.scale.linear()
+								 .domain([yMin,yMax])
+								 .range([h-(2 * padding),padding]);
+			var xAxis= d3.svg.axis()
+							 .scale(xScale)
+							 .orient("bottom");
+			var yAxis= d3.svg.axis()
+						 .scale(yScale)
+						 .orient("left");
+						
+			//scatter plot
+			svg.selectAll("circle")
+			    .data(dataset.aaData)
+			    .enter()
+			    .append("circle")
+			    .attr({
+			   		cx: function(d) {
+			   			var x= xScale(d.SUCCESS_LRG1); 
+			   			//console.log(x);
+			   			return x;
+			   		},
+			   		cy: function(d) {				   			
+			   			var y= yScale(d.SUCCESS_LRG2); 
+			   			//console.log(""+ y); 
+			   			return y;
+			   		},
+			   		r: 2,
+			   		fill: function(d){
+			   			if(d.PLATEQUALITY=="bad"){
+			   				return "red";
+			   			}
+			   			if(d.MJD<55171){
+			   				return "grey";
+			   			}
+			   		}
+				});
+			svg.append("g")
+			   .attr({
+			   		class: "axis",
+			   		transform: "translate(0," + (h-(2 * padding)) + ")",
+				})
+			   .call(xAxis);
+
+			svg.append("g")
+			   .attr({
+			   		class: "axis",
+			   		transform: "translate(" + (3 * padding) + ",0)",
+				})
+			   .call(yAxis);
+		}
+	});
 	
 } );
 
