@@ -1,13 +1,24 @@
 /*this formats the page, stylesheet*/
 
 /* put custom css here */
+#header{
+	overflow: auto;
+
+}
+#header h1{
+	float: left;
+}
+#toggleList{
+	float:left;
+}
+
 #title{
 	font-size: large;
 }
 
 a:link    {color:blue;}
 a:visited {color:purple;}
-a:hover   {font-weight: bold;}
+/*a:hover   {font-weight: bold;}*/
 a:active  {font-weight: bold; color:green;}
 
 body {
@@ -60,7 +71,7 @@ table tr.even {background-color: white;}
 
 svg {
 	display: inline;
-	border: 1px solid #787878;
+	border: 1px solid #c4c4c4;
 	margin-right: 20px;
 }
 
