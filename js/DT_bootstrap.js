@@ -1,12 +1,10 @@
 /* Set the defaults for DataTables initialisation */
+
 $.extend( true, $.fn.dataTable.defaults, {
 	"sDom": "<'row'<'col-lg-6'l><'col-lg-6'f>r>t<'row'<'col-lg-6'i><'col-lg-6'p>>",
 	"sPaginationType": "bootstrap",
-	/*"sPaginationType": "full_numbers",*/
-	//"iDisplayLength": 50,  /*default number of rows per page*/
 	"oLanguage": {
 	"sLengthMenu": "_MENU_ records per page",
-	
 	}
 } );
 
@@ -212,7 +210,7 @@ $(document).ready(function() {
     	} );
 	}
 	oTable = $('#project_table').dataTable( {
-		"sDom": "<'row'<'col-lg-6'f><'col-lg-6'l>r>t<'row'<'col-lg-6'i><'col-lg-6'p>>",
+		"sDom": "<'row'<'col-lg-6'f><'col-lg-6'l>r>t<'row'<ip>>",
 		"sPaginationType": "bootstrap",
 		"bPaginate": true,
 		"bLengthChange": true, /*records per page drop down*/
