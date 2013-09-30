@@ -229,13 +229,13 @@ $(document).ready(function() {
 		"sAjaxSource": "data/platelist_original.json",
 		"aLengthMenu": [[ 50, 100, 500, 1000, -1], [ 50, 100, 500, 1000, "All"]], /*records per page drop down*/
    		"aoColumns": [
-			{ "mData": "PLATE", "sWidth": "50px"},
-			{ "mData": "MJD", "sWidth": "50px"},      
-			{ "mData": "TILEID" , "sWidth": "55px"},  
-			{ "mData": "RUN2D" ,"bSearchable": false, "sWidth": "65px"}, 
-			{ "mData": "RUN1D" ,"bSearchable": false, "sWidth": "65px"}, 
-			{ "mData": "RACEN" ,"bSearchable": false, "sWidth": "50px"}, /*5*/
-			{ "mData": "DECCEN" ,"bSearchable": false, "sWidth": "75px"},
+			{ "mData": "PLATE", "sWidth": "40px"},
+			{ "mData": "MJD", "sWidth": "40px"},      
+			{ "mData": "TILEID" , "bVisible": false, "sWidth": "45px"},  
+			{ "mData": "RUN2D" ,"bSearchable": false, "sWidth": "55px"}, 
+			{ "mData": "RUN1D" ,"bSearchable": false, "sWidth": "55px"}, 
+			{ "mData": "RACEN" ,"bSearchable": false, "bVisible": false, "sWidth": "50px"}, /*5*/
+			{ "mData": "DECCEN" ,"bSearchable": false, "bVisible": false, "sWidth": "75px"},
 			{ "mData": "EPOCH" ,"bSearchable": false, "bVisible": false},
 			{ "mData": "CARTID" ,"bSearchable": false, "bVisible": false},
 			{ "mData": "TAI" ,"bSearchable": false, "bVisible": false},
@@ -244,11 +244,11 @@ $(document).ready(function() {
 			{ "mData": "AIRMASS" ,"bSearchable": false, "bVisible": false},
 			{ "mData": "EXPTIME" ,"bSearchable": false, "bVisible": false},
 			{ "mData": "MAPNAME" ,"bSearchable": false, "bVisible": false},
-			{ "mData": "SURVEY" , "sWidth": "65px"},  /*15*/
-			{ "mData": "PROGRAMNAME" , "sWidth": "100px"}, 
-			{ "mData": "CHUNK" , "sWidth": "60px"},
-			{ "mData": "PLATEQUALITY" , "sWidth": "60px"},
-			{ "mData": "PLATESN2" , "sWidth": "50px"}, 
+			{ "mData": "SURVEY" , "bVisible": false, "sWidth": "55px"},  /*15*/
+			{ "mData": "PROGRAMNAME" , "bVisible": false, "sWidth": "175px"}, 
+			{ "mData": "CHUNK" , "bVisible": false, "sWidth": "60px"},
+			{ "mData": "PLATEQUALITY" , "sWidth": "50px"},
+			{ "mData": "PLATESN2" , "bVisible": false, "sWidth": "50px"}, 
 			{ "mData": "DEREDSN2" ,"bSearchable": false, "bVisible": false}, /*20*/
 			{ "mData": "QSURVEY" ,"bSearchable": false, "bVisible": false},
 			{ "mData": "MJDLIST" ,"bSearchable": false, "bVisible": false},
@@ -319,21 +319,21 @@ $(document).ready(function() {
 			{ "mData": "N_TOTAL" ,"bSearchable": false, "bVisible": false},
 			{ "mData": "N_GALAXY" ,"bSearchable": false, "bVisible": false},
 			{ "mData": "N_QSO" ,"bSearchable": false, "bVisible": false}, 
-			{ "mData": "N_STAR" ,"bSearchable": false, "sWidth": "40px"}, /*90*/
-			{ "mData": "N_UNKNOWN" ,"bSearchable": false, "sWidth": "60px"},
-			{ "mData": "N_SKY" ,"bSearchable": false, "sWidth": "40px"},
-			{ "mData": "N_TARGET_MAIN" ,"bSearchable": false, "bVisible": false},
-			{ "mData": "N_TARGET_LRG1" ,"bSearchable": false, "sWidth": "40px"}, 
-			{ "mData": "N_TARGET_LRG2" ,"bSearchable": false, "sWidth": "40px"}, /*95*/
-			{ "mData": "N_TARGET_QSO" ,"bSearchable": false, "sWidth": "40px"},
+			{ "mData": "N_STAR" ,"bSearchable": false, "bVisible": false, "sWidth": "40px"}, /*90*/
+			{ "mData": "N_UNKNOWN" ,"bSearchable": false, "bVisible": false, "sWidth": "70px"},
+			{ "mData": "N_SKY" ,"bSearchable": false, "bVisible": false, "sWidth": "40px"},
+			{ "mData": "N_TARGET_MAIN" ,"bSearchable": false, "bVisible": false, "bVisible": false},
+			{ "mData": "N_TARGET_LRG1" ,"bSearchable": false, "bVisible": false, "sWidth": "40px"}, 
+			{ "mData": "N_TARGET_LRG2" ,"bSearchable": false, "bVisible": false, "sWidth": "40px"}, /*95*/
+			{ "mData": "N_TARGET_QSO" ,"bSearchable": false, "bVisible": false, "sWidth": "40px"},
 			{ "mData": "SUCCESS_MAIN" ,"bSearchable": false, "bVisible": false}, 
-			{ "mData": "SUCCESS_LRG1" ,"bSearchable": false, "sWidth": "60px"}, 
-			{ "mData": "SUCCESS_LRG2" ,"bSearchable": false, "sWidth": "60px"},  
+			{ "mData": "SUCCESS_LRG1" ,"bSearchable": false, "sWidth": "65px"}, 
+			{ "mData": "SUCCESS_LRG2" ,"bSearchable": false, "sWidth": "65px"},  
 			{ "mData": "SUCCESS_QSO" ,"bSearchable": false, "sWidth": "60px"}, /*100*/
 			{ "mData": "STATUS2D" , "sWidth": "30px"}, 
 			{ "mData": "STATUSCOMBINE" , "sWidth": "60px"}, 
 			{ "mData": "STATUS1D" , "sWidth": "30px"}, 
-			{ "mData": "PUBLIC" , "sWidth": "60px"}, 
+			{ "mData": "PUBLIC" , "bVisible": false, "sWidth": "60px"}, 
 			{ "mData": "QUALCOMMENTS" }, /*105*/	
 		],
 
