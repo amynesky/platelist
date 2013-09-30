@@ -46,6 +46,10 @@ body {
 .table thead tr th {
 	padding-right: 15px;
 	font-size: 10pt;
+	/*
+	border-top: 1px solid #787878;
+	border-bottom: 1px solid #787878;
+	*/
 }
 
 table {
@@ -54,6 +58,10 @@ table {
 }
 
 table th, table td {
+	/*
+	border-left: 1px solid #787878;
+	border-right: 1px solid #787878;
+	*/
 	border: 1px solid #787878;
 	text-align: left;
 	padding-left: 3px;

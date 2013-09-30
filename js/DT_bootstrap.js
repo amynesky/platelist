@@ -24,8 +24,9 @@ $.fn.dataTableExt.oApi.fnPagingInfo = function ( oSettings ){
 	/*this makes the search bar respond to the enter key*/
     $('#project_table_filter input').unbind('keypress keyup');
    	$('#project_table_filter input').bind('keypress keyup', function(e) {
-   		//if ($(this).val().length < 3 && e.keyCode != 13) return;	
-       	if(e.keyCode == 13) {
+   		if ($(this).val().length < 3 && e.keyCode != 13) {return;}	
+       	//if(e.keyCode == 13) {
+       	else{
         	oTable.fnFilter($(this).val());   
     	}
     		
