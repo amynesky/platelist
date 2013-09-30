@@ -234,8 +234,8 @@ $(document).ready(function() {
 			{ "mData": "TILEID" , "sWidth": "55px"},  
 			{ "mData": "RUN2D" ,"bSearchable": false, "sWidth": "65px"}, 
 			{ "mData": "RUN1D" ,"bSearchable": false, "sWidth": "65px"}, 
-			{ "mData": "RACEN" ,"bSearchable": false, "sWidth": "40px"}, /*5*/
-			{ "mData": "DECCEN" ,"bSearchable": false, "sWidth": "65px"},
+			{ "mData": "RACEN" ,"bSearchable": false, "sWidth": "50px"}, /*5*/
+			{ "mData": "DECCEN" ,"bSearchable": false, "sWidth": "75px"},
 			{ "mData": "EPOCH" ,"bSearchable": false, "bVisible": false},
 			{ "mData": "CARTID" ,"bSearchable": false, "bVisible": false},
 			{ "mData": "TAI" ,"bSearchable": false, "bVisible": false},
@@ -350,7 +350,6 @@ $(document).ready(function() {
 	    },
 	} );
 	new FixedColumns(oTable);
-
 	//, {
 		//"iLeftColumns": 2,
 		//"sLeftWidth": 'relative',
@@ -361,6 +360,15 @@ $(document).ready(function() {
   		oTable.fnAdjustColumnSizing();
 	} );
 	
+
+
+
+
+
+
+
+
+	/*Adding plots*/
 	var dataset;
 	d3.json("data/platelist_original.json", function(error, json){
 		if(error){
@@ -460,7 +468,7 @@ $(document).ready(function() {
 			   				return "#b3b3b3";
 			   			}else{
 			   				if(d.PLATEQUALITY=="good"){
-			   					return "green";
+			   					return "rgba(11, 128, 0, 0.85)";
 			   				}
 			   				else{
 			   					return "red";
@@ -561,7 +569,7 @@ $(document).ready(function() {
 			   				return "#b3b3b3";
 			   			}else{
 			   				if(d.PLATEQUALITY=="good"){
-			   					return "green";
+			   					return "rgba(11, 128, 0, 0.85)";
 			   				}
 			   				else{
 			   					return "red";
@@ -709,7 +717,7 @@ $(document).ready(function() {
 				});
 				
 
-
+			/*making the plots interactive*/
 			d3.select("#project_table_filter input")
 			  .on("keypress keyup", function(){
 			  	console.log("successfully communicating with d3");
