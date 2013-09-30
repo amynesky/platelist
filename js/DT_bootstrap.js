@@ -378,7 +378,7 @@ $(document).ready(function() {
 			//console.log(dataset);
 
 			//Width and height
-			var w = 360;
+			var w = 200;
 			var h = 200;
 			var padding = 10;
 

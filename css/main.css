@@ -61,7 +61,7 @@ table tr.even {background-color: white;}
 svg {
 	display: inline;
 	border: 1px solid #787878;
-	padding-right: 20px;
+	margin-right: 20px;
 }
 
 .axis path, .axis line{
