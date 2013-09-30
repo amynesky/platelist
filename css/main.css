@@ -8,6 +8,7 @@
 #header h1{
 	margin-bottom: 5px;
 	font-size: 30px;
+	margin-top: 5px;
 }
 
 a:link    {color: #238aaa; text-decoration: none;}
@@ -22,8 +23,11 @@ body {
 }
 #project_table_length{
 	padding-left: 400px;
-	padding-bottom: 20px;
+	padding-bottom: 10px;
+	padding-top: 0px;
 }
+
+
 
 #toggleList li{
 	display: inline;
@@ -41,6 +45,7 @@ body {
 /* give some spacing for sort icons */
 .table thead tr th {
 	padding-right: 15px;
+	font-size: 10pt;
 }
 
 table {
@@ -62,6 +67,12 @@ table td:nth-child(2) {padding-left: 5px;}
 table tr.odd {background-color: #ddd;}
 table tr.even {background-color: white;}
 
+.results{
+	float:left;
+}
+.pages{
+	float: right;
+}
 
 svg {
 	display: inline;
