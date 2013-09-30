@@ -3,20 +3,14 @@
 /* put custom css here */
 #header{
 	overflow: auto;
-
+	margin-bottom: 10px;
 }
 #header h1{
-	float: left;
-}
-#toggleList{
-	float:left;
+	margin-bottom: 5px;
+	font-size: 30px;
 }
 
-#title{
-	font-size: large;
-}
-
-a:link    {color:blue;}
+a:link    {color: #238aaa; text-decoration: none;}
 a:visited {color:purple;}
 /*a:hover   {font-weight: bold;}*/
 a:active  {font-weight: bold; color:green;}
@@ -73,6 +67,7 @@ svg {
 	display: inline;
 	border: 1px solid #c4c4c4;
 	margin-right: 20px;
+	margin-bottom: 10px;
 }
 
 .axis path, .axis line{
