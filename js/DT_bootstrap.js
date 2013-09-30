@@ -212,6 +212,7 @@ $(document).ready(function() {
 	oTable = $('#project_table').dataTable( {
 		"sDom": "<'row'<'col-lg-6'f><'col-lg-6'l>r>t<'row'<ip>>",
 		"sPaginationType": "bootstrap",
+		"aaSorting": [[ 1, "desc" ]],
 		"bPaginate": true,
 		"bLengthChange": true, /*records per page drop down*/
 		"bDeferRender": true, /*defers rendering till after.. what?*/
