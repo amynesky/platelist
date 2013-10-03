@@ -14,6 +14,8 @@ $.extend( true, $.fn.dataTable.defaults, {
 $.extend( $.fn.dataTableExt.oStdClasses, {
 	"sWrapper": "dataTables_wrapper form-inline"
 } );
+
+
  
  
 /* API method to get paging information */
@@ -26,8 +28,7 @@ $.fn.dataTableExt.oApi.fnPagingInfo = function ( oSettings ){
        	//if(e.keyCode == 13) {
        	else{
         	oTable.fnFilter($(this).val());   
-    	}
-    		
+    	}	
     });
     return {
         "iStart":         oSettings._iDisplayStart,
@@ -168,6 +169,34 @@ if ( $.fn.DataTable.TableTools ) {
 	} );
 }
 
+/*clear search bar button*/
+if ( typeof $.fn.dataTable == "function" && typeof $.fn.dataTableExt.fnVersionCheck == "function" && $.fn.dataTableExt.fnVersionCheck('1.9.2')/*older versions should work too*/ )
+{
+    $.fn.dataTableExt.oApi.clearSearch = function ( oSettings )
+    {
+ 
+        var table = this;
+         
+        //any browser, must include your own file
+        //var clearSearch = $('<img src="/images/delete.png" style="vertical-align:text-bottom;cursor:pointer;" alt="Delete" title="Delete"/>');
+         
+        //no image file needed, css embedding must be supported by browser
+        var clearSearch = $('<img title="Delete" alt="" src="data:image/png;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAAD2SURBVHjaxFM7DoMwDH2pOESHHgDPcB223gKpAxK34EAMMIe1FCQOgFQxuflARVBSVepQS5Ht2PHn2RHMjF/ohB8p2gSZpprtyxEHX8dGTeMG0A5UlsD5rCSGvF55F4SpqpSm1GmCzPO3LXJy1LXllwvodoMsCpNVy2hbYBjCLRiaZ8u7Dng+QXlu9b4H7ncvBmKbwoYBWR4kaXv3YmAMyoEpjv2PdWUHcP1j1ECqFpyj777YA6Yss9KyuEeDaW0cCsCUJMDjYUE8kr5TNuOzC+JiMI5uz2rmJvNWvidwcJXXx8IAuwb6uMqrY2iVgzbx99/4EmAAarFu0IJle5oAAAAASUVORK5CYII=" style="vertical-align:text-bottom;cursor:pointer;" />');
+        $(clearSearch).click( function ()
+                {
+                      table.fnFilter('');
+                });
+        $(oSettings.nTableWrapper).find('div.dataTables_filter').append(clearSearch);
+        $(oSettings.nTableWrapper).find('div.dataTables_filter label').css('margin-right', '-16px');//16px the image width
+        $(oSettings.nTableWrapper).find('div.dataTables_filter input').css('padding-right', '16px');
+    }
+ 
+    //auto-execute, no code needs to be added
+    $.fn.dataTable.models.oSettings['aoInitComplete'].push( {
+        "fn": $.fn.dataTableExt.oApi.clearSearch,
+        "sName": 'whatever'
+    } );
+}
 
 /* Table initialisation */
 var oTable;
@@ -226,7 +255,7 @@ $(document).ready(function() {
 		"bAutoWidth": false,
 		"bSortClasses": false,
 		"bProcessing": true,
-		"sAjaxSource": "data/platelist_original.json",
+		"sAjaxSource": "data/platelist.json",
 		"aLengthMenu": [[ 50, 100, 500, 1000, -1], [ 50, 100, 500, 1000, "All"]], /*records per page drop down*/
    		"aoColumns": [
 			{ "mData": "PLATE", "sWidth": "40px"},
@@ -235,7 +264,7 @@ $(document).ready(function() {
 			{ "mData": "RUN2D" ,"bSearchable": false, "sWidth": "55px"}, 
 			{ "mData": "RUN1D" ,"bSearchable": false, "sWidth": "55px"}, 
 			{ "mData": "RACEN" ,"bSearchable": false, "bVisible": false, "sWidth": "50px"}, /*5*/
-			{ "mData": "DECCEN" ,"bSearchable": false, "bVisible": false, "sWidth": "75px"},
+			{ "mData": "DECCEN" ,"bSearchable": false, "bVisible": false, "sWidth": "65px"},
 			{ "mData": "EPOCH" ,"bSearchable": false, "bVisible": false},
 			{ "mData": "CARTID" ,"bSearchable": false, "bVisible": false},
 			{ "mData": "TAI" ,"bSearchable": false, "bVisible": false},
@@ -340,11 +369,9 @@ $(document).ready(function() {
 		/*makes cells content sensitive*/
 		"fnRowCallback": function( nRow, aData, iDisplayIndex,iDisplayIndexFull) {
 	        $(nRow).children().each(function(index, td) {
-				if(index ==10)  {
 		            if ($(td).html() === "bad") {
-		                $(td).css("background-color", "#FF3229");
+		                $(td).css("color", "#FF3229");
 		            } 
-		        }
 		    });                        
 		    return nRow;
 	    },
@@ -370,7 +397,7 @@ $(document).ready(function() {
 
 	/*Adding plots*/
 	var dataset;
-	d3.json("data/platelist_original.json", function(error, json){
+	d3.json("data/platelist.json", function(error, json){
 		if(error){
 			console.log(error);
 		}else{
@@ -383,12 +410,13 @@ $(document).ready(function() {
 			var padding = 10;
 
 		//Create SVG element for %LRG1v%LRG2
-			var svg = d3.select("#plots")
+			var LRG1vLRG2 = d3.select("#plots")
 						.append("svg")
 						.attr({
 							width: w,
 							height: h,
-						});
+						})
+						.attr("class", "plot");
 
 			var xMin = d3.min(dataset.aaData, function(d){return d.SUCCESS_LRG1;});
 			var xMax = d3.max(dataset.aaData, function(d){return d.SUCCESS_LRG1;});
@@ -408,14 +436,14 @@ $(document).ready(function() {
 						 .scale(yScale)
 						 .orient("left");
 		/*axis*/
-			svg.append("g")
+			LRG1vLRG2.append("g")
 			   .attr({
 			   		class: "axis",
 			   		transform: "translate(0," + (h-(3.5 * padding)) + ")",
 				})
 			   .call(xAxis);
 
-			svg.append("g")
+			LRG1vLRG2.append("g")
 			   .attr({
 			   		class: "axis",
 			   		transform: "translate(" + (4.5 * padding) + ",0)",
@@ -423,7 +451,7 @@ $(document).ready(function() {
 			   .call(yAxis);
 
 			/*label x-axis*/
-			svg.append("text")
+			LRG1vLRG2.append("text")
 			   .attr("class", "x label")
 			   .attr("text-anchor", "middle")
 			   .attr("x", w /2 )
@@ -434,7 +462,7 @@ $(document).ready(function() {
 			   .attr("fill", "black");
 
 			/*label y-axis*/
-			svg.append("text")
+			LRG1vLRG2.append("text")
 			   .attr("class", "y label")
 			   .attr("text-anchor", "middle")
 			   .attr("x", 0- h/2 )
@@ -447,7 +475,7 @@ $(document).ready(function() {
 			   .attr("fill", "black");
 						
 		//scatter plot
-			svg.selectAll("circle")
+			LRG1vLRG2.selectAll("circle")
 			    .data(dataset.aaData)
 			    .enter()
 			    .append("circle")
@@ -475,8 +503,67 @@ $(document).ready(function() {
 			   				}
 			   			}
 			   		}
-				});
+				})
+				/*
+				.on("mouseover", function(d){
+					//Get this dot's x/y values, then augment for the tooltip
+					var xPosition = parseFloat(d3.select(this).attr("cx"));
+					var yPosition = parseFloat(d3.select(this).attr("cy"));
+					//Create the tooltip label
+					LRG1vLRG2.append("text")
+					   .attr("id", "tooltip")
+					   .attr("x", xPosition)
+					   .attr("y", yPosition)
+					   .attr("text-anchor", "middle")
+					   .attr("font-family", "sans-serif")
+					   .attr("font-size", "11px")
+					   .attr("font-weight", "bold")
+					   .attr("fill", "black")
+					   .text("(" + d.SUCCESS_LRG1+","+ d.SUCCESS_LRG2+")");
 
+					console.log("(" + d.SUCCESS_LRG1+","+ d.SUCCESS_LRG2+")")
+				})
+				.on("mouseout", function(d){
+					d3.select("#tooltip").remove();
+				})*/
+			   .on("mouseover", function(d) {
+
+					//Get this bar's x/y values, then augment for the tooltip
+					var xPosition = parseFloat(d3.select(this).attr("cx")) ;
+					var yPosition = parseFloat(d3.select(this).attr("cy")) ;
+
+					var plate = d.PLATE ;
+
+					//Update the tooltip position and value
+					d3.select("#tooltip")
+						/*
+						.style("left", xPosition + "px")
+						.style("top", yPosition + "px")
+						*/						
+						.select("#tooltipLine1")
+						.text("Plate: " + d.PLATE)
+						.select("#tooltipLine2")
+						.text("MJD: " + d.MJD);
+
+					d3.select("#tooltip")
+						/*
+						.style("left", xPosition + "px")
+						.style("top", yPosition + "px")
+						*/						
+						.select("#tooltipLine2")
+						.text("MJD: " + d.MJD);
+			   
+					//Show the tooltip
+					d3.select("#tooltip").classed("hidden", false);
+
+			   })
+			   .on("mouseout", function() {
+			   
+					//Hide the tooltip
+					d3.select("#tooltip").classed("hidden", true);
+					
+			   });
+			
 
 
 
@@ -484,12 +571,13 @@ $(document).ready(function() {
 
 
 		//Create SVG element for %LRG2v%QSO
-		    var svg = d3.select("#plots")
+		    var LRG2vQSO = d3.select("#plots")
 					.append("svg")
 					.attr({
 						width: w,
 						height: h,
-					});
+					})
+					.attr("class", "plot");
 
 			var xMin = d3.min(dataset.aaData, function(d){return d.SUCCESS_LRG2;});
 			var xMax = d3.max(dataset.aaData, function(d){return d.SUCCESS_LRG2;});
@@ -509,14 +597,14 @@ $(document).ready(function() {
 						 .scale(yScale)
 						 .orient("left");
 		/*axis*/
-			svg.append("g")
+			LRG2vQSO.append("g")
 			   .attr({
 			   		class: "axis",
 			   		transform: "translate(0," + (h-(3.5 * padding)) + ")",
 				})
 			   .call(xAxis);
 
-			svg.append("g")
+			LRG2vQSO.append("g")
 			   .attr({
 			   		class: "axis",
 			   		transform: "translate(" + (4.5 * padding) + ",0)",
@@ -524,7 +612,7 @@ $(document).ready(function() {
 			   .call(yAxis);
 
 			/*label x-axis*/
-			svg.append("text")
+			LRG2vQSO.append("text")
 			   .attr("class", "x label")
 			   .attr("text-anchor", "middle")
 			   .attr("x", w /2 )
@@ -535,7 +623,7 @@ $(document).ready(function() {
 			   .attr("fill", "black");
 
 			/*label y-axis*/
-			svg.append("text")
+			LRG2vQSO.append("text")
 			   .attr("class", "y label")
 			   .attr("text-anchor", "middle")
 			   .attr("x", 0- h/2 )
@@ -548,7 +636,7 @@ $(document).ready(function() {
 			   .attr("fill", "black");
 						
 		//scatter plot
-			svg.selectAll("circle")
+			LRG2vQSO.selectAll("circle")
 			    .data(dataset.aaData)
 			    .enter()
 			    .append("circle")
@@ -576,6 +664,27 @@ $(document).ready(function() {
 			   				}
 			   			}
 			   		}
+				})
+				.on("mouseover", function(d){
+					//Get this dot's x/y values, then augment for the tooltip
+					var xPosition = parseFloat(d3.select(this).attr("cx"));
+					var yPosition = parseFloat(d3.select(this).attr("cy"));
+					//Create the tooltip label
+					LRG2vQSO.append("text")
+					   .attr("id", "tooltip")
+					   .attr("x", xPosition)
+					   .attr("y", yPosition)
+					   .attr("text-anchor", "middle")
+					   .attr("font-family", "sans-serif")
+					   .attr("font-size", "11px")
+					   .attr("font-weight", "bold")
+					   .attr("fill", "black")
+					   .text("(" + d.SUCCESS_LRG2+","+ d.SUCCESS_QSO+")");
+
+					console.log("(" + d.SUCCESS_LRG1+","+ d.SUCCESS_LRG2+")")
+				})
+				.on("mouseout", function(d){
+					d3.select("#tooltip").remove();
 				});
 
 
@@ -585,12 +694,13 @@ $(document).ready(function() {
 
 
 		//Create SVG element for SN2_G1vSN2_I1 on top of SN2_G2vSN2_I2
-		    var svg = d3.select("#plots")
+		    var SN2_G2vSN2_I2 = d3.select("#plots")
 					.append("svg")
 					.attr({
 						width: w,
 						height: h,
-					});
+					})
+					.attr("class", "plot");
 
 			var xMin = d3.min([d3.min(dataset.aaData, function(d){return d.DERED_SN2_G1;}), 
 							  d3.min(dataset.aaData, function(d){return d.DERED_SN2_G2;})]);
@@ -614,14 +724,14 @@ $(document).ready(function() {
 						 .scale(yScale)
 						 .orient("left");
 		/*axis*/
-			svg.append("g")
+			SN2_G2vSN2_I2.append("g")
 			   .attr({
 			   		class: "axis",
 			   		transform: "translate(0," + (h-(3.5 * padding)) + ")",
 				})
 			   .call(xAxis);
 
-			svg.append("g")
+			SN2_G2vSN2_I2.append("g")
 			   .attr({
 			   		class: "axis",
 			   		transform: "translate(" + (4.5 * padding) + ",0)",
@@ -629,7 +739,7 @@ $(document).ready(function() {
 			   .call(yAxis);
 
 			/*label x-axis*/
-			svg.append("text")
+			SN2_G2vSN2_I2.append("text")
 			   .attr("class", "x label")
 			   .attr("text-anchor", "middle")
 			   .attr("x", w /2 -25)
@@ -639,7 +749,7 @@ $(document).ready(function() {
 			   .attr("font-size", "11px")
 			   .attr("fill", "blue");
 
-			svg.append("text")
+			SN2_G2vSN2_I2.append("text")
 			   .attr("class", "x label")
 			   .attr("text-anchor", "middle")
 			   .attr("x", w /2 + 25)
@@ -650,7 +760,7 @@ $(document).ready(function() {
 			   .attr("fill", "#ff6600");
 
 			/*label y-axis*/
-			svg.append("text")
+			SN2_G2vSN2_I2.append("text")
 			   .attr("class", "y label")
 			   .attr("text-anchor", "middle")
 			   .attr("x", 0- h/2 - 25)
@@ -662,7 +772,7 @@ $(document).ready(function() {
 			   .attr("font-size", "11px")
 			   .attr("fill", "blue");
 
-			svg.append("text")
+			SN2_G2vSN2_I2.append("text")
 			   .attr("class", "y label")
 			   .attr("text-anchor", "middle")
 			   .attr("x", 0- h/2 + 25)
@@ -676,7 +786,7 @@ $(document).ready(function() {
 						
 		//scatter plot
 		
-			svg.selectAll("circle")
+			SN2_G2vSN2_I2.selectAll("circle")
 			    .data(dataset.aaData)
 			    .enter()
 			    .append("circle")
@@ -696,7 +806,7 @@ $(document).ready(function() {
 				});
 			    
 			
-			svg.selectAll("ellipse")
+			SN2_G2vSN2_I2.selectAll("ellipse")
 			    .data(dataset.aaData)
 			    .enter()
 			    .append("ellipse")
@@ -716,6 +826,12 @@ $(document).ready(function() {
 			   		fill: "rgba(255, 145, 0, 0.85)"
 				});
 				
+
+			/*making the plots interactive*/
+			d3.select("#project_table_filter input")
+			  .on("keyup", function(){
+			  	console.log("successfully communicating with d3");
+			  });
 
 			/*making the plots interactive*/
 			d3.select("#project_table_filter input")

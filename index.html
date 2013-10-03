@@ -20,13 +20,6 @@
   		<div id = "header">
 	  		<h1 id="title">BOSS Plates</h1>
 	  		<div id="toggleButtons">
-		  <!--
-			<ul id="toggleList">
-			<li><a href="javascript:void(0);" onclick="fnShowColumn(2); fnShowColumn(3); fnShowColumn(4); fnShowColumn(5); fnShowColumn(6); fnShowColumn(15); fnShowColumn(16); fnShowColumn(17); fnShowColumn(18); fnShowColumn(19); fnShowColumn(38); fnShowColumn(40); fnShowColumn(41); fnShowColumn(43); fnShowColumn(84); fnShowColumn(90); fnShowColumn(91); fnShowColumn(92); fnShowColumn(94); fnShowColumn(95); fnShowColumn(96); fnShowColumn(98); fnShowColumn(99); fnShowColumn(100); fnShowColumn(101); fnShowColumn(102); fnShowColumn(103); fnShowColumn(104); fnShowColumn(105);">View All</a></li>
-			<li><a href="javascript:void(0);" onclick="fnShowColumn(2); fnShowColumn(3); fnShowColumn(4); fnShowColumn(5); fnShowColumn(6); fnShowColumn(15); fnShowColumn(16); fnShowColumn(17); fnShowColumn(18); fnShowColumn(19); fnHideColumn(38); fnHideColumn(40); fnHideColumn(41); fnHideColumn(43); fnHideColumn(84); fnShowColumn(90); fnShowColumn(91); fnShowColumn(92); fnShowColumn(94); fnShowColumn(95); fnShowColumn(96); fnHideColumn(98); fnHideColumn(99); fnHideColumn(100); fnHideColumn(101); fnHideColumn(102); fnHideColumn(103); fnShowColumn(104); fnShowColumn(105);">Plate View</a></li>
-			<li><a href="javascript:void(0);" onclick="fnHideColumn(2); fnShowColumn(3); fnShowColumn(4); fnHideColumn(5); fnHideColumn(6); fnHideColumn(15); fnHideColumn(16); fnHideColumn(17); fnShowColumn(18); fnHideColumn(19); fnShowColumn(38); fnShowColumn(40); fnShowColumn(41); fnShowColumn(43); fnShowColumn(84); fnHideColumn(90); fnHideColumn(91); fnHideColumn(92); fnHideColumn(94); fnHideColumn(95); fnHideColumn(96); fnShowColumn(98); fnShowColumn(99); fnShowColumn(100); fnShowColumn(101); fnShowColumn(102); fnShowColumn(103); fnHideColumn(104); fnShowColumn(105);">Plate Quality View</a></li>
-			</ul>
-			-->
 			<a href="javascript:void(0);" onclick="fnHideColumn(2); fnShowColumn(3); fnShowColumn(4); fnHideColumn(5); fnHideColumn(6); fnHideColumn(15); fnHideColumn(16); fnHideColumn(17); fnShowColumn(18); fnHideColumn(19); fnShowColumn(38); fnShowColumn(40); fnShowColumn(41); fnShowColumn(43); fnShowColumn(84); fnHideColumn(90); fnHideColumn(91); fnHideColumn(92); fnHideColumn(94); fnHideColumn(95); fnHideColumn(96); fnShowColumn(98); fnShowColumn(99); fnShowColumn(100); fnShowColumn(101); fnShowColumn(102); fnShowColumn(103); fnHideColumn(104); fnShowColumn(105);">Plate Quality</a>
 			&bull;
 			<a href="javascript:void(0);" onclick="fnShowColumn(2); fnShowColumn(3); fnShowColumn(4); fnShowColumn(5); fnShowColumn(6); fnShowColumn(15); fnShowColumn(16); fnShowColumn(17); fnShowColumn(18); fnShowColumn(19); fnHideColumn(38); fnHideColumn(40); fnHideColumn(41); fnHideColumn(43); fnHideColumn(84); fnShowColumn(90); fnShowColumn(91); fnShowColumn(92); fnShowColumn(94); fnShowColumn(95); fnShowColumn(96); fnHideColumn(98); fnHideColumn(99); fnHideColumn(100); fnHideColumn(101); fnHideColumn(102); fnHideColumn(103); fnShowColumn(104); fnShowColumn(105);">Plate List</a>
@@ -59,46 +52,16 @@
 	    </div>
 		-->
 	    
-		<!--
-		<div id="toggleButtons">
-			<ul id="toggleList">
-				<li><a href="javascript:void(0);" onclick="fnShowHide(2);">TILEID</a></li>
-				<li><a href="javascript:void(0);" onclick="fnShowHide(3);">RUN2D</a></li>
-				<li><a href="javascript:void(0);" onclick="fnShowHide(4);">RUN1D</a></li>
-				<li><a href="javascript:void(0);" onclick="fnShowHide(5);">RACEN</a></li>
-				<li><a href="javascript:void(0);" onclick="fnShowHide(6);">DECCEN</a></li>
-				<li><a href="javascript:void(0);" onclick="fnShowHide(15);">SURVEY</a></li>
-				<li><a href="javascript:void(0);" onclick="fnShowHide(16);">PROGRAMNAME</a></li>
-				<li><a href="javascript:void(0);" onclick="fnShowHide(17);">CHUNK</a></li>
-				<li><a href="javascript:void(0);" onclick="fnShowHide(18);">PLATEQUALITY</a></li>
-				<li><a href="javascript:void(0);" onclick="fnShowHide(19);">PLATESN2</a></li>
-				<li><a href="javascript:void(0);" onclick="fnShowHide(38);">DERED_SN2_G1<br></a></li>
-				<li><a href="javascript:void(0);" onclick="fnShowHide(40);">DERED_SN2_I1</a></li>
-				<li><a href="javascript:void(0);" onclick="fnShowHide(41);">DERED_SN2_G2</a></li>
-				<li><a href="javascript:void(0);" onclick="fnShowHide(43);">DERED_SN2_I2</a></li>
-				<li><a href="javascript:void(0);" onclick="fnShowHide(84);">FBADPIX</a></li>
-				<li><a href="javascript:void(0);" onclick="fnShowHide(90);">N_STAR</a></li>
-				<li><a href="javascript:void(0);" onclick="fnShowHide(91);">N_UNKNOWN</a></li>
-				<li><a href="javascript:void(0);" onclick="fnShowHide(92);">N_SKY</a></li>
-				<li><a href="javascript:void(0);" onclick="fnShowHide(94);">N_TARGET_LRG1</a></li>
-				<li><a href="javascript:void(0);" onclick="fnShowHide(95);">N_TARGET_LRGQ<br></a></li>
-				<li><a href="javascript:void(0);" onclick="fnShowHide(96);">N_TARGET_QSO</a></li>
-				<li><a href="javascript:void(0);" onclick="fnShowHide(98);">SUCCESS_LRG1</a></li>
-				<li><a href="javascript:void(0);" onclick="fnShowHide(99);">SUCCESS_LRG2</a></li>
-				<li><a href="javascript:void(0);" onclick="fnShowHide(100);">SUCCESS_QSO</a></li>
-				<li><a href="javascript:void(0);" onclick="fnShowHide(101);">STATUS2D</a></li>
-				<li><a href="javascript:void(0);" onclick="fnShowHide(102);">STATUSCOMBINE</a></li>
-				<li><a href="javascript:void(0);" onclick="fnShowHide(103);">STATUS1D</a></li>
-				<li><a href="javascript:void(0);" onclick="fnShowHide(104);">PUBLIC</a></li>
-				<li><a href="javascript:void(0);" onclick="fnShowHide(105);">QUALCOMMENTS</a></li>
-			</ul>
-		</div>
-		-->
-		
-		<div id="plots">
-		</div>
-		
 
+		<div id="graphics">
+			<div id="plots">
+			</div>
+			<div id="tooltip" class="hidden">
+				<p><strong>About Dot</strong></p>
+				<p><span id="tooltipLine1">100</span></p>
+				<p><span id="tooltipLine2">100</span></p>
+			</div>
+		</div>
 		
 		
 

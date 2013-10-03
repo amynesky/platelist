@@ -75,6 +75,7 @@ table th, table td {
 	padding-top: 1px;
 	padding-bottom: 1px;
 	padding-right: 1px;
+	white-space: nowrap;
 }
 
 table td{font-size: small;}
@@ -84,6 +85,7 @@ table tr.even {background-color: white;}
 
 .dataTables_info{
 	float:left;
+	font-size: small;
 }
 .dataTables_paginate.paging_bootstrap.pagination.pagination-right{
 	float: right;
@@ -91,13 +93,19 @@ table tr.even {background-color: white;}
 	padding-bottom: 0px;
 	margin-top:0px;
 	margin-top: 0px;
+	font-size: small;
 }
 
-svg {
+#graphics{
+	display: inline;
+}
+
+.plot{
 	display: inline;
 	border: 1px solid #c4c4c4;
 	margin-right: 20px;
 	margin-bottom: 10px;
+	/*float: left;*/
 }
 
 .axis path, .axis line{
@@ -109,4 +117,32 @@ svg {
 .axis text{
 	font-family: sans-serif;
 	font-size: 9px;
+}
+
+#tooltip {
+	/*position: absolute;*/
+	width: 200px;
+	height: auto;
+	padding: 10px;
+	background-color: white;
+	-webkit-border-radius: 10px;
+	-moz-border-radius: 10px;
+	border-radius: 10px;
+	-webkit-box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
+	-moz-box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
+	box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
+	pointer-events: none;
+	display: inline;
+	float: right;
+}
+
+#tooltip.hidden {
+	display: none;
+}
+
+#tooltip p {
+	margin: 0;
+	font-family: sans-serif;
+	font-size: 16px;
+	line-height: 20px;
 }
