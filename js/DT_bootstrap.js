@@ -391,10 +391,14 @@ $(document).ready(function() {
 
 
 
-
-
-
-
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/*Adding plots*/
 	var dataset;
 	d3.json("data/platelist.json", function(error, json){
@@ -423,17 +427,17 @@ $(document).ready(function() {
 			var yMin = d3.min(dataset.aaData, function(d){return d.SUCCESS_LRG2;});
 			var yMax = d3.max(dataset.aaData, function(d){return d.SUCCESS_LRG2;});
 
-			var xScale = d3.scale.linear()
+			var xScaleLRG1vLRG2 = d3.scale.linear()
 								 .domain([xMin,xMax])
 								 .range([4.5 * padding,w-padding]);
-			var yScale = d3.scale.linear()
+			var yScaleLRG1vLRG2 = d3.scale.linear()
 								 .domain([yMin,yMax])
 								 .range([h-(3.5 * padding),padding]);
 			var xAxis= d3.svg.axis()
-							 .scale(xScale)
+							 .scale(xScaleLRG1vLRG2)
 							 .orient("bottom");
 			var yAxis= d3.svg.axis()
-						 .scale(yScale)
+						 .scale(yScaleLRG1vLRG2)
 						 .orient("left");
 		/*axis*/
 			LRG1vLRG2.append("g")
@@ -481,12 +485,12 @@ $(document).ready(function() {
 			    .append("circle")
 			    .attr({
 			   		cx: function(d) {
-			   			var x= xScale(d.SUCCESS_LRG1); 
+			   			var x= xScaleLRG1vLRG2(d.SUCCESS_LRG1); 
 			   			//console.log(x);
 			   			return x;
 			   		},
 			   		cy: function(d) {				   			
-			   			var y= yScale(d.SUCCESS_LRG2); 
+			   			var y= yScaleLRG1vLRG2(d.SUCCESS_LRG2); 
 			   			//console.log(""+ y); 
 			   			return y;
 			   		},
@@ -504,36 +508,11 @@ $(document).ready(function() {
 			   			}
 			   		}
 				})
-				/*
-				.on("mouseover", function(d){
-					//Get this dot's x/y values, then augment for the tooltip
-					var xPosition = parseFloat(d3.select(this).attr("cx"));
-					var yPosition = parseFloat(d3.select(this).attr("cy"));
-					//Create the tooltip label
-					LRG1vLRG2.append("text")
-					   .attr("id", "tooltip")
-					   .attr("x", xPosition)
-					   .attr("y", yPosition)
-					   .attr("text-anchor", "middle")
-					   .attr("font-family", "sans-serif")
-					   .attr("font-size", "11px")
-					   .attr("font-weight", "bold")
-					   .attr("fill", "black")
-					   .text("(" + d.SUCCESS_LRG1+","+ d.SUCCESS_LRG2+")");
-
-					console.log("(" + d.SUCCESS_LRG1+","+ d.SUCCESS_LRG2+")")
-				})
-				.on("mouseout", function(d){
-					d3.select("#tooltip").remove();
-				})*/
 			   .on("mouseover", function(d) {
 
 					//Get this bar's x/y values, then augment for the tooltip
 					var xPosition = parseFloat(d3.select(this).attr("cx")) ;
 					var yPosition = parseFloat(d3.select(this).attr("cy")) ;
-
-					var plate = d.PLATE ;
-
 					//Update the tooltip position and value
 					d3.select("#tooltip")
 						/*
@@ -542,8 +521,6 @@ $(document).ready(function() {
 						*/						
 						.select("#tooltipLine1")
 						.text("Plate: " + d.PLATE)
-						.select("#tooltipLine2")
-						.text("MJD: " + d.MJD);
 
 					d3.select("#tooltip")
 						/*
@@ -556,20 +533,58 @@ $(document).ready(function() {
 					//Show the tooltip
 					d3.select("#tooltip").classed("hidden", false);
 
+					LRG2vQSO.append("circle")
+					  		.attr("id", "highlighter")
+					   		.attr({
+						   		cx: xScaleLRG2vQSO(d.SUCCESS_LRG2),
+						   		cy: yScaleLRG2vQSO(d.SUCCESS_QSO),
+						   		r: 2,
+						   		fill: function(d){
+						   			return "#f2ff00";
+						   		}
+							});
+
+					SN2_G12vSN2_I12.append("circle")
+					  		.attr("id", "highlighter2")
+					   		.attr({
+						   		cx: xScaleSN2_G12vSN2_I12(d.DERED_SN2_G2),
+						   		cy: yScaleSN2_G12vSN2_I12(d.DERED_SN2_I2),
+						   		r: 2,
+						   		fill: function(d){
+						   			return "#f2ff00";
+						   		}
+							});
+
+					SN2_G12vSN2_I12.append("circle")
+					  		.attr("id", "highlighter3")
+					   		.attr({
+						   		cx: xScaleSN2_G12vSN2_I12(d.DERED_SN2_G1),
+						   		cy: yScaleSN2_G12vSN2_I12(d.DERED_SN2_I1),
+						   		r: 2,
+						   		fill: function(d){
+						   			return "#d400ff";
+						   		}
+							});
+
 			   })
 			   .on("mouseout", function() {
 			   
 					//Hide the tooltip
 					d3.select("#tooltip").classed("hidden", true);
+					d3.select("#highlighter").remove();
+					d3.select("#highlighter2").remove();
+					d3.select("#highlighter3").remove();
 					
 			   });
 			
 
 
-
-
-
-
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		//Create SVG element for %LRG2v%QSO
 		    var LRG2vQSO = d3.select("#plots")
 					.append("svg")
@@ -584,17 +599,17 @@ $(document).ready(function() {
 			var yMin = d3.min(dataset.aaData, function(d){return d.SUCCESS_QSO;});
 			var yMax = d3.max(dataset.aaData, function(d){return d.SUCCESS_QSO;});
 
-			var xScale = d3.scale.linear()
+			var xScaleLRG2vQSO = d3.scale.linear()
 								 .domain([xMin,xMax])
 								 .range([4.5 * padding,w-padding]);
-			var yScale = d3.scale.linear()
+			var yScaleLRG2vQSO = d3.scale.linear()
 								 .domain([yMin,yMax])
 								 .range([h-(3.5 * padding),padding]);
 			var xAxis= d3.svg.axis()
-							 .scale(xScale)
+							 .scale(xScaleLRG2vQSO)
 							 .orient("bottom");
 			var yAxis= d3.svg.axis()
-						 .scale(yScale)
+						 .scale(yScaleLRG2vQSO)
 						 .orient("left");
 		/*axis*/
 			LRG2vQSO.append("g")
@@ -642,12 +657,12 @@ $(document).ready(function() {
 			    .append("circle")
 			    .attr({
 			   		cx: function(d) {
-			   			var x= xScale(d.SUCCESS_LRG2); 
+			   			var x= xScaleLRG2vQSO(d.SUCCESS_LRG2); 
 			   			//console.log(x);
 			   			return x;
 			   		},
 			   		cy: function(d) {				   			
-			   			var y= yScale(d.SUCCESS_QSO); 
+			   			var y= yScaleLRG2vQSO(d.SUCCESS_QSO); 
 			   			//console.log(""+ y); 
 			   			return y;
 			   		},
@@ -665,36 +680,85 @@ $(document).ready(function() {
 			   			}
 			   		}
 				})
-				.on("mouseover", function(d){
-					//Get this dot's x/y values, then augment for the tooltip
-					var xPosition = parseFloat(d3.select(this).attr("cx"));
-					var yPosition = parseFloat(d3.select(this).attr("cy"));
-					//Create the tooltip label
-					LRG2vQSO.append("text")
-					   .attr("id", "tooltip")
-					   .attr("x", xPosition)
-					   .attr("y", yPosition)
-					   .attr("text-anchor", "middle")
-					   .attr("font-family", "sans-serif")
-					   .attr("font-size", "11px")
-					   .attr("font-weight", "bold")
-					   .attr("fill", "black")
-					   .text("(" + d.SUCCESS_LRG2+","+ d.SUCCESS_QSO+")");
+			   .on("mouseover", function(d) {
 
-					console.log("(" + d.SUCCESS_LRG1+","+ d.SUCCESS_LRG2+")")
-				})
-				.on("mouseout", function(d){
-					d3.select("#tooltip").remove();
-				});
+					//Get this bar's x/y values, then augment for the tooltip
+					var xPosition = parseFloat(d3.select(this).attr("cx")) ;
+					var yPosition = parseFloat(d3.select(this).attr("cy")) ;
+					//Update the tooltip position and value
+					d3.select("#tooltip")
+						/*
+						.style("left", xPosition + "px")
+						.style("top", yPosition + "px")
+						*/						
+						.select("#tooltipLine1")
+						.text("Plate: " + d.PLATE)
+
+					d3.select("#tooltip")
+						/*
+						.style("left", xPosition + "px")
+						.style("top", yPosition + "px")
+						*/						
+						.select("#tooltipLine2")
+						.text("MJD: " + d.MJD);
+			   
+					//Show the tooltip
+					d3.select("#tooltip").classed("hidden", false);
+
+					LRG1vLRG2.append("circle")
+					  		.attr("id", "highlighter")
+					   		.attr({
+						   		cx: xScaleLRG1vLRG2(d.SUCCESS_LRG1),
+						   		cy: yScaleLRG1vLRG2(d.SUCCESS_LRG2),
+						   		r: 2,
+						   		fill: function(d){
+						   			return "#f2ff00";
+						   		}
+							});
+
+					SN2_G12vSN2_I12.append("circle")
+					  		.attr("id", "highlighter2")
+					   		.attr({
+						   		cx: xScaleSN2_G12vSN2_I12(d.DERED_SN2_G2),
+						   		cy: yScaleSN2_G12vSN2_I12(d.DERED_SN2_I2),
+						   		r: 2,
+						   		fill: function(d){
+						   			return "#f2ff00";
+						   		}
+							});
+
+					SN2_G12vSN2_I12.append("circle")
+					  		.attr("id", "highlighter3")
+					   		.attr({
+						   		cx: xScaleSN2_G12vSN2_I12(d.DERED_SN2_G1),
+						   		cy: yScaleSN2_G12vSN2_I12(d.DERED_SN2_I1),
+						   		r: 2,
+						   		fill: function(d){
+						   			return "#d400ff";
+						   		}
+							});
+			   })
+			   .on("mouseout", function() {
+			   
+					//Hide the tooltip
+					d3.select("#tooltip").classed("hidden", true);
+					d3.select("#highlighter").remove();
+					d3.select("#highlighter2").remove();
+					d3.select("#highlighter3").remove();
+			   });
 
 
 
-
-
-
-
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		//Create SVG element for SN2_G1vSN2_I1 on top of SN2_G2vSN2_I2
-		    var SN2_G2vSN2_I2 = d3.select("#plots")
+		    var SN2_G12vSN2_I12 = d3.select("#plots")
 					.append("svg")
 					.attr({
 						width: w,
@@ -711,27 +775,27 @@ $(document).ready(function() {
 			var yMax = d3.max([d3.max(dataset.aaData, function(d){return d.DERED_SN2_I1;}), 
 							  d3.max(dataset.aaData, function(d){return d.DERED_SN2_I2;})]);
 
-			var xScale = d3.scale.linear()
+			var xScaleSN2_G12vSN2_I12 = d3.scale.linear()
 								 .domain([xMin,xMax])
 								 .range([4.5 * padding,w-padding]);
-			var yScale = d3.scale.linear()
+			var yScaleSN2_G12vSN2_I12 = d3.scale.linear()
 								 .domain([yMin,yMax])
 								 .range([h-(3.5 * padding),padding]);
 			var xAxis= d3.svg.axis()
-							 .scale(xScale)
+							 .scale(xScaleSN2_G12vSN2_I12)
 							 .orient("bottom");
 			var yAxis= d3.svg.axis()
-						 .scale(yScale)
+						 .scale(yScaleSN2_G12vSN2_I12)
 						 .orient("left");
 		/*axis*/
-			SN2_G2vSN2_I2.append("g")
+			SN2_G12vSN2_I12.append("g")
 			   .attr({
 			   		class: "axis",
 			   		transform: "translate(0," + (h-(3.5 * padding)) + ")",
 				})
 			   .call(xAxis);
 
-			SN2_G2vSN2_I2.append("g")
+			SN2_G12vSN2_I12.append("g")
 			   .attr({
 			   		class: "axis",
 			   		transform: "translate(" + (4.5 * padding) + ",0)",
@@ -739,7 +803,7 @@ $(document).ready(function() {
 			   .call(yAxis);
 
 			/*label x-axis*/
-			SN2_G2vSN2_I2.append("text")
+			SN2_G12vSN2_I12.append("text")
 			   .attr("class", "x label")
 			   .attr("text-anchor", "middle")
 			   .attr("x", w /2 -25)
@@ -749,7 +813,7 @@ $(document).ready(function() {
 			   .attr("font-size", "11px")
 			   .attr("fill", "blue");
 
-			SN2_G2vSN2_I2.append("text")
+			SN2_G12vSN2_I12.append("text")
 			   .attr("class", "x label")
 			   .attr("text-anchor", "middle")
 			   .attr("x", w /2 + 25)
@@ -760,7 +824,7 @@ $(document).ready(function() {
 			   .attr("fill", "#ff6600");
 
 			/*label y-axis*/
-			SN2_G2vSN2_I2.append("text")
+			SN2_G12vSN2_I12.append("text")
 			   .attr("class", "y label")
 			   .attr("text-anchor", "middle")
 			   .attr("x", 0- h/2 - 25)
@@ -772,7 +836,7 @@ $(document).ready(function() {
 			   .attr("font-size", "11px")
 			   .attr("fill", "blue");
 
-			SN2_G2vSN2_I2.append("text")
+			SN2_G12vSN2_I12.append("text")
 			   .attr("class", "y label")
 			   .attr("text-anchor", "middle")
 			   .attr("x", 0- h/2 + 25)
@@ -786,46 +850,181 @@ $(document).ready(function() {
 						
 		//scatter plot
 		
-			SN2_G2vSN2_I2.selectAll("circle")
+			SN2_G12vSN2_I12.selectAll("circle")
 			    .data(dataset.aaData)
 			    .enter()
 			    .append("circle")
 			    .attr({
 			   		cx: function(d) {
-			   			var x= xScale(d.DERED_SN2_G1); 
+			   			var x= xScaleSN2_G12vSN2_I12(d.DERED_SN2_G1); 
 			   			//console.log(x);
 			   			return x;
 			   		},
 			   		cy: function(d) {				   			
-			   			var y= yScale(d.DERED_SN2_I1); 
+			   			var y= yScaleSN2_G12vSN2_I12(d.DERED_SN2_I1); 
 			   			//console.log(""+ y); 
 			   			return y;
 			   		},
 			   		r: 2,
 			   		fill: "rgba(0, 0, 255, 0.85)"
-				});
+				})
+				.on("mouseover", function(d) {
+
+					//Get this bar's x/y values, then augment for the tooltip
+					var xPosition = parseFloat(d3.select(this).attr("cx")) ;
+					var yPosition = parseFloat(d3.select(this).attr("cy")) ;
+					//Update the tooltip position and value
+					d3.select("#tooltip")
+						/*
+						.style("left", xPosition + "px")
+						.style("top", yPosition + "px")
+						*/						
+						.select("#tooltipLine1")
+						.text("Plate: " + d.PLATE)
+
+					d3.select("#tooltip")
+						/*
+						.style("left", xPosition + "px")
+						.style("top", yPosition + "px")
+						*/						
+						.select("#tooltipLine2")
+						.text("MJD: " + d.MJD);
+			   
+					//Show the tooltip
+					d3.select("#tooltip").classed("hidden", false);
+
+					LRG1vLRG2.append("circle")
+					  		.attr("id", "highlighter")
+					   		.attr({
+						   		cx: xScaleLRG1vLRG2(d.SUCCESS_LRG1),
+						   		cy: yScaleLRG1vLRG2(d.SUCCESS_LRG2),
+						   		r: 2,
+						   		fill: function(d){
+						   			return "#f2ff00";
+						   		}
+							});
+
+					LRG2vQSO.append("circle")
+					  		.attr("id", "highlighter2")
+					   		.attr({
+						   		cx: xScaleLRG2vQSO(d.SUCCESS_LRG2),
+						   		cy: yScaleLRG2vQSO(d.SUCCESS_QSO),
+						   		r: 2,
+						   		fill: function(d){
+						   			return "#f2ff00";
+						   		}
+							});
+
+					SN2_G12vSN2_I12.append("circle")
+					  		.attr("id", "highlighter3")
+					   		.attr({
+						   		cx: xScaleSN2_G12vSN2_I12(d.DERED_SN2_G2),
+						   		cy: yScaleSN2_G12vSN2_I12(d.DERED_SN2_I2),
+						   		r: 2,
+						   		fill: function(d){
+						   			return "#f2ff00";
+						   		}
+							});
+
+			   })
+			   .on("mouseout", function() {
+			   
+					//Hide the tooltip
+					d3.select("#tooltip").classed("hidden", true);
+					d3.select("#highlighter").remove();
+					d3.select("#highlighter2").remove();
+
+					d3.select("#highlighter3").remove();
+					
+			   });
 			    
 			
-			SN2_G2vSN2_I2.selectAll("ellipse")
+			SN2_G12vSN2_I12.selectAll("ellipse")
 			    .data(dataset.aaData)
 			    .enter()
 			    .append("ellipse")
 			    .attr({
 			   		cx: function(d) {
-			   			var x= xScale(d.DERED_SN2_G2); 
+			   			var x= xScaleSN2_G12vSN2_I12(d.DERED_SN2_G2); 
 			   			//console.log(x);
 			   			return x;
 			   		},
 			   		cy: function(d) {				   			
-			   			var y= yScale(d.DERED_SN2_I2); 
+			   			var y= yScaleSN2_G12vSN2_I12(d.DERED_SN2_I2); 
 			   			//console.log(""+ y); 
 			   			return y;
 			   		},
 			   		rx: 2,
 			   		ry:2,
 			   		fill: "rgba(255, 145, 0, 0.85)"
-				});
-				
+				})
+				.on("mouseover", function(d) {
+
+					//Get this bar's x/y values, then augment for the tooltip
+					var xPosition = parseFloat(d3.select(this).attr("cx")) ;
+					var yPosition = parseFloat(d3.select(this).attr("cy")) ;
+					//Update the tooltip position and value
+					d3.select("#tooltip")
+						/*
+						.style("left", xPosition + "px")
+						.style("top", yPosition + "px")
+						*/						
+						.select("#tooltipLine1")
+						.text("Plate: " + d.PLATE)
+
+					d3.select("#tooltip")
+						/*
+						.style("left", xPosition + "px")
+						.style("top", yPosition + "px")
+						*/						
+						.select("#tooltipLine2")
+						.text("MJD: " + d.MJD);
+			   
+					//Show the tooltip
+					d3.select("#tooltip").classed("hidden", false);
+
+					LRG1vLRG2.append("circle")
+					  		.attr("id", "highlighter")
+					   		.attr({
+						   		cx: xScaleLRG1vLRG2(d.SUCCESS_LRG1),
+						   		cy: yScaleLRG1vLRG2(d.SUCCESS_LRG2),
+						   		r: 2,
+						   		fill: function(d){
+						   			return "#f2ff00";
+						   		}
+							});
+
+					LRG2vQSO.append("circle")
+					  		.attr("id", "highlighter2")
+					   		.attr({
+						   		cx: xScaleLRG2vQSO(d.SUCCESS_LRG2),
+						   		cy: yScaleLRG2vQSO(d.SUCCESS_QSO),
+						   		r: 2,
+						   		fill: function(d){
+						   			return "#f2ff00";
+						   		}
+							});
+					SN2_G12vSN2_I12.append("circle")
+					  		.attr("id", "highlighter3")
+					   		.attr({
+						   		cx: xScaleSN2_G12vSN2_I12(d.DERED_SN2_G1),
+						   		cy: yScaleSN2_G12vSN2_I12(d.DERED_SN2_I1),
+						   		r: 2,
+						   		fill: function(d){
+						   			return "#d400ff";
+						   		}
+							});		
+
+			   })
+			   .on("mouseout", function() {
+			   
+					//Hide the tooltip
+					d3.select("#tooltip").classed("hidden", true);
+					d3.select("#highlighter").remove();
+					d3.select("#highlighter2").remove();
+					d3.select("#highlighter3").remove();
+					
+			   });
 
 			/*making the plots interactive*/
 			d3.select("#project_table_filter input")
