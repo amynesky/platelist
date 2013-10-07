@@ -7,7 +7,7 @@
 }
 #header h1{
 	margin-bottom: 5px;
-	font-size: 30px;
+	font-size: 20px;
 	margin-top: 5px;
 }
 
@@ -87,6 +87,9 @@ table tr.even {background-color: white;}
 	float:left;
 	font-size: small;
 }
+.dataTables_filter{
+	float:left;
+}
 .dataTables_paginate.paging_bootstrap.pagination.pagination-right{
 	float: right;
 	padding-top: 0px;
@@ -119,23 +122,48 @@ table tr.even {background-color: white;}
 	font-size: 9px;
 }
 
-#tooltip {
+#tooltipHover {
 	/*position: absolute;*/
-	width: 200px;
+	/*
+	width: 400px;
 	height: auto;
 	padding: 10px;
+	*/
 	background-color: white;
 	-webkit-border-radius: 10px;
 	-moz-border-radius: 10px;
 	border-radius: 10px;
+	/*
 	-webkit-box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
 	-moz-box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
 	box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
+	*/
 	pointer-events: none;
-	display: inline;
-	float: right;
-}
 
+}
+#tooltipSelect {
+	/*position: absolute;*/
+	/*
+	width: 400px;
+	height: auto;
+	padding: 10px;
+	*/
+	background-color: white;
+	-webkit-border-radius: 10px;
+	-moz-border-radius: 10px;
+	border-radius: 10px;
+	/*
+	-webkit-box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
+	-moz-box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
+	box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
+	*/
+	pointer-events: none;
+
+}
+#tooltip{
+	display: block;
+	margin-bottom: 10px;
+}
 #tooltip.hidden {
 	display: none;
 }

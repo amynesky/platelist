@@ -28,8 +28,14 @@ $.fn.dataTableExt.oApi.fnPagingInfo = function ( oSettings ){
        	//if(e.keyCode == 13) {
        	else{
         	oTable.fnFilter($(this).val());   
-    	}	
-    });
+        	/* SP 2013-10-07 - this is a hook to retrieve the nodes that are filters */ 
+            var nNodes = oTable._('tr', {"filter":"applied"}); /* get all the filtered table rows */
+            for ( var i=0 ; i<nNodes.length ; i++ ){  /* iterate through and get the PLATE name */
+              console.log(i + ":" + nNodes[i].PLATE); /* this is just for logging purposes, you probably want to remove */
+            }
+        }
+
+	});
     return {
         "iStart":         oSettings._iDisplayStart,
         "iEnd":           oSettings.fnDisplayEnd(),
@@ -244,7 +250,7 @@ $(document).ready(function() {
 		"aaSorting": [[ 1, "desc" ]],
 		"bPaginate": true,
 		"bLengthChange": true, /*records per page drop down*/
-		"bDeferRender": true, /*defers rendering till after.. what?*/
+		"bDeferRender": false, /*defers rendering till after.. what?*/
 		"sScrollY": "500px",
 		"sScrollX": "100%",
 		"sScrollXInner": "275%",
@@ -528,7 +534,7 @@ $(document).ready(function() {
 						.style("top", yPosition + "px")
 						*/						
 						.select("#tooltipLine2")
-						.text("MJD: " + d.MJD);
+						.text(", MJD: " + d.MJD);
 			   
 					//Show the tooltip
 					d3.select("#tooltip").classed("hidden", false);
@@ -538,6 +544,16 @@ $(document).ready(function() {
 					   		.attr({
 						   		cx: xScaleLRG2vQSO(d.SUCCESS_LRG2),
 						   		cy: yScaleLRG2vQSO(d.SUCCESS_QSO),
+						   		r: 2,
+						   		fill: function(d){
+						   			return "#f2ff00";
+						   		}
+							});
+					RAvDEC.append("circle")
+					  		.attr("id", "highlighter4")
+					   		.attr({
+						   		cx: xScaleRAvDEC(d.RACEN),
+						   		cy: yScaleRAvDEC(d.DECCEN),
 						   		r: 2,
 						   		fill: function(d){
 						   			return "#f2ff00";
@@ -567,13 +583,34 @@ $(document).ready(function() {
 							});
 
 			   })
+			   .on("click", function(d) {
+			   
+					//Update the tooltip position and value
+					d3.select("#tooltip")
+						/*
+						.style("left", xPosition + "px")
+						.style("top", yPosition + "px")
+						*/						
+						.select("#selectedTooltipLine1")
+						.text(" Plate: " + d.PLATE)
+
+					d3.select("#tooltip")
+						/*
+						.style("left", xPosition + "px")
+						.style("top", yPosition + "px")
+						*/						
+						.select("#selectedTooltipLine2")
+						.text(", MJD: " + d.MJD);
+					
+			   })
 			   .on("mouseout", function() {
 			   
 					//Hide the tooltip
-					d3.select("#tooltip").classed("hidden", true);
+					//d3.select("#tooltip").classed("hidden", true);
 					d3.select("#highlighter").remove();
 					d3.select("#highlighter2").remove();
 					d3.select("#highlighter3").remove();
+					d3.select("#highlighter4").remove();
 					
 			   });
 			
@@ -700,7 +737,7 @@ $(document).ready(function() {
 						.style("top", yPosition + "px")
 						*/						
 						.select("#tooltipLine2")
-						.text("MJD: " + d.MJD);
+						.text(", MJD: " + d.MJD);
 			   
 					//Show the tooltip
 					d3.select("#tooltip").classed("hidden", false);
@@ -710,6 +747,16 @@ $(document).ready(function() {
 					   		.attr({
 						   		cx: xScaleLRG1vLRG2(d.SUCCESS_LRG1),
 						   		cy: yScaleLRG1vLRG2(d.SUCCESS_LRG2),
+						   		r: 2,
+						   		fill: function(d){
+						   			return "#f2ff00";
+						   		}
+							});
+					RAvDEC.append("circle")
+					  		.attr("id", "highlighter4")
+					   		.attr({
+						   		cx: xScaleRAvDEC(d.RACEN),
+						   		cy: yScaleRAvDEC(d.DECCEN),
 						   		r: 2,
 						   		fill: function(d){
 						   			return "#f2ff00";
@@ -738,13 +785,34 @@ $(document).ready(function() {
 						   		}
 							});
 			   })
+			   .on("click", function(d) {
+			   
+					//Update the tooltip position and value
+					d3.select("#tooltip")
+						/*
+						.style("left", xPosition + "px")
+						.style("top", yPosition + "px")
+						*/						
+						.select("#selectedTooltipLine1")
+						.text(" Plate: " + d.PLATE)
+
+					d3.select("#tooltip")
+						/*
+						.style("left", xPosition + "px")
+						.style("top", yPosition + "px")
+						*/						
+						.select("#selectedTooltipLine2")
+						.text(", MJD: " + d.MJD);
+					
+			   })
 			   .on("mouseout", function() {
 			   
 					//Hide the tooltip
-					d3.select("#tooltip").classed("hidden", true);
+					//d3.select("#tooltip").classed("hidden", true);
 					d3.select("#highlighter").remove();
 					d3.select("#highlighter2").remove();
 					d3.select("#highlighter3").remove();
+					d3.select("#highlighter4").remove();
 			   });
 
 
@@ -888,7 +956,7 @@ $(document).ready(function() {
 						.style("top", yPosition + "px")
 						*/						
 						.select("#tooltipLine2")
-						.text("MJD: " + d.MJD);
+						.text(", MJD: " + d.MJD);
 			   
 					//Show the tooltip
 					d3.select("#tooltip").classed("hidden", false);
@@ -924,17 +992,47 @@ $(document).ready(function() {
 						   		fill: function(d){
 						   			return "#f2ff00";
 						   		}
+							});					
+					RAvDEC.append("circle")
+					  		.attr("id", "highlighter4")
+					   		.attr({
+						   		cx: xScaleRAvDEC(d.RACEN),
+						   		cy: yScaleRAvDEC(d.DECCEN),
+						   		r: 2,
+						   		fill: function(d){
+						   			return "#f2ff00";
+						   		}
 							});
 
+			   })
+			   .on("click", function(d) {
+			   
+					//Update the tooltip position and value
+					d3.select("#tooltip")
+						/*
+						.style("left", xPosition + "px")
+						.style("top", yPosition + "px")
+						*/						
+						.select("#selectedTooltipLine1")
+						.text(" Plate: " + d.PLATE)
+
+					d3.select("#tooltip")
+						/*
+						.style("left", xPosition + "px")
+						.style("top", yPosition + "px")
+						*/						
+						.select("#selectedTooltipLine2")
+						.text(", MJD: " + d.MJD);
+					
 			   })
 			   .on("mouseout", function() {
 			   
 					//Hide the tooltip
-					d3.select("#tooltip").classed("hidden", true);
+					//d3.select("#tooltip").classed("hidden", true);
 					d3.select("#highlighter").remove();
 					d3.select("#highlighter2").remove();
-
 					d3.select("#highlighter3").remove();
+					d3.select("#highlighter4").remove();
 					
 			   });
 			    
@@ -978,7 +1076,7 @@ $(document).ready(function() {
 						.style("top", yPosition + "px")
 						*/						
 						.select("#tooltipLine2")
-						.text("MJD: " + d.MJD);
+						.text(", MJD: " + d.MJD);
 			   
 					//Show the tooltip
 					d3.select("#tooltip").classed("hidden", false);
@@ -1013,30 +1111,269 @@ $(document).ready(function() {
 						   		fill: function(d){
 						   			return "#d400ff";
 						   		}
-							});		
+							});	
+					RAvDEC.append("circle")
+					  		.attr("id", "highlighter4")
+					   		.attr({
+						   		cx: xScaleRAvDEC(d.RACEN),
+						   		cy: yScaleRAvDEC(d.DECCEN),
+						   		r: 2,
+						   		fill: function(d){
+						   			return "#f2ff00";
+						   		}
+							});	
 
+			   })
+			   .on("click", function(d) {
+			   
+					//Update the tooltip position and value
+					d3.select("#tooltip")
+						/*
+						.style("left", xPosition + "px")
+						.style("top", yPosition + "px")
+						*/						
+						.select("#selectedTooltipLine1")
+						.text(" Plate: " + d.PLATE)
+
+					d3.select("#tooltip")
+						/*
+						.style("left", xPosition + "px")
+						.style("top", yPosition + "px")
+						*/						
+						.select("#selectedTooltipLine2")
+						.text(", MJD: " + d.MJD);
+					
 			   })
 			   .on("mouseout", function() {
 			   
 					//Hide the tooltip
-					d3.select("#tooltip").classed("hidden", true);
+					//d3.select("#tooltip").classed("hidden", true);
 					d3.select("#highlighter").remove();
 					d3.select("#highlighter2").remove();
 					d3.select("#highlighter3").remove();
+					d3.select("#highlighter4").remove();
 					
 			   });
 
-			/*making the plots interactive*/
-			d3.select("#project_table_filter input")
-			  .on("keyup", function(){
-			  	console.log("successfully communicating with d3");
-			  });
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		//Create SVG element for RAvDEC
 
-			/*making the plots interactive*/
-			d3.select("#project_table_filter input")
-			  .on("keypress keyup", function(){
-			  	console.log("successfully communicating with d3");
-			  });
+		var w= 400;
+
+		    var RAvDEC = d3.select("#plots")
+					.append("svg")
+					.attr({
+						width: w,
+						height: h,
+					})
+					.attr("class", "plot");
+
+			var xMin = d3.min(dataset.aaData, function(d){return d.RACEN;});
+			var xMax = d3.max(dataset.aaData, function(d){return d.RACEN;});
+			var yMin = d3.min(dataset.aaData, function(d){return d.DECCEN;});
+			var yMax = d3.max(dataset.aaData, function(d){return d.DECCEN;});
+
+			var xScaleRAvDEC = d3.scale.linear()
+								 .domain([xMin,xMax])
+								 .range([4.5 * padding,w-padding]);
+			var yScaleRAvDEC = d3.scale.linear()
+								 .domain([yMin,yMax])
+								 .range([h-(3.5 * padding),padding]);
+			var xAxis= d3.svg.axis()
+							 .scale(xScaleRAvDEC)
+							 .orient("bottom");
+			var yAxis= d3.svg.axis()
+						 .scale(yScaleRAvDEC)
+						 .orient("left");
+		/*axis*/
+			RAvDEC.append("g")
+			   .attr({
+			   		class: "axis",
+			   		transform: "translate(0," + (h-(3.5 * padding)) + ")",
+				})
+			   .call(xAxis);
+
+			RAvDEC.append("g")
+			   .attr({
+			   		class: "axis",
+			   		transform: "translate(" + (4.5 * padding) + ",0)",
+				})
+			   .call(yAxis);
+
+			/*label x-axis*/
+			RAvDEC.append("text")
+			   .attr("class", "x label")
+			   .attr("text-anchor", "middle")
+			   .attr("x", w /2 )
+			   .attr("y", h - 6)
+			   .text("RA")
+			   .attr("font-family", "sans-serif")
+			   .attr("font-size", "11px")
+			   .attr("fill", "black");
+
+			/*label y-axis*/
+			RAvDEC.append("text")
+			   .attr("class", "y label")
+			   .attr("text-anchor", "middle")
+			   .attr("x", 0- h/2 )
+			   .attr("y", 6)
+			   .attr("dy", ".75em")
+			   .attr("transform", "rotate(-90)")
+			   .text("DEC")
+			   .attr("font-family", "sans-serif")
+			   .attr("font-size", "11px")
+			   .attr("fill", "black");
+						
+		//scatter plot
+			RAvDEC.selectAll("circle")
+			    .data(dataset.aaData)
+			    .enter()
+			    .append("circle")
+			    .attr({
+			   		cx: function(d) {
+			   			var x= xScaleRAvDEC(d.RACEN); 
+			   			//console.log(x);
+			   			return x;
+			   		},
+			   		cy: function(d) {				   			
+			   			var y= yScaleRAvDEC(d.DECCEN); 
+			   			//console.log(""+ y); 
+			   			return y;
+			   		},
+			   		r: 2,
+			   		fill: function(d){
+			   			if(d.MJD<55171){
+			   				return "#b3b3b3";
+			   			}else{
+			   				if(d.PLATEQUALITY=="good"){
+			   					return "rgba(11, 128, 0, 0.85)";
+			   				}
+			   				else{
+			   					return "red";
+			   				}
+			   			}
+			   		}
+				})
+			   .on("mouseover", function(d) {
+
+					//Get this bar's x/y values, then augment for the tooltip
+					var xPosition = parseFloat(d3.select(this).attr("cx")) ;
+					var yPosition = parseFloat(d3.select(this).attr("cy")) ;
+					//Update the tooltip position and value
+					d3.select("#tooltip")
+						/*
+						.style("left", xPosition + "px")
+						.style("top", yPosition + "px")
+						*/						
+						.select("#tooltipLine1")
+						.text("Plate: " + d.PLATE)
+
+					d3.select("#tooltip")
+						/*
+						.style("left", xPosition + "px")
+						.style("top", yPosition + "px")
+						*/						
+						.select("#tooltipLine2")
+						.text(", MJD: " + d.MJD);
+			   
+					//Show the tooltip
+					d3.select("#tooltip").classed("hidden", false);
+
+					LRG1vLRG2.append("circle")
+					  		.attr("id", "highlighter")
+					   		.attr({
+						   		cx: xScaleLRG1vLRG2(d.SUCCESS_LRG1),
+						   		cy: yScaleLRG1vLRG2(d.SUCCESS_LRG2),
+						   		r: 2,
+						   		fill: function(d){
+						   			return "#f2ff00";
+						   		}
+							});
+
+
+					LRG2vQSO.append("circle")
+					  		.attr("id", "highlighter4")
+					   		.attr({
+						   		cx: xScaleLRG2vQSO(d.SUCCESS_LRG2),
+						   		cy: yScaleLRG2vQSO(d.SUCCESS_QSO),
+						   		r: 2,
+						   		fill: function(d){
+						   			return "#f2ff00";
+						   		}
+							});
+
+					SN2_G12vSN2_I12.append("circle")
+					  		.attr("id", "highlighter2")
+					   		.attr({
+						   		cx: xScaleSN2_G12vSN2_I12(d.DERED_SN2_G2),
+						   		cy: yScaleSN2_G12vSN2_I12(d.DERED_SN2_I2),
+						   		r: 2,
+						   		fill: function(d){
+						   			return "#f2ff00";
+						   		}
+							});
+
+					SN2_G12vSN2_I12.append("circle")
+					  		.attr("id", "highlighter3")
+					   		.attr({
+						   		cx: xScaleSN2_G12vSN2_I12(d.DERED_SN2_G1),
+						   		cy: yScaleSN2_G12vSN2_I12(d.DERED_SN2_I1),
+						   		r: 2,
+						   		fill: function(d){
+						   			return "#d400ff";
+						   		}
+							});
+			   })
+			   .on("click", function(d) {
+			   
+					//Update the tooltip position and value
+					d3.select("#tooltip")
+						/*
+						.style("left", xPosition + "px")
+						.style("top", yPosition + "px")
+						*/						
+						.select("#selectedTooltipLine1")
+						.text(" Plate: " + d.PLATE)
+
+					d3.select("#tooltip")
+						/*
+						.style("left", xPosition + "px")
+						.style("top", yPosition + "px")
+						*/						
+						.select("#selectedTooltipLine2")
+						.text(", MJD: " + d.MJD);
+					
+			   })
+			   .on("mouseout", function() {
+			   
+					//Hide the tooltip
+					//d3.select("#tooltip").classed("hidden", true);
+					d3.select("#highlighter").remove();
+					d3.select("#highlighter2").remove();
+					d3.select("#highlighter3").remove();
+					d3.select("#highlighter4").remove();
+			   });
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		
+
+
+
+
+
 
 		}
 	});
@@ -1044,7 +1381,39 @@ $(document).ready(function() {
 } );
 
 	
+/*
+			d3.select("#project_table_filter input")
+			        	LRG1vLRG2.append("circle")
+						  		.attr("id", "highlighter")
+						   		.attr({
+							   		cx: xScaleLRG1vLRG2(d.SUCCESS_LRG1),
+							   		cy: yScaleLRG1vLRG2(d.SUCCESS_LRG2),
+							   		r: 2,
+							   		fill: function(d){
+							   			return "#f2ff00";
+							   		}
+								});
 
-			
-
+						LRG2vQSO.append("circle")
+						  		.attr("id", "highlighter2")
+						   		.attr({
+							   		cx: xScaleLRG2vQSO(d.SUCCESS_LRG2),
+							   		cy: yScaleLRG2vQSO(d.SUCCESS_QSO),
+							   		r: 2,
+							   		fill: function(d){
+							   			return "#f2ff00";
+							   		}
+								});
+						SN2_G12vSN2_I12.append("circle")
+						  		.attr("id", "highlighter3")
+						   		.attr({
+							   		cx: xScaleSN2_G12vSN2_I12(d.DERED_SN2_G1),
+							   		cy: yScaleSN2_G12vSN2_I12(d.DERED_SN2_I1),
+							   		r: 2,
+							   		fill: function(d){
+							   			return "#d400ff";
+							   		}
+								});   
+			    	}
+*/
 
