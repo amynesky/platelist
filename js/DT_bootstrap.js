@@ -27,7 +27,12 @@ $.fn.dataTableExt.oApi.fnPagingInfo = function ( oSettings ){
    		if ($(this).val().length < 3 && e.keyCode != 13) {return;}	
        	//if(e.keyCode == 13) {
        	else{
-        	oTable.fnFilter($(this).val());   
+        	oTable.fnFilter($(this).val()); 
+        	/* SP 2013-10-07 - this is a hook to retrieve the nodes that are filters */ 
+        	var nNodes = oTable._('tr', {"filter":"applied"}); /* get all the filtered table rows */
+        	for ( var i=0 ; i<nNodes.length ; i++ ){  /* iterate through and get the PLATE name */
+        		console.log(i + ":" + nNodes[i].PLATE); /* this is just for logging purposes, you probably want to remove */
+        	} 
     	}	
     });
     return {
@@ -244,7 +249,10 @@ $(document).ready(function() {
 		"aaSorting": [[ 1, "desc" ]],
 		"bPaginate": true,
 		"bLengthChange": true, /*records per page drop down*/
-		"bDeferRender": true, /*defers rendering till after.. what?*/
+		"bDeferRender": false, /*defers rendering till after.. what?*/ 
+		/* SP 2013-10-07 - I updated this to false, so that it renders the entire
+		 table on load vs only the visible table elements; this is needed to retrieve 
+		 all filtered items, not just the visible filtered items */
 		"sScrollY": "500px",
 		"sScrollX": "100%",
 		"sScrollXInner": "275%",
