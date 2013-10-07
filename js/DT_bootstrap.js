@@ -20,7 +20,6 @@ $.extend( $.fn.dataTableExt.oStdClasses, {
  
 /* API method to get paging information */
 $.fn.dataTableExt.oApi.fnPagingInfo = function ( oSettings ){
-	
 	/*this makes the search bar respond to the enter key*/
     $('#project_table_filter input').unbind('keypress keyup');
    	$('#project_table_filter input').bind('keypress keyup', function(e) {
@@ -32,8 +31,63 @@ $.fn.dataTableExt.oApi.fnPagingInfo = function ( oSettings ){
         	var nNodes = oTable._('tr', {"filter":"applied"}); /* get all the filtered table rows */
         	for ( var i=0 ; i<nNodes.length ; i++ ){  /* iterate through and get the PLATE name */
         		console.log(i + ":" + nNodes[i].PLATE); /* this is just for logging purposes, you probably want to remove */
-        	} 
-    	}	
+        	}
+
+        	d3.json("data/platelist.json", function(error, json){
+				if(error){
+					console.log(error);
+				}else{
+					//Width and height
+					var w = 200;
+					var h = 200;
+					var padding = 10;
+
+					var xMin = d3.min(dataset.aaData, function(d){return d.SUCCESS_LRG1;});
+					var xMax = d3.max(dataset.aaData, function(d){return d.SUCCESS_LRG1;});
+					var yMin = d3.min(dataset.aaData, function(d){return d.SUCCESS_LRG2;});
+					var yMax = d3.max(dataset.aaData, function(d){return d.SUCCESS_LRG2;});
+
+					var xScaleLRG1vLRG2 = d3.scale.linear()
+										 .domain([xMin,xMax])
+										 .range([4.5 * padding,w-padding]);
+					var yScaleLRG1vLRG2 = d3.scale.linear()
+										 .domain([yMin,yMax])
+										 .range([h-(3.5 * padding),padding]);
+
+			        d3.select(LRG1vLRG2).selectAll("circle").remove()
+
+					d3.select(LRG1vLRG2).selectAll("circle")
+						    .data(nNodes)
+						    .enter()
+						    .append("circle")
+						    .attr({
+						   		cx: function(d) {
+						   			var x= xScaleLRG1vLRG2(d.RACEN); 
+						   			//console.log(x);
+						   			return x;
+						   		},
+						   		cy: function(d) {				   			
+						   			var y= yScaleLRG1vLRG2(d.DECCEN); 
+						   			//console.log(""+ y); 
+						   			return y;
+						   		},
+						   		r: 2,
+						   		fill: function(d){
+							   		if(d.MJD<55171){
+						   				return "#b3b3b3";
+						   			}else{
+						   				if(d.PLATEQUALITY=="good"){
+						   					return "rgba(11, 128, 0, 0.85)";
+						   				}
+						   				else{
+						   					return "red";
+						   				}
+						   			}
+					   			}
+							});	 
+	    		}
+    		})	
+    	}
     });
     return {
         "iStart":         oSettings._iDisplayStart,
@@ -396,9 +450,6 @@ $(document).ready(function() {
 	} );
 	
 
-
-
-
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -428,7 +479,8 @@ $(document).ready(function() {
 							width: w,
 							height: h,
 						})
-						.attr("class", "plot");
+						.attr("class", "plot")
+						.attr("id", "LRG1vLRG2");
 
 			var xMin = d3.min(dataset.aaData, function(d){return d.SUCCESS_LRG1;});
 			var xMax = d3.max(dataset.aaData, function(d){return d.SUCCESS_LRG1;});
@@ -546,7 +598,7 @@ $(document).ready(function() {
 					   		.attr({
 						   		cx: xScaleLRG2vQSO(d.SUCCESS_LRG2),
 						   		cy: yScaleLRG2vQSO(d.SUCCESS_QSO),
-						   		r: 2,
+						   		r: 4,
 						   		fill: function(d){
 						   			return "#f2ff00";
 						   		}
@@ -556,7 +608,7 @@ $(document).ready(function() {
 					   		.attr({
 						   		cx: xScaleRAvDEC(d.RACEN),
 						   		cy: yScaleRAvDEC(d.DECCEN),
-						   		r: 2,
+						   		r: 4,
 						   		fill: function(d){
 						   			return "#f2ff00";
 						   		}
@@ -567,7 +619,7 @@ $(document).ready(function() {
 					   		.attr({
 						   		cx: xScaleSN2_G12vSN2_I12(d.DERED_SN2_G2),
 						   		cy: yScaleSN2_G12vSN2_I12(d.DERED_SN2_I2),
-						   		r: 2,
+						   		r: 4,
 						   		fill: function(d){
 						   			return "#f2ff00";
 						   		}
@@ -578,7 +630,7 @@ $(document).ready(function() {
 					   		.attr({
 						   		cx: xScaleSN2_G12vSN2_I12(d.DERED_SN2_G1),
 						   		cy: yScaleSN2_G12vSN2_I12(d.DERED_SN2_I1),
-						   		r: 2,
+						   		r: 4,
 						   		fill: function(d){
 						   			return "#d400ff";
 						   		}
@@ -1375,47 +1427,11 @@ $(document).ready(function() {
 
 
 
-
-
 		}
 	});
 	
 } );
 
 	
-/*
-			d3.select("#project_table_filter input")
-			        	LRG1vLRG2.append("circle")
-						  		.attr("id", "highlighter")
-						   		.attr({
-							   		cx: xScaleLRG1vLRG2(d.SUCCESS_LRG1),
-							   		cy: yScaleLRG1vLRG2(d.SUCCESS_LRG2),
-							   		r: 2,
-							   		fill: function(d){
-							   			return "#f2ff00";
-							   		}
-								});
 
-						LRG2vQSO.append("circle")
-						  		.attr("id", "highlighter2")
-						   		.attr({
-							   		cx: xScaleLRG2vQSO(d.SUCCESS_LRG2),
-							   		cy: yScaleLRG2vQSO(d.SUCCESS_QSO),
-							   		r: 2,
-							   		fill: function(d){
-							   			return "#f2ff00";
-							   		}
-								});
-						SN2_G12vSN2_I12.append("circle")
-						  		.attr("id", "highlighter3")
-						   		.attr({
-							   		cx: xScaleSN2_G12vSN2_I12(d.DERED_SN2_G1),
-							   		cy: yScaleSN2_G12vSN2_I12(d.DERED_SN2_I1),
-							   		r: 2,
-							   		fill: function(d){
-							   			return "#d400ff";
-							   		}
-								});   
-			    	}
-*/
 
