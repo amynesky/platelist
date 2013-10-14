@@ -15,6 +15,7 @@ a:link    {color: #238aaa; text-decoration: none;}
 a:visited {color:purple;}
 /*a:hover   {font-weight: bold;}*/
 a:active  {font-weight: bold; color:green;}
+a.current { font-weight: bold; color:#238aaa}
 
 body {
   padding-top: 0px;
