@@ -17,6 +17,7 @@ $.extend( $.fn.dataTableExt.oStdClasses, {
 
 
  var nNodes;
+ var filteredPlots = false;
  
 /* API method to get paging information */
 $.fn.dataTableExt.oApi.fnPagingInfo = function ( oSettings ){
@@ -36,6 +37,7 @@ $.fn.dataTableExt.oApi.fnPagingInfo = function ( oSettings ){
         
     	}
     	if(e.keyCode == 13) {
+    		filteredPlots = true;
     		/* SP 2013-10-07 - this is a hook to retrieve the nodes that are filters */ 
         	nNodes = oTable._('tr', {"filter":"applied"}); /* get all the filtered table rows */
         	for ( var i=0 ; i<nNodes.length ; i++ ){  /* iterate through and get the PLATE name */
@@ -218,7 +220,10 @@ if ( typeof $.fn.dataTable == "function" && typeof $.fn.dataTableExt.fnVersionCh
         			d3.select(SN2_G12vSN2_I12).selectAll(".filter").remove();
 					d3.select(RAvDEC).selectAll(".filter").remove();
 					*/
-					manipulateData(nNodes, false);
+					if(filteredPlots){
+						manipulateData(nNodes, false);
+						filteredPlots = false;
+					}
                 });
         $(oSettings.nTableWrapper).find('div.dataTables_filter').append(clearSearch);
         $(oSettings.nTableWrapper).find('div.dataTables_filter label').css('margin-right', '-16px');//16px the image width
