@@ -16,7 +16,7 @@ $.extend( $.fn.dataTableExt.oStdClasses, {
 } );
 
 
- 
+ var nNodes;
  
 /* API method to get paging information */
 $.fn.dataTableExt.oApi.fnPagingInfo = function ( oSettings ){
@@ -24,45 +24,24 @@ $.fn.dataTableExt.oApi.fnPagingInfo = function ( oSettings ){
     $('#project_table_filter input').unbind('keypress keyup');
    	$('#project_table_filter input').bind('keypress keyup', function(e) {
    		if ($(this).val().length < 3 && e.keyCode != 13) {return;}	
-       	//if(e.keyCode == 13) {
        	else{
         	oTable.fnFilter($(this).val()); 
-        	/* SP 2013-10-07 - this is a hook to retrieve the nodes that are filters */ 
-        	var nNodes = oTable._('tr', {"filter":"applied"}); /* get all the filtered table rows */
-        	for ( var i=0 ; i<nNodes.length ; i++ ){  /* iterate through and get the PLATE name */
-        		//console.log(i + ":" + nNodes[i].PLATE); /* this is just for logging purposes, you probably want to remove */
-        	}
+
         	/*
-        	d3.select(LRG1vLRG2).select(function(d){
-        		return "#LRG1vLRG2_"+d.PLATE+"_"+d.MJD;
-        	}).remove()
-			
-        	d3.select(LRG1vLRG2)
-        		.data(nNodes)
-			    .enter()
-			    .select(function(d){
-        			return "#LRG1vLRG2_"+d.PLATE+"_"+d.MJD;
-        		})
-        		.attr("fill",function(d){		   			
-        			if(d.MJD<55171){
-				   		return greyedOut;
-				   	}else{
-				   		if(d.PLATEQUALITY=="good"){
-				   			return goodColoring;
-				   		}
-						else{
-				   			return badColoring;
-				   		}
-				   	}
-				})
         	d3.select(LRG2vQSO).selectAll("circle").attr("fill", "#b3b3b3")
         	d3.select(SN2_G12vSN2_I12).selectAll("circle").attr("fill", "#b3b3b3")
         	d3.select(SN2_G12vSN2_I12).selectAll("ellipse").attr("fill", "#b3b3b3")
         	d3.select(RAvDEC).selectAll("circle").attr("fill", "#b3b3b3")
 			*/
-        	//manipulateData(nNodes, true, "#2bad00", "#ff0000", "#0000ff", "#eb7500");
-        	
-
+        
+    	}
+    	if(e.keyCode == 13) {
+    		/* SP 2013-10-07 - this is a hook to retrieve the nodes that are filters */ 
+        	nNodes = oTable._('tr', {"filter":"applied"}); /* get all the filtered table rows */
+        	for ( var i=0 ; i<nNodes.length ; i++ ){  /* iterate through and get the PLATE name */
+        		//console.log(i + ":" + nNodes[i].PLATE); /* this is just for logging purposes, you probably want to remove */
+        	}
+    		manipulateData(nNodes, true, "#00780e", "#ff0000", "#1e00b3", "#ff5900");
     	}
     });
     return {
@@ -239,6 +218,7 @@ if ( typeof $.fn.dataTable == "function" && typeof $.fn.dataTableExt.fnVersionCh
         			d3.select(SN2_G12vSN2_I12).selectAll(".filter").remove();
 					d3.select(RAvDEC).selectAll(".filter").remove();
 					*/
+					manipulateData(nNodes, false);
                 });
         $(oSettings.nTableWrapper).find('div.dataTables_filter').append(clearSearch);
         $(oSettings.nTableWrapper).find('div.dataTables_filter label').css('margin-right', '-16px');//16px the image width
@@ -803,10 +783,7 @@ function drawData(nNodes, filter, goodColoring, badColoring, SN2_GI1color, SN2_G
 			var padding = 10;
 
 			//colors
-			console.log(typeof(goodColoring));
 			if(typeof(goodColoring) === "undefined"){ goodColoring = "#5cba57";}
-
-			console.log(goodColoring);
 			if(typeof(badColoring) === "undefined"){badColoring = "#f76060";}
 			if(typeof(SN2_GI1color) === "undefined"){SN2_GI1color = "#5c69ff";}
 			if(typeof(SN2_GI2color) === "undefined"){SN2_GI2color = "#ffa85c";}
@@ -834,7 +811,7 @@ function drawData(nNodes, filter, goodColoring, badColoring, SN2_GI1color, SN2_G
 								 .range([h-(3.5 * padding),padding]);
 						
 			//scatter plot
-			d3.select(LRG1vLRG2).selectAll("circle")
+			d3.select(LRG1vLRG2).selectAll("ellipse")
 			    .data(nNodes)
 			    .enter()
 			    .append("circle")
@@ -865,11 +842,7 @@ function drawData(nNodes, filter, goodColoring, badColoring, SN2_GI1color, SN2_G
 			   		},
 				})
 			   .on("mouseover", function(d) {
-
-					//Get this bar's x/y values, then augment for the tooltip
-					var xPosition = parseFloat(d3.select(this).attr("cx")) ;
-					var yPosition = parseFloat(d3.select(this).attr("cy")) ;
-					//Update the tooltip position and value
+					//Update the tooltip value
 					d3.select("#tooltip")						
 						.select("#tooltipLine1")
 						.text("Plate: " + d.PLATE)
@@ -877,10 +850,8 @@ function drawData(nNodes, filter, goodColoring, badColoring, SN2_GI1color, SN2_G
 					d3.select("#tooltip")					
 						.select("#tooltipLine2")
 						.text(", MJD: " + d.MJD);
-			   
-					//Show the tooltip
-					d3.select("#tooltip").classed("hidden", false);
 
+					//draw highlighter dots
 					d3.select(LRG2vQSO).append("circle")
 					  		.attr("id", "highlighter")
 					   		.attr({
@@ -970,11 +941,11 @@ function drawData(nNodes, filter, goodColoring, badColoring, SN2_GI1color, SN2_G
 
 						
 		//scatter plot
-			d3.select(LRG2vQSO).selectAll("circle")
+			d3.select(LRG2vQSO).selectAll("ellipse")
 			    .data(nNodes)
 			    .enter()
 			    .append("circle")
-			    .attr("id", function(d) {return "LRGvQSO_"+d.PLATE+"_"+d.MJD;})
+			    .attr("id", function(d) {return "LRG2vQSO_"+d.PLATE+"_"+d.MJD;})
 			    .attr({
 			   		cx: function(d) {
 			   			var x= xScaleLRG2vQSO(d.SUCCESS_LRG2); 
@@ -1002,10 +973,7 @@ function drawData(nNodes, filter, goodColoring, badColoring, SN2_GI1color, SN2_G
 				})
 			   .on("mouseover", function(d) {
 
-					//Get this bar's x/y values, then augment for the tooltip
-					var xPosition = parseFloat(d3.select(this).attr("cx")) ;
-					var yPosition = parseFloat(d3.select(this).attr("cy")) ;
-					//Update the tooltip position and value
+					//Update the tooltip value
 					d3.select("#tooltip")					
 						.select("#tooltipLine1")
 						.text("Plate: " + d.PLATE)
@@ -1013,10 +981,8 @@ function drawData(nNodes, filter, goodColoring, badColoring, SN2_GI1color, SN2_G
 					d3.select("#tooltip")				
 						.select("#tooltipLine2")
 						.text(", MJD: " + d.MJD);
-			   
-					//Show the tooltip
-					d3.select("#tooltip").classed("hidden", false);
 
+					//draw highlighter dots
 					d3.select(LRG1vLRG2).append("circle")
 					  		.attr("id", "highlighter")
 					   		.attr({
@@ -1111,11 +1077,11 @@ function drawData(nNodes, filter, goodColoring, badColoring, SN2_GI1color, SN2_G
 						
 		//scatter plot
 
-			d3.select(SN2_G12vSN2_I12).selectAll("circle")
+			d3.select(SN2_G12vSN2_I12).selectAll("ellipse")
 			    .data(nNodes)
 			    .enter()
 			    .append("circle")
-			    .attr("id", function(d) {return "SN2_G12vSN2_I12_"+d.PLATE+"_"+d.MJD;})
+			    .attr("id", function(d) {return "SN2_G1vSN2_I1_"+d.PLATE+"_"+d.MJD;})
 			    .attr({
 			   		cx: function(d) {
 			   			var x= xScaleSN2_G12vSN2_I12(d.DERED_SN2_G1); 
@@ -1131,11 +1097,7 @@ function drawData(nNodes, filter, goodColoring, badColoring, SN2_GI1color, SN2_G
 			   		fill: SN2_GI1color
 				})
 				.on("mouseover", function(d) {
-
-					//Get this bar's x/y values, then augment for the tooltip
-					var xPosition = parseFloat(d3.select(this).attr("cx")) ;
-					var yPosition = parseFloat(d3.select(this).attr("cy")) ;
-					//Update the tooltip position and value
+					//Update the tooltip value
 					d3.select("#tooltip")				
 						.select("#tooltipLine1")
 						.text("Plate: " + d.PLATE)
@@ -1143,10 +1105,8 @@ function drawData(nNodes, filter, goodColoring, badColoring, SN2_GI1color, SN2_G
 					d3.select("#tooltip")				
 						.select("#tooltipLine2")
 						.text(", MJD: " + d.MJD);
-			   
-					//Show the tooltip
-					d3.select("#tooltip").classed("hidden", false);
 
+					//hightlighter dots
 					d3.select(LRG1vLRG2).append("circle")
 					  		.attr("id", "highlighter")
 					   		.attr({
@@ -1212,7 +1172,7 @@ function drawData(nNodes, filter, goodColoring, badColoring, SN2_GI1color, SN2_G
 					
 			   });
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1222,8 +1182,8 @@ function drawData(nNodes, filter, goodColoring, badColoring, SN2_GI1color, SN2_G
 			d3.select(SN2_G12vSN2_I12).selectAll("ellipse")
 			    .data(nNodes)
 			    .enter()
-			    .append("ellipse")
-			    .attr("id", function(d) {return "ellipse_SN2_G12vSN2_I12_"+d.PLATE+"_"+d.MJD;})
+			    .append("circle")
+			    .attr("id", function(d) {return "SN2_G2vSN2_I2_"+d.PLATE+"_"+d.MJD;})
 			    .attr({
 			   		cx: function(d) {
 			   			var x= xScaleSN2_G12vSN2_I12(d.DERED_SN2_G2); 
@@ -1235,15 +1195,11 @@ function drawData(nNodes, filter, goodColoring, badColoring, SN2_GI1color, SN2_G
 			   			//console.log(""+ y); 
 			   			return y;
 			   		},
-			   		rx: radius,
-			   		ry:radius,
+			   		r: radius,
 			   		fill: SN2_GI2color
 				})
 				.on("mouseover", function(d) {
-					//Get this bar's x/y values, then augment for the tooltip
-					var xPosition = parseFloat(d3.select(this).attr("cx")) ;
-					var yPosition = parseFloat(d3.select(this).attr("cy")) ;
-					//Update the tooltip position and value
+					//Update the tooltip value
 					d3.select("#tooltip")				
 						.select("#tooltipLine1")
 						.text("Plate: " + d.PLATE)
@@ -1251,10 +1207,8 @@ function drawData(nNodes, filter, goodColoring, badColoring, SN2_GI1color, SN2_G
 					d3.select("#tooltip")					
 						.select("#tooltipLine2")
 						.text(", MJD: " + d.MJD);
-			   
-					//Show the tooltip
-					d3.select("#tooltip").classed("hidden", false);
 
+					//highlighter dots
 					d3.select(LRG1vLRG2).append("circle")
 					  		.attr("id", "highlighter")
 					   		.attr({
@@ -1340,7 +1294,7 @@ function drawData(nNodes, filter, goodColoring, badColoring, SN2_GI1color, SN2_G
 
 						
 		//scatter plot
-			d3.select(RAvDEC).selectAll("circle")
+			d3.select(RAvDEC).selectAll("ellipse")
 			    .data(nNodes)
 			    .enter()
 			    .append("circle")
@@ -1371,10 +1325,7 @@ function drawData(nNodes, filter, goodColoring, badColoring, SN2_GI1color, SN2_G
 			   		}
 				})
 			   .on("mouseover", function(d) {
-					//Get this bar's x/y values, then augment for the tooltip
-					var xPosition = parseFloat(d3.select(this).attr("cx")) ;
-					var yPosition = parseFloat(d3.select(this).attr("cy")) ;
-					//Update the tooltip position and value
+					//Update the tooltip value
 					d3.select("#tooltip")					
 						.select("#tooltipLine1")
 						.text("Plate: " + d.PLATE)
@@ -1383,9 +1334,7 @@ function drawData(nNodes, filter, goodColoring, badColoring, SN2_GI1color, SN2_G
 						.select("#tooltipLine2")
 						.text(", MJD: " + d.MJD);
 			   
-					//Show the tooltip
-					d3.select("#tooltip").classed("hidden", false);
-
+					//highlighter dots
 					d3.select(LRG1vLRG2).append("circle")
 					  		.attr("id", "highlighter")
 					   		.attr({
@@ -1473,154 +1422,112 @@ function drawData(nNodes, filter, goodColoring, badColoring, SN2_GI1color, SN2_G
 
 
 
-/*
-
 function manipulateData(nNodes, filter, goodColoring, badColoring, SN2_GI1color, SN2_GI2color){
 	if(typeof(badColoring) === "undefined"){badColoring = "#f76060";}
 	if(typeof(SN2_GI1color) === "undefined"){SN2_GI1color = "#5c69ff";}
 	if(typeof(SN2_GI2color) === "undefined"){SN2_GI2color = "#ffa85c";}
 	greyedOut = "#c4c4c4";
 
-	for (var d = 0; d < nNodes.length; i++) {
+	for (var d = 0; d < nNodes.length; d++) {
 
-	d3.select("#LRG1vLRG2")
-	  .select(function(d){
-      	return "#LRG1vLRG2"+"_"+d.PLATE+"_"+d.MJD;
-      })
-	  .attr("class", function(d) {
-    	  if(filter){
-    		console.log(filter)
-    	  	return "filter";
-    	  }else{
-    	  	console.log(filter);
-    	  };
-      })
-      .attr({
-		  fill: function(nNodes.item(d){
-			  if(d.MJD<55171){
-				  return greyedOut;
-			  }else{
-				  if(d.PLATEQUALITY=="good"){
-					  return goodColoring;
-				  }
-				  else{
-					  return badColoring;
+	d3.select("#LRG1vLRG2").select("#LRG1vLRG2"+"_"+nNodes[d].PLATE+"_"+nNodes[d].MJD).remove();
+	d3.select("#LRG2vQSO").select("#LRG2vQSO"+"_"+nNodes[d].PLATE+"_"+nNodes[d].MJD).remove();
+	d3.select("#SN2_G12vSN2_I12").select("#SN2_G1vSN2_I1_"+nNodes[d].PLATE+"_"+nNodes[d].MJD).remove();
+	d3.select("#SN2_G12vSN2_I12").select("#SN2_G2vSN2_I2_"+nNodes[d].PLATE+"_"+nNodes[d].MJD).remove();
+	d3.select("#RAvDEC").select("#RAvDEC"+"_"+nNodes[d].PLATE+"_"+nNodes[d].MJD).remove();
+	/*
+		d3.select("#LRG1vLRG2")
+		  .select("#LRG1vLRG2"+"_"+nNodes[d].PLATE+"_"+nNodes[d].MJD)
+		  .attr("class", function() {
+	    	  if(filter){
+	    	  	return "filter";
+	    	  };
+	      })
+	      .attr({
+			  fill: function(){
+				  if(nNodes[d].MJD<55171){
+					  return greyedOut;
+				  }else{
+					  if(nNodes[d].PLATEQUALITY=="good"){
+						  return goodColoring;
+					  }
+					  else{
+						  return badColoring;
+					  }
 				  }
 			  }
-		  }
-	  });
+		  });
 
-	d3.select("#LRG2vQSO")
-	  .select(function(d){
-      	return "#LRG2vQSO"+"_"+d.PLATE+"_"+d.MJD;
-      })
-	  .attr("class", function(d) {
-    	  if(filter){
-    		console.log(filter)
-    	  	return "filter";
-    	  }else{
-    	  	console.log(filter);
-    	  };
-      })
-      .attr({
-		  fill: function(d){
-			  if(d.MJD<55171){
-				  return greyedOut;
-			  }else{
-				  if(d.PLATEQUALITY=="good"){
-					  return goodColoring;
-				  }
-				  else{
-					  return badColoring;
+		d3.select("#LRG2vQSO")
+		  .select("#LRG2vQSO"+"_"+nNodes[d].PLATE+"_"+nNodes[d].MJD)
+		  .attr("class", function() {
+	    	  if(filter){
+	    	  	return "filter";
+	    	  };
+	      })
+	      .attr({
+			  fill: function(){
+				  if(nNodes[d].MJD<55171){
+					  return greyedOut;
+				  }else{
+					  if(nNodes[d].PLATEQUALITY=="good"){
+						  return goodColoring;
+					  }
+					  else{
+						  return badColoring;
+					  }
 				  }
 			  }
-		  }
-	  });
+		  });
 
-	d3.select("#SN2_G12vSN2_I12")
-	  .select(function(d){
-      	return "#SN2_G12vSN2_I12_"+d.PLATE+"_"+d.MJD;
-      })
-	  .attr("class", function(d) {
-    	  if(filter){
-    		console.log(filter)
-    	  	return "filter";
-    	  }else{
-    	  	console.log(filter);
-    	  };
-      })
-      .attr({
-		  fill: function(d){
-			  if(d.MJD<55171){
-				  return greyedOut;
-			  }else{
-				  if(d.PLATEQUALITY=="good"){
-					  return goodColoring;
-				  }
-				  else{
-					  return badColoring;
+		d3.select("#SN2_G12vSN2_I12")
+		  .select("#SN2_G12vSN2_I12_"+nNodes[d].PLATE+"_"+nNodes[d].MJD)
+		  .attr("class", function() {
+	    	  if(filter){
+	    	  	return "filter";
+	    	  };
+	      })
+	      .attr({
+				fill: SN2_GI1color
+		  });
+
+		d3.select("#SN2_G12vSN2_I12")
+		  .select("#ellipse_SN2_G12vSN2_I12_"+nNodes[d].PLATE+"_"+nNodes[d].MJD)
+		  .attr("class", function() {
+	    	  if(filter){
+	    	  	return "filter";
+	    	  };
+	      })
+	      .attr({
+				fill: SN2_GI2color
+		  });
+
+		d3.select("#RAvDEC")
+		  .select("#RAvDEC"+"_"+nNodes[d].PLATE+"_"+nNodes[d].MJD)
+		  .attr("class", function() {
+	    	  if(filter){
+	    	  	return "filter";
+	    	  };
+	      })
+	      .attr({
+			  fill: function(){
+				  if(nNodes[d].MJD<55171){
+					  return greyedOut;
+				  }else{
+					  if(nNodes[d].PLATEQUALITY=="good"){
+						  return goodColoring;
+					  }
+					  else{
+						  return badColoring;
+					  }
 				  }
 			  }
-		  }
-	  });
+		  });
+	*/
 
-	d3.select("#SN2_G12vSN2_I12")
-	  .select(function(d){
-      	return "#ellipse_SN2_G12vSN2_I12_"+d.PLATE+"_"+d.MJD;
-      })
-	  .attr("class", function(d) {
-    	  if(filter){
-    		console.log(filter)
-    	  	return "filter";
-    	  }else{
-    	  	console.log(filter);
-    	  };
-      })
-      .attr({
-		  fill: function(d){
-			  if(d.MJD<55171){
-				  return greyedOut;
-			  }else{
-				  if(d.PLATEQUALITY=="good"){
-					  return goodColoring;
-				  }
-				  else{
-					  return badColoring;
-				  }
-			  }
-		  }
-	  });
+  	}
+  	drawData(nNodes, filter, goodColoring, badColoring, SN2_GI1color, SN2_GI2color);
 
-	d3.select("#RAvDEC")
-	  .select(function(d){
-      	return "#RAvDEC"+"_"+d.PLATE+"_"+d.MJD;
-      })
-	  .attr("class", function(d) {
-    	  if(filter){
-    		console.log(filter)
-    	  	return "filter";
-    	  }else{
-    	  	console.log(filter);
-    	  };
-      })
-      .attr({
-		  fill: function(d){
-			  if(d.MJD<55171){
-				  return greyedOut;
-			  }else{
-				  if(d.PLATEQUALITY=="good"){
-					  return goodColoring;
-				  }
-				  else{
-					  return badColoring;
-				  }
-			  }
-		  }
-	  });
-
-  }
 }
 
-
-*/
 
