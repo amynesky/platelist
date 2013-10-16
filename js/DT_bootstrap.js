@@ -214,6 +214,7 @@ if ( typeof $.fn.dataTable == "function" && typeof $.fn.dataTableExt.fnVersionCh
         $(oSettings.nTableWrapper).find('div.dataTables_filter').append(clearSearch);
         $(oSettings.nTableWrapper).find('div.dataTables_filter label').css('margin-right', '-16px');//16px the image width
         $(oSettings.nTableWrapper).find('div.dataTables_filter input').css('padding-right', '16px');
+        $("#project_table_filter").append("<span>  Press enter to filter the plots.</span>");
     }
  
     //auto-execute, no code needs to be added

@@ -23,7 +23,7 @@ body {
 
 }
 #project_table_length{
-	padding-left: 400px;
+	/*padding-left: 400px;*/
 	padding-bottom: 10px;
 	padding-top: 0px;
 	float:right;
@@ -141,6 +141,8 @@ table tr.even {background-color: white;}
 	box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
 	*/
 	pointer-events: none;
+	float: left;
+	width: 450px;
 
 }
 #tooltipSelect {
@@ -160,11 +162,15 @@ table tr.even {background-color: white;}
 	box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
 	*/
 	pointer-events: none;
+	float: left;
 
 }
 #tooltip{
 	display: block;
 	margin-bottom: 10px;
+	overflow:auto;
+	clear: both;
+	width: 95%;
 }
 #tooltip.hidden {
 	display: none;
