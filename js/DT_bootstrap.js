@@ -185,6 +185,21 @@ if ( $.fn.DataTable.TableTools ) {
 	} );
 }
 
+
+
+$.fn.dataTableExt.oApi.fnGetTd  = function ( oSettings, iTd ){  
+	// Looking at both visible and hidden TD elements - convert to visible index, if not present
+    // then it must be hidden. Return as appropriate
+    var iCalcVis = oSettings.oApi._fnColumnIndexToVisible( oSettings, iTd );
+	return iCalcVis;
+};
+
+function getVisibleIndexofColumn(index){
+	var nTd = oTable.fnGetTd( index );
+	//console.log( nTd );
+	return nTd;
+}
+
 /*clear search bar button*/
 if ( typeof $.fn.dataTable == "function" && typeof $.fn.dataTableExt.fnVersionCheck == "function" && $.fn.dataTableExt.fnVersionCheck('1.9.2')/*older versions should work too*/ )
 {
@@ -403,32 +418,38 @@ $(document).ready(function() {
 		/*makes cells content sensitive*/
 		"fnRowCallback": function( nRow, aData, iDisplayIndex,iDisplayIndexFull) {
 	        $(nRow).children().each(function(index, td) {
-	        	if(index == 4){ /*quality*/
+	        	var visibleQualityIndex = getVisibleIndexofColumn (18);
+	        	if(index == visibleQualityIndex){ /*quality*/
 		            if ($(td).html() === "bad") {
 		                $(td).css("color", "#FF3229");
 		            };
 		        } 
-		    	if(index == 5){ /*sn2_g1*/
-		            if ($(td).html() < 10.0) {
-		                $(td).css("color", "#FF3229");
-		            };
-		        }  
-		    	if(index == 6){ /*sn2_i1*/
+	        	var visibleSN2_G1Index = getVisibleIndexofColumn (38);
+		    	if(index == visibleSN2_G1Index){ /*sn2_g1*/
 		            if ($(td).html() < 10.0) {
 		                $(td).css("color", "#FF3229");
 		            };
 		        } 
-		    	if(index == 7){ /*sn2_g2*/
+	        	var visibleSN2_I1Index = getVisibleIndexofColumn (40); 
+		    	if(index == visibleSN2_I1Index){ /*sn2_i1*/
+		            if ($(td).html() < 10.0) {
+		                $(td).css("color", "#FF3229");
+		            };
+		        } 
+	        	var visibleSN2_G2Index = getVisibleIndexofColumn (41);
+		    	if(index == visibleSN2_G2Index){ /*sn2_g2*/
 		            if ($(td).html() < 22.0) {
 		                $(td).css("color", "#FF3229");
 		            };
 		        } 
-		    	if(index == 8){ /*sn2_i2*/
+	        	var visibleSN2_I2Index = getVisibleIndexofColumn (43);
+		    	if(index == visibleSN2_I2Index){ /*sn2_i2*/
 		            if ($(td).html() < 22.0) {
 		                $(td).css("color", "#FF3229");
 		            };
 		        } 
-		        if(index == 9){ /*fbadpix*/
+	        	var visibleFBADPIXIndex = getVisibleIndexofColumn (84);
+		        if(index == visibleFBADPIXIndex){ /*fbadpix*/
 		            if ($(td).html() <0.1 && $(td).html() > 0.05) {
 		                $(td).css("color", "#FF8800");
 		            };
@@ -436,7 +457,8 @@ $(document).ready(function() {
 		                $(td).css("color", "#FF3229");
 		            };
 		        } 
-		        if(index == 10){ /*%LRG1*/
+	        	var visibleLRG1Index = getVisibleIndexofColumn (98);
+		        if(index == visibleLRG1Index){ /*%LRG1*/
 		            if ($(td).html() >92 && $(td).html() < 95) {
 		                $(td).css("color", "#FF8800");
 		            };
@@ -444,14 +466,51 @@ $(document).ready(function() {
 		                $(td).css("color", "#FF3229");
 		            };		            
 		        } 
-		        if(index == 11){ /*%LRG2*/
+	        	var visibleLRG2Index = getVisibleIndexofColumn (99);
+		        if(index == visibleLRG2Index){ /*%LRG2*/
 		            if ($(td).html() >80 && $(td).html() < 88) {
 		                $(td).css("color", "#FF8800");
 		            };
 		            if ($(td).html() < 80) {
 		                $(td).css("color", "#FF3229");
 		            };		            
-		        } 		        
+		        }
+		        var visibleSTATUS1DIndex = getVisibleIndexofColumn (103);
+	        	if(index == visibleSTATUS1DIndex){ /*STATUS1D*/
+		            if ($(td).html() === "Pending") {
+		                $(td).css("color", "#FF8800");
+		            };
+		            if ($(td).html() === "RUNNING") {
+		                $(td).css("color", "#FF8800");
+		            };
+		            if ($(td).html() === "FAILED") {
+		                $(td).css("color", "#FF3229");
+		            };
+		        } 
+		        var visibleSTATUSCOMBINEIndex = getVisibleIndexofColumn (102);
+	        	if(index == visibleSTATUSCOMBINEIndex){ /*STATUSCOMBINE*/
+		            if ($(td).html() === "Pending") {
+		                $(td).css("color", "#FF8800");
+		            };
+		            if ($(td).html() === "RUNNING") {
+		                $(td).css("color", "#FF8800");
+		            };
+		            if ($(td).html() === "FAILED") {
+		                $(td).css("color", "#FF3229");
+		            };	            
+		        } 
+		        var visibleSTATUS2DIndex = getVisibleIndexofColumn (101);
+	        	if(index == visibleSTATUS2DIndex){ /*STATUS2D*/
+		            if ($(td).html() === "Pending") {
+		                $(td).css("color", "#FF8800");
+		            };
+		            if ($(td).html() === "RUNNING") {
+		                $(td).css("color", "#FF8800");
+		            };
+		            if ($(td).html() === "FAILED") {
+		                $(td).css("color", "#FF3229");
+		            };		            
+		        }  		        
 		    });                        
 		    return nRow;
 	    },
@@ -483,10 +542,12 @@ $(document).ready(function() {
 
 	$("a.togglelinks").click(function(e) {
 		selectLink(e);
-	})
+	});
 
-	
+
 } );
+
+
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
