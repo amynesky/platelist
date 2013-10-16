@@ -201,28 +201,14 @@ if ( typeof $.fn.dataTable == "function" && typeof $.fn.dataTableExt.fnVersionCh
         $(clearSearch).click( function ()
                 {
                     table.fnFilter('');
-                    /*
-                    var dataset;
-					d3.json("data/platelist.json", function(error, json){
-						if(error){
-							console.log(error);
-						}else{
-							dataset = json;
-							//console.log(dataset);
-							drawData(dataset.aaData);	
-						}
-					});
-					*/
-					/*
-					d3.select(LRG1vLRG2).selectAll(".filter").remove();
-					d3.select(LRG2vQSO).selectAll(".filter").remove();
-        			d3.select(SN2_G12vSN2_I12).selectAll(".filter").remove();
-        			d3.select(SN2_G12vSN2_I12).selectAll(".filter").remove();
-					d3.select(RAvDEC).selectAll(".filter").remove();
-					*/
-					if(filteredPlots){
-						manipulateData(nNodes, false);
+                    if(filteredPlots){
+						d3.select(LRG1vLRG2).selectAll(".filter").remove();
+						d3.select(LRG2vQSO).selectAll(".filter").remove();
+	        			d3.select(SN2_G12vSN2_I12).selectAll(".filter").remove();
+	        			d3.select(SN2_G12vSN2_I12).selectAll(".filter").remove();
+						d3.select(RAvDEC).selectAll(".filter").remove();
 						filteredPlots = false;
+
 					}
                 });
         $(oSettings.nTableWrapper).find('div.dataTables_filter').append(clearSearch);
@@ -555,6 +541,14 @@ function createSVGs(){
 			.attr("class", "plot")
 			.attr("id", "RAvDEC");
 }
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 function drawAxes(dataset){
 	//Width and height
@@ -821,6 +815,14 @@ function drawAxes(dataset){
 	   .attr("fill", "black");
 
 }
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 function drawData(nNodes, filter, goodColoring, badColoring, SN2_GI1color, SN2_GI2color , radius){
@@ -866,7 +868,12 @@ function drawData(nNodes, filter, goodColoring, badColoring, SN2_GI1color, SN2_G
 			    .data(nNodes)
 			    .enter()
 			    .append("circle")
-			    .attr("id", function(d) {return "LRG1vLRG2_"+d.PLATE+"_"+d.MJD;})
+			    //.attr("id", function(d) {return "LRG1vLRG2_"+d.PLATE+"_"+d.MJD;})
+			    .attr("class", function() {
+	    	  		if(filter){
+	    	  			return "filter";
+	    	  		};
+	      		})
 			    .attr({
 			   		cx: function(d) {
 			   			var x= xScaleLRG1vLRG2(d.SUCCESS_LRG1); 
@@ -996,7 +1003,12 @@ function drawData(nNodes, filter, goodColoring, badColoring, SN2_GI1color, SN2_G
 			    .data(nNodes)
 			    .enter()
 			    .append("circle")
-			    .attr("id", function(d) {return "LRG2vQSO_"+d.PLATE+"_"+d.MJD;})
+			    //.attr("id", function(d) {return "LRG2vQSO_"+d.PLATE+"_"+d.MJD;})
+			    .attr("class", function() {
+	    	  		if(filter){
+	    	  			return "filter";
+	    	  		};
+	      		})
 			    .attr({
 			   		cx: function(d) {
 			   			var x= xScaleLRG2vQSO(d.SUCCESS_LRG2); 
@@ -1132,7 +1144,12 @@ function drawData(nNodes, filter, goodColoring, badColoring, SN2_GI1color, SN2_G
 			    .data(nNodes)
 			    .enter()
 			    .append("circle")
-			    .attr("id", function(d) {return "SN2_G1vSN2_I1_"+d.PLATE+"_"+d.MJD;})
+			    //.attr("id", function(d) {return "SN2_G1vSN2_I1_"+d.PLATE+"_"+d.MJD;})
+			    .attr("class", function() {
+	    	  		if(filter){
+	    	  			return "filter";
+	    	  		};
+	      		})
 			    .attr({
 			   		cx: function(d) {
 			   			var x= xScaleSN2_G12vSN2_I12(d.DERED_SN2_G1); 
@@ -1234,8 +1251,13 @@ function drawData(nNodes, filter, goodColoring, badColoring, SN2_GI1color, SN2_G
 			    .data(nNodes)
 			    .enter()
 			    .append("circle")
-			    .attr("id", function(d) {return "SN2_G2vSN2_I2_"+d.PLATE+"_"+d.MJD;})
-			    .attr({
+			    //.attr("id", function(d) {return "SN2_G2vSN2_I2_"+d.PLATE+"_"+d.MJD;})
+			    .attr("class", function() {
+	    	  		if(filter){
+	    	  			return "filter";
+	    	  		};
+	      		})			    
+	      		.attr({
 			   		cx: function(d) {
 			   			var x= xScaleSN2_G12vSN2_I12(d.DERED_SN2_G2); 
 			   			//console.log(x);
@@ -1349,7 +1371,12 @@ function drawData(nNodes, filter, goodColoring, badColoring, SN2_GI1color, SN2_G
 			    .data(nNodes)
 			    .enter()
 			    .append("circle")
-			    .attr("id", function(d) {return "RAvDEC_"+d.PLATE+"_"+d.MJD;})
+			    //.attr("id", function(d) {return "RAvDEC_"+d.PLATE+"_"+d.MJD;})
+			    .attr("class", function() {
+	    	  		if(filter){
+	    	  			return "filter";
+	    	  		};
+	      		})
 			    .attr({
 			   		cx: function(d) {
 			   			var x= xScaleRAvDEC(d.RACEN); 
@@ -1473,11 +1500,11 @@ function manipulateData(nNodes, filter, goodColoring, badColoring, SN2_GI1color,
 
 	for (var d = 0; d < nNodes.length; d++) {
 
-	d3.select("#LRG1vLRG2").select("#LRG1vLRG2"+"_"+nNodes[d].PLATE+"_"+nNodes[d].MJD).remove();
-	d3.select("#LRG2vQSO").select("#LRG2vQSO"+"_"+nNodes[d].PLATE+"_"+nNodes[d].MJD).remove();
-	d3.select("#SN2_G12vSN2_I12").select("#SN2_G1vSN2_I1_"+nNodes[d].PLATE+"_"+nNodes[d].MJD).remove();
-	d3.select("#SN2_G12vSN2_I12").select("#SN2_G2vSN2_I2_"+nNodes[d].PLATE+"_"+nNodes[d].MJD).remove();
-	d3.select("#RAvDEC").select("#RAvDEC"+"_"+nNodes[d].PLATE+"_"+nNodes[d].MJD).remove();
+	//d3.select("#LRG1vLRG2").select("#LRG1vLRG2"+"_"+nNodes[d].PLATE+"_"+nNodes[d].MJD).remove();
+	//d3.select("#LRG2vQSO").select("#LRG2vQSO"+"_"+nNodes[d].PLATE+"_"+nNodes[d].MJD).remove();
+	//d3.select("#SN2_G12vSN2_I12").select("#SN2_G1vSN2_I1_"+nNodes[d].PLATE+"_"+nNodes[d].MJD).remove();
+	//d3.select("#SN2_G12vSN2_I12").select("#SN2_G2vSN2_I2_"+nNodes[d].PLATE+"_"+nNodes[d].MJD).remove();
+	//d3.select("#RAvDEC").select("#RAvDEC"+"_"+nNodes[d].PLATE+"_"+nNodes[d].MJD).remove();
 	/*
 		d3.select("#LRG1vLRG2")
 		  .select("#LRG1vLRG2"+"_"+nNodes[d].PLATE+"_"+nNodes[d].MJD)
