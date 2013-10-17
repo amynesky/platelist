@@ -273,281 +273,295 @@ function selectLink(event){
 	$(event.target).addClass("current");
 } 
 
+
 $(document).ready(function() {
-	var queryString = window.location.search;
-	if (queryString === "") {
-		$.extend( $.fn.dataTable.defaults, {
-			"iDisplayLength": 100,  /*default number of rows per page*/
-    	} );
-	} else {
-		$.extend( $.fn.dataTable.defaults, {
-			"iDisplayLength": -1,  /*default number of rows per page*/
-    	} );
-	}
-	oTable = $('#project_table').dataTable( {
-		"sDom": "<'row'<'col-lg-6'f><'col-lg-6'l>r>t<'row'<ip>>",
-		"sPaginationType": "bootstrap",
-		"aaSorting": [[ 1, "desc" ]],
-		"bPaginate": true,
-		"bLengthChange": true, /*records per page drop down*/
-		"bDeferRender": false, /*defers rendering till after.. what?*/ 
-		/* SP 2013-10-07 - I updated this to false, so that it renders the entire
-		 table on load vs only the visible table elements; this is needed to retrieve 
-		 all filtered items, not just the visible filtered items */
-		"sScrollY": "500px",
-		"sScrollX": "100%",
-		"sScrollXInner": "275%",
-		"bScrollCollapse": true,
-		"bFilter": true,
-		"bSort": true,
-		"bInfo": true, /*Showing 1 to 2,194 of 2,194 entries*/
-		"bAutoWidth": false,
-		"bSortClasses": false,
-		"bProcessing": true,
-		"sAjaxSource": "data/platelist.json",
-		"aLengthMenu": [[ 50, 100, 500, 1000, -1], [ 50, 100, 500, 1000, "All"]], /*records per page drop down*/
-   		"aoColumns": [
-			{ "mData": "PLATE", "sWidth": "40px"},
-			{ "mData": "MJD", "sWidth": "40px"},      
-			{ "mData": "TILEID" , "bVisible": false, "sWidth": "45px"},  
-			{ "mData": "RUN2D" ,"bSearchable": false, "sWidth": "55px"}, 
-			{ "mData": "RUN1D" ,"bSearchable": false, "sWidth": "55px"}, 
-			{ "mData": "RACEN" ,"bSearchable": false, "bVisible": false, "sWidth": "50px"}, /*5*/
-			{ "mData": "DECCEN" ,"bSearchable": false, "bVisible": false, "sWidth": "65px"},
-			{ "mData": "EPOCH" ,"bSearchable": false, "bVisible": false},
-			{ "mData": "CARTID" ,"bSearchable": false, "bVisible": false},
-			{ "mData": "TAI" ,"bSearchable": false, "bVisible": false},
-			{ "mData": "TAI_BEG" ,"bSearchable": false, "bVisible": false}, /*10*/
-			{ "mData": "TAI_END" ,"bSearchable": false, "bVisible": false},
-			{ "mData": "AIRMASS" ,"bSearchable": false, "bVisible": false},
-			{ "mData": "EXPTIME" ,"bSearchable": false, "bVisible": false},
-			{ "mData": "MAPNAME" ,"bSearchable": false, "bVisible": false},
-			{ "mData": "SURVEY" , "bVisible": false, "sWidth": "55px"},  /*15*/
-			{ "mData": "PROGRAMNAME" , "bVisible": false, "sWidth": "175px"}, 
-			{ "mData": "CHUNK" , "bVisible": false, "sWidth": "60px"},
-			{ "mData": "PLATEQUALITY" , "sWidth": "50px"},
-			{ "mData": "PLATESN2" , "bVisible": false, "sWidth": "50px"}, 
-			{ "mData": "DEREDSN2" ,"bSearchable": false, "bVisible": false}, /*20*/
-			{ "mData": "QSURVEY" ,"bSearchable": false, "bVisible": false},
-			{ "mData": "MJDLIST" ,"bSearchable": false, "bVisible": false},
-			{ "mData": "NEXP" ,"bSearchable": false, "bVisible": false},
-			{ "mData": "NEXP_B1" ,"bSearchable": false, "bVisible": false},
-			{ "mData": "NEXP_B2" ,"bSearchable": false, "bVisible": false}, /*25*/
-			{ "mData": "NEXP_R1" ,"bSearchable": false, "bVisible": false},
-			{ "mData": "NEXP_R2" ,"bSearchable": false, "bVisible": false},
-			{ "mData": "EXPT_B1" ,"bSearchable": false, "bVisible": false},
-			{ "mData": "EXPT_B2" ,"bSearchable": false, "bVisible": false},
-			{ "mData": "EXPT_R1" ,"bSearchable": false, "bVisible": false}, /*30*/
-			{ "mData": "EXPT_R2" ,"bSearchable": false, "bVisible": false},
-			{ "mData": "SN2_G1" ,"bSearchable": false, "bVisible": false},
-			{ "mData": "SN2_R1" ,"bSearchable": false, "bVisible": false},
-			{ "mData": "SN2_I1" ,"bSearchable": false, "bVisible": false},
-			{ "mData": "SN2_G2" ,"bSearchable": false, "bVisible": false}, /*35*/
-			{ "mData": "SN2_R2" ,"bSearchable": false, "bVisible": false},
-			{ "mData": "SN2_I2" ,"bSearchable": false, "bVisible": false},
-			{ "mData": "DERED_SN2_G1" ,"bSearchable": false, "sWidth": "60px"}, 
-			{ "mData": "DERED_SN2_R1" ,"bSearchable": false, "bVisible": false},
-			{ "mData": "DERED_SN2_I1" ,"bSearchable": false, "sWidth": "60px"}, /*40*/
-			{ "mData": "DERED_SN2_G2" ,"bSearchable": false, "sWidth": "60px"},
-			{ "mData": "DERED_SN2_R2" ,"bSearchable": false, "bVisible": false}, 
-			{ "mData": "DERED_SN2_I2" ,"bSearchable": false, "sWidth": "60px"},
-			{ "mData": "GOFFSTD" ,"bSearchable": false, "bVisible": false},
-			{ "mData": "GRMSSTD" ,"bSearchable": false, "bVisible": false}, /*45*/
-			{ "mData": "ROFFSTD" ,"bSearchable": false, "bVisible": false},
-			{ "mData": "RRMSSTD" ,"bSearchable": false, "bVisible": false},
-			{ "mData": "IOFFSTD" ,"bSearchable": false, "bVisible": false},
-			{ "mData": "IRMSSTD" ,"bSearchable": false, "bVisible": false},
-			{ "mData": "GROFFSTD" ,"bSearchable": false, "bVisible": false}, /*50*/
-			{ "mData": "GRRMSSTD" ,"bSearchable": false, "bVisible": false},
-			{ "mData": "RIOFFSTD" ,"bSearchable": false, "bVisible": false},
-			{ "mData": "RIRMSSTD" ,"bSearchable": false, "bVisible": false},
-			{ "mData": "GOFFGAL" ,"bSearchable": false, "bVisible": false},
-			{ "mData": "GRMSGAL" ,"bSearchable": false, "bVisible": false}, /*55*/
-			{ "mData": "ROFFGAL" ,"bSearchable": false, "bVisible": false},
-			{ "mData": "RRMSGAL" ,"bSearchable": false, "bVisible": false},
-			{ "mData": "IOFFGAL" ,"bSearchable": false, "bVisible": false},
-			{ "mData": "IRMSGAL" ,"bSearchable": false, "bVisible": false},
-			{ "mData": "GROFFGAL" ,"bSearchable": false, "bVisible": false}, /*60*/
-			{ "mData": "GRRMSGAL" ,"bSearchable": false, "bVisible": false},
-			{ "mData": "RIOFFGAL" ,"bSearchable": false, "bVisible": false},
-			{ "mData": "RIRMSGAL" ,"bSearchable": false, "bVisible": false},
-			{ "mData": "NGUIDE" ,"bSearchable": false, "bVisible": false},
-			{ "mData": "SEEING20" ,"bSearchable": false, "bVisible": false}, /*65*/
-			{ "mData": "SEEING50" ,"bSearchable": false, "bVisible": false},
-			{ "mData": "SEEING80" ,"bSearchable": false, "bVisible": false},
-			{ "mData": "RMSOFF20" ,"bSearchable": false, "bVisible": false},
-			{ "mData": "RMSOFF50" ,"bSearchable": false, "bVisible": false},
-			{ "mData": "RMSOFF80" ,"bSearchable": false, "bVisible": false}, /*70*/
-			{ "mData": "AIRTEMP" ,"bSearchable": false, "bVisible": false},
-			{ "mData": "XSIGMA" ,"bSearchable": false, "bVisible": false},
-			{ "mData": "XSIGMIN" ,"bSearchable": false, "bVisible": false},
-			{ "mData": "XSIGMAX" ,"bSearchable": false, "bVisible": false}, 
-			{ "mData": "WSIGMA" ,"bSearchable": false, "bVisible": false}, /*75*/
-			{ "mData": "WSIGMIN" ,"bSearchable": false, "bVisible": false},
-			{ "mData": "WSIGMAX" ,"bSearchable": false, "bVisible": false},
-			{ "mData": "XCHI2" ,"bSearchable": false, "bVisible": false},
-			{ "mData": "XCHI2MIN" ,"bSearchable": false, "bVisible": false}, 
-			{ "mData": "XCHI2MAX" ,"bSearchable": false, "bVisible": false}, /*80*/
-			{ "mData": "SKYCHI2" ,"bSearchable": false, "bVisible": false},
-			{ "mData": "SCHI2MIN" ,"bSearchable": false, "bVisible": false},
-			{ "mData": "SCHI2MAX" ,"bSearchable": false, "bVisible": false},
-			{ "mData": "FBADPIX" ,"bSearchable": false, "sWidth": "75px"}, 
-			{ "mData": "FBADPIX1" ,"bSearchable": false, "bVisible": false}, /*85*/
-			{ "mData": "FBADPIX2" ,"bSearchable": false, "bVisible": false},
-			{ "mData": "N_TOTAL" ,"bSearchable": false, "bVisible": false},
-			{ "mData": "N_GALAXY" ,"bSearchable": false, "bVisible": false},
-			{ "mData": "N_QSO" ,"bSearchable": false, "bVisible": false}, 
-			{ "mData": "N_STAR" ,"bSearchable": false, "bVisible": false, "sWidth": "40px"}, /*90*/
-			{ "mData": "N_UNKNOWN" ,"bSearchable": false, "bVisible": false, "sWidth": "70px"},
-			{ "mData": "N_SKY" ,"bSearchable": false, "bVisible": false, "sWidth": "40px"},
-			{ "mData": "N_TARGET_MAIN" ,"bSearchable": false, "bVisible": false, "bVisible": false},
-			{ "mData": "N_TARGET_LRG1" ,"bSearchable": false, "bVisible": false, "sWidth": "40px"}, 
-			{ "mData": "N_TARGET_LRG2" ,"bSearchable": false, "bVisible": false, "sWidth": "40px"}, /*95*/
-			{ "mData": "N_TARGET_QSO" ,"bSearchable": false, "bVisible": false, "sWidth": "40px"},
-			{ "mData": "SUCCESS_MAIN" ,"bSearchable": false, "bVisible": false}, 
-			{ "mData": "SUCCESS_LRG1" ,"bSearchable": false, "sWidth": "65px"}, 
-			{ "mData": "SUCCESS_LRG2" ,"bSearchable": false, "sWidth": "65px"},  
-			{ "mData": "SUCCESS_QSO" ,"bSearchable": false, "sWidth": "60px"}, /*100*/
-			{ "mData": "STATUS2D" , "sWidth": "30px"}, 
-			{ "mData": "STATUSCOMBINE" , "sWidth": "60px"}, 
-			{ "mData": "STATUS1D" , "sWidth": "30px"}, 
-			{ "mData": "PUBLIC" , "bVisible": false, "sWidth": "60px"}, 
-			{ "mData": "QUALCOMMENTS" }, /*105*/	
-		],
+				var queryString = window.location.search;
+				if (queryString === "") {
+					$.extend( $.fn.dataTable.defaults, {
+						"iDisplayLength": 100,  /*default number of rows per page*/
+			    	} );
+				} else {
+					$.extend( $.fn.dataTable.defaults, {
+						"iDisplayLength": -1,  /*default number of rows per page*/
+			    	} );
+				}
+				oTable = $('#project_table').dataTable( {
+					"sDom": "<'row'<'col-lg-6'f><'col-lg-6'l>r>t<'row'<ip>>",
+					"sPaginationType": "bootstrap",
+					"aaSorting": [[ 1, "desc" ]],
+					"bPaginate": true,
+					"bLengthChange": true, /*records per page drop down*/
+					"bDeferRender": false, /*defers rendering till after.. what?*/ 
+					/* SP 2013-10-07 - I updated this to false, so that it renders the entire
+					 table on load vs only the visible table elements; this is needed to retrieve 
+					 all filtered items, not just the visible filtered items */
+					"sScrollY": "500px",
+					"sScrollX": "100%",
+					"sScrollXInner": "275%",
+					"bScrollCollapse": true,
+					"bFilter": true,
+					"bSort": true,
+					"bInfo": true, /*Showing 1 to 2,194 of 2,194 entries*/
+					"bAutoWidth": false,
+					"bSortClasses": false,
+					"bProcessing": true,
+					"sAjaxSource": "data/platelist.json",
+					"aLengthMenu": [[ 50, 100, 500, 1000, -1], [ 50, 100, 500, 1000, "All"]], /*records per page drop down*/
+			   		"aoColumns": [
+						{ "mData": "PLATE", "sWidth": "40px"},
+						{ "mData": "MJD", "sWidth": "40px"},      
+						{ "mData": "TILEID" , "bVisible": false, "sWidth": "45px"},  
+						{ "mData": "RUN2D" ,"bSearchable": false, "sWidth": "55px"}, 
+						{ "mData": "RUN1D" ,"bSearchable": false, "sWidth": "55px"}, 
+						{ "mData": "RACEN" ,"bSearchable": false, "bVisible": false, "sWidth": "50px"}, /*5*/
+						{ "mData": "DECCEN" ,"bSearchable": false, "bVisible": false, "sWidth": "65px"},
+						{ "mData": "EPOCH" ,"bSearchable": false, "bVisible": false},
+						{ "mData": "CARTID" ,"bSearchable": false, "bVisible": false},
+						{ "mData": "TAI" ,"bSearchable": false, "bVisible": false},
+						{ "mData": "TAI_BEG" ,"bSearchable": false, "bVisible": false}, /*10*/
+						{ "mData": "TAI_END" ,"bSearchable": false, "bVisible": false},
+						{ "mData": "AIRMASS" ,"bSearchable": false, "bVisible": false},
+						{ "mData": "EXPTIME" ,"bSearchable": false, "bVisible": false},
+						{ "mData": "MAPNAME" ,"bSearchable": false, "bVisible": false},
+						{ "mData": "SURVEY" , "bVisible": false, "sWidth": "55px"},  /*15*/
+						{ "mData": "PROGRAMNAME" , "bVisible": false, "sWidth": "175px"}, 
+						{ "mData": "CHUNK" , "bVisible": false, "sWidth": "60px"},
+						{ "mData": "PLATEQUALITY" , "sWidth": "50px"},
+						{ "mData": "PLATESN2" , "bVisible": false, "sWidth": "50px"}, 
+						{ "mData": "DEREDSN2" ,"bSearchable": false, "bVisible": false}, /*20*/
+						{ "mData": "QSURVEY" ,"bSearchable": false, "bVisible": false},
+						{ "mData": "MJDLIST" ,"bSearchable": false, "bVisible": false},
+						{ "mData": "NEXP" ,"bSearchable": false, "bVisible": false},
+						{ "mData": "NEXP_B1" ,"bSearchable": false, "bVisible": false},
+						{ "mData": "NEXP_B2" ,"bSearchable": false, "bVisible": false}, /*25*/
+						{ "mData": "NEXP_R1" ,"bSearchable": false, "bVisible": false},
+						{ "mData": "NEXP_R2" ,"bSearchable": false, "bVisible": false},
+						{ "mData": "EXPT_B1" ,"bSearchable": false, "bVisible": false},
+						{ "mData": "EXPT_B2" ,"bSearchable": false, "bVisible": false},
+						{ "mData": "EXPT_R1" ,"bSearchable": false, "bVisible": false}, /*30*/
+						{ "mData": "EXPT_R2" ,"bSearchable": false, "bVisible": false},
+						{ "mData": "SN2_G1" ,"bSearchable": false, "bVisible": false},
+						{ "mData": "SN2_R1" ,"bSearchable": false, "bVisible": false},
+						{ "mData": "SN2_I1" ,"bSearchable": false, "bVisible": false},
+						{ "mData": "SN2_G2" ,"bSearchable": false, "bVisible": false}, /*35*/
+						{ "mData": "SN2_R2" ,"bSearchable": false, "bVisible": false},
+						{ "mData": "SN2_I2" ,"bSearchable": false, "bVisible": false},
+						{ "mData": "DERED_SN2_G1" ,"bSearchable": false, "sWidth": "60px"}, 
+						{ "mData": "DERED_SN2_R1" ,"bSearchable": false, "bVisible": false},
+						{ "mData": "DERED_SN2_I1" ,"bSearchable": false, "sWidth": "60px"}, /*40*/
+						{ "mData": "DERED_SN2_G2" ,"bSearchable": false, "sWidth": "60px"},
+						{ "mData": "DERED_SN2_R2" ,"bSearchable": false, "bVisible": false}, 
+						{ "mData": "DERED_SN2_I2" ,"bSearchable": false, "sWidth": "60px"},
+						{ "mData": "GOFFSTD" ,"bSearchable": false, "bVisible": false},
+						{ "mData": "GRMSSTD" ,"bSearchable": false, "bVisible": false}, /*45*/
+						{ "mData": "ROFFSTD" ,"bSearchable": false, "bVisible": false},
+						{ "mData": "RRMSSTD" ,"bSearchable": false, "bVisible": false},
+						{ "mData": "IOFFSTD" ,"bSearchable": false, "bVisible": false},
+						{ "mData": "IRMSSTD" ,"bSearchable": false, "bVisible": false},
+						{ "mData": "GROFFSTD" ,"bSearchable": false, "bVisible": false}, /*50*/
+						{ "mData": "GRRMSSTD" ,"bSearchable": false, "bVisible": false},
+						{ "mData": "RIOFFSTD" ,"bSearchable": false, "bVisible": false},
+						{ "mData": "RIRMSSTD" ,"bSearchable": false, "bVisible": false},
+						{ "mData": "GOFFGAL" ,"bSearchable": false, "bVisible": false},
+						{ "mData": "GRMSGAL" ,"bSearchable": false, "bVisible": false}, /*55*/
+						{ "mData": "ROFFGAL" ,"bSearchable": false, "bVisible": false},
+						{ "mData": "RRMSGAL" ,"bSearchable": false, "bVisible": false},
+						{ "mData": "IOFFGAL" ,"bSearchable": false, "bVisible": false},
+						{ "mData": "IRMSGAL" ,"bSearchable": false, "bVisible": false},
+						{ "mData": "GROFFGAL" ,"bSearchable": false, "bVisible": false}, /*60*/
+						{ "mData": "GRRMSGAL" ,"bSearchable": false, "bVisible": false},
+						{ "mData": "RIOFFGAL" ,"bSearchable": false, "bVisible": false},
+						{ "mData": "RIRMSGAL" ,"bSearchable": false, "bVisible": false},
+						{ "mData": "NGUIDE" ,"bSearchable": false, "bVisible": false},
+						{ "mData": "SEEING20" ,"bSearchable": false, "bVisible": false}, /*65*/
+						{ "mData": "SEEING50" ,"bSearchable": false, "bVisible": false},
+						{ "mData": "SEEING80" ,"bSearchable": false, "bVisible": false},
+						{ "mData": "RMSOFF20" ,"bSearchable": false, "bVisible": false},
+						{ "mData": "RMSOFF50" ,"bSearchable": false, "bVisible": false},
+						{ "mData": "RMSOFF80" ,"bSearchable": false, "bVisible": false}, /*70*/
+						{ "mData": "AIRTEMP" ,"bSearchable": false, "bVisible": false},
+						{ "mData": "XSIGMA" ,"bSearchable": false, "bVisible": false},
+						{ "mData": "XSIGMIN" ,"bSearchable": false, "bVisible": false},
+						{ "mData": "XSIGMAX" ,"bSearchable": false, "bVisible": false}, 
+						{ "mData": "WSIGMA" ,"bSearchable": false, "bVisible": false}, /*75*/
+						{ "mData": "WSIGMIN" ,"bSearchable": false, "bVisible": false},
+						{ "mData": "WSIGMAX" ,"bSearchable": false, "bVisible": false},
+						{ "mData": "XCHI2" ,"bSearchable": false, "bVisible": false},
+						{ "mData": "XCHI2MIN" ,"bSearchable": false, "bVisible": false}, 
+						{ "mData": "XCHI2MAX" ,"bSearchable": false, "bVisible": false}, /*80*/
+						{ "mData": "SKYCHI2" ,"bSearchable": false, "bVisible": false},
+						{ "mData": "SCHI2MIN" ,"bSearchable": false, "bVisible": false},
+						{ "mData": "SCHI2MAX" ,"bSearchable": false, "bVisible": false},
+						{ "mData": "FBADPIX" ,"bSearchable": false, "sWidth": "75px"}, 
+						{ "mData": "FBADPIX1" ,"bSearchable": false, "bVisible": false}, /*85*/
+						{ "mData": "FBADPIX2" ,"bSearchable": false, "bVisible": false},
+						{ "mData": "N_TOTAL" ,"bSearchable": false, "bVisible": false},
+						{ "mData": "N_GALAXY" ,"bSearchable": false, "bVisible": false},
+						{ "mData": "N_QSO" ,"bSearchable": false, "bVisible": false}, 
+						{ "mData": "N_STAR" ,"bSearchable": false, "bVisible": false, "sWidth": "40px"}, /*90*/
+						{ "mData": "N_UNKNOWN" ,"bSearchable": false, "bVisible": false, "sWidth": "70px"},
+						{ "mData": "N_SKY" ,"bSearchable": false, "bVisible": false, "sWidth": "40px"},
+						{ "mData": "N_TARGET_MAIN" ,"bSearchable": false, "bVisible": false, "bVisible": false},
+						{ "mData": "N_TARGET_LRG1" ,"bSearchable": false, "bVisible": false, "sWidth": "40px"}, 
+						{ "mData": "N_TARGET_LRG2" ,"bSearchable": false, "bVisible": false, "sWidth": "40px"}, /*95*/
+						{ "mData": "N_TARGET_QSO" ,"bSearchable": false, "bVisible": false, "sWidth": "40px"},
+						{ "mData": "SUCCESS_MAIN" ,"bSearchable": false, "bVisible": false}, 
+						{ "mData": "SUCCESS_LRG1" ,"bSearchable": false, "sWidth": "65px"}, 
+						{ "mData": "SUCCESS_LRG2" ,"bSearchable": false, "sWidth": "65px"},  
+						{ "mData": "SUCCESS_QSO" ,"bSearchable": false, "sWidth": "60px"}, /*100*/
+						{ "mData": "STATUS2D" , "sWidth": "30px"}, 
+						{ "mData": "STATUSCOMBINE" , "sWidth": "60px"}, 
+						{ "mData": "STATUS1D" , "sWidth": "30px"}, 
+						{ "mData": "PUBLIC" , "bVisible": false, "sWidth": "60px"}, 
+						{ "mData": "QUALCOMMENTS" }, /*105*/	
+					],
+					/*makes cells content sensitive*/
+					"fnRowCallback": function( nRow, aData, iDisplayIndex,iDisplayIndexFull) {
+				        $(nRow).children().each(function(index, td) {
+				        	var visibleQualityIndex = getVisibleIndexofColumn (18);
+				        	if(index == visibleQualityIndex){ /*quality*/
+					            if ($(td).html() === "bad") {
+					                $(td).css("color", "#FF3229");
+					            };
+					        } 
+				        	var visibleSN2_G1Index = getVisibleIndexofColumn (38);
+					    	if(index == visibleSN2_G1Index){ /*sn2_g1*/
+					            if ($(td).html() < 10.0) {
+					                $(td).css("color", "#FF3229");
+					            };
+					        } 
+				        	var visibleSN2_I1Index = getVisibleIndexofColumn (40); 
+					    	if(index == visibleSN2_I1Index){ /*sn2_i1*/
+					            if ($(td).html() < 10.0) {
+					                $(td).css("color", "#FF3229");
+					            };
+					        } 
+				        	var visibleSN2_G2Index = getVisibleIndexofColumn (41);
+					    	if(index == visibleSN2_G2Index){ /*sn2_g2*/
+					            if ($(td).html() < 22.0) {
+					                $(td).css("color", "#FF3229");
+					            };
+					        } 
+				        	var visibleSN2_I2Index = getVisibleIndexofColumn (43);
+					    	if(index == visibleSN2_I2Index){ /*sn2_i2*/
+					            if ($(td).html() < 22.0) {
+					                $(td).css("color", "#FF3229");
+					            };
+					        } 
+				        	var visibleFBADPIXIndex = getVisibleIndexofColumn (84);
+					        if(index == visibleFBADPIXIndex){ /*fbadpix*/
+					            if ($(td).html() <0.1 && $(td).html() > 0.05) {
+					                $(td).css("color", "#FF8800");
+					            };
+					            if ($(td).html()>0.1) {
+					                $(td).css("color", "#FF3229");
+					            };
+					        } 
+				        	var visibleLRG1Index = getVisibleIndexofColumn (98);
+					        if(index == visibleLRG1Index){ /*%LRG1*/
+					            if ($(td).html() >92 && $(td).html() < 95) {
+					                $(td).css("color", "#FF8800");
+					            };
+					            if ($(td).html() <92) {
+					                $(td).css("color", "#FF3229");
+					            };		            
+					        } 
+				        	var visibleLRG2Index = getVisibleIndexofColumn (99);
+					        if(index == visibleLRG2Index){ /*%LRG2*/
+					            if ($(td).html() >80 && $(td).html() < 88) {
+					                $(td).css("color", "#FF8800");
+					            };
+					            if ($(td).html() < 80) {
+					                $(td).css("color", "#FF3229");
+					            };		            
+					        }
+					        var visibleSTATUS1DIndex = getVisibleIndexofColumn (103);
+				        	if(index == visibleSTATUS1DIndex){ /*STATUS1D*/
+					            if ($(td).html() === "Pending") {
+					                $(td).css("color", "#FF8800");
+					            };
+					            if ($(td).html() === "RUNNING") {
+					                $(td).css("color", "#FF8800");
+					            };
+					            if ($(td).html() === "FAILED") {
+					                $(td).css("color", "#FF3229");
+					            };
+					        } 
+					        var visibleSTATUSCOMBINEIndex = getVisibleIndexofColumn (102);
+				        	if(index == visibleSTATUSCOMBINEIndex){ /*STATUSCOMBINE*/
+					            if ($(td).html() === "Pending") {
+					                $(td).css("color", "#FF8800");
+					            };
+					            if ($(td).html() === "RUNNING") {
+					                $(td).css("color", "#FF8800");
+					            };
+					            if ($(td).html() === "FAILED") {
+					                $(td).css("color", "#FF3229");
+					            };	            
+					        } 
+					        var visibleSTATUS2DIndex = getVisibleIndexofColumn (101);
+				        	if(index == visibleSTATUS2DIndex){ /*STATUS2D*/
+					            if ($(td).html() === "Pending") {
+					                $(td).css("color", "#FF8800");
+					            };
+					            if ($(td).html() === "RUNNING") {
+					                $(td).css("color", "#FF8800");
+					            };
+					            if ($(td).html() === "FAILED") {
+					                $(td).css("color", "#FF3229");
+					            };		            
+					        }  		        
+					    });                        
+					    return nRow;
+				    },
+				} );
+				new FixedColumns(oTable);
+				//, {
+					//"iLeftColumns": 2,
+					//"sLeftWidth": 'relative',
+					//"iLeftWidth": 160
+				//} );
 
-		/*makes cells content sensitive*/
-		"fnRowCallback": function( nRow, aData, iDisplayIndex,iDisplayIndexFull) {
-	        $(nRow).children().each(function(index, td) {
-	        	var visibleQualityIndex = getVisibleIndexofColumn (18);
-	        	if(index == visibleQualityIndex){ /*quality*/
-		            if ($(td).html() === "bad") {
-		                $(td).css("color", "#FF3229");
-		            };
-		        } 
-	        	var visibleSN2_G1Index = getVisibleIndexofColumn (38);
-		    	if(index == visibleSN2_G1Index){ /*sn2_g1*/
-		            if ($(td).html() < 10.0) {
-		                $(td).css("color", "#FF3229");
-		            };
-		        } 
-	        	var visibleSN2_I1Index = getVisibleIndexofColumn (40); 
-		    	if(index == visibleSN2_I1Index){ /*sn2_i1*/
-		            if ($(td).html() < 10.0) {
-		                $(td).css("color", "#FF3229");
-		            };
-		        } 
-	        	var visibleSN2_G2Index = getVisibleIndexofColumn (41);
-		    	if(index == visibleSN2_G2Index){ /*sn2_g2*/
-		            if ($(td).html() < 22.0) {
-		                $(td).css("color", "#FF3229");
-		            };
-		        } 
-	        	var visibleSN2_I2Index = getVisibleIndexofColumn (43);
-		    	if(index == visibleSN2_I2Index){ /*sn2_i2*/
-		            if ($(td).html() < 22.0) {
-		                $(td).css("color", "#FF3229");
-		            };
-		        } 
-	        	var visibleFBADPIXIndex = getVisibleIndexofColumn (84);
-		        if(index == visibleFBADPIXIndex){ /*fbadpix*/
-		            if ($(td).html() <0.1 && $(td).html() > 0.05) {
-		                $(td).css("color", "#FF8800");
-		            };
-		            if ($(td).html()>0.1) {
-		                $(td).css("color", "#FF3229");
-		            };
-		        } 
-	        	var visibleLRG1Index = getVisibleIndexofColumn (98);
-		        if(index == visibleLRG1Index){ /*%LRG1*/
-		            if ($(td).html() >92 && $(td).html() < 95) {
-		                $(td).css("color", "#FF8800");
-		            };
-		            if ($(td).html() <92) {
-		                $(td).css("color", "#FF3229");
-		            };		            
-		        } 
-	        	var visibleLRG2Index = getVisibleIndexofColumn (99);
-		        if(index == visibleLRG2Index){ /*%LRG2*/
-		            if ($(td).html() >80 && $(td).html() < 88) {
-		                $(td).css("color", "#FF8800");
-		            };
-		            if ($(td).html() < 80) {
-		                $(td).css("color", "#FF3229");
-		            };		            
-		        }
-		        var visibleSTATUS1DIndex = getVisibleIndexofColumn (103);
-	        	if(index == visibleSTATUS1DIndex){ /*STATUS1D*/
-		            if ($(td).html() === "Pending") {
-		                $(td).css("color", "#FF8800");
-		            };
-		            if ($(td).html() === "RUNNING") {
-		                $(td).css("color", "#FF8800");
-		            };
-		            if ($(td).html() === "FAILED") {
-		                $(td).css("color", "#FF3229");
-		            };
-		        } 
-		        var visibleSTATUSCOMBINEIndex = getVisibleIndexofColumn (102);
-	        	if(index == visibleSTATUSCOMBINEIndex){ /*STATUSCOMBINE*/
-		            if ($(td).html() === "Pending") {
-		                $(td).css("color", "#FF8800");
-		            };
-		            if ($(td).html() === "RUNNING") {
-		                $(td).css("color", "#FF8800");
-		            };
-		            if ($(td).html() === "FAILED") {
-		                $(td).css("color", "#FF3229");
-		            };	            
-		        } 
-		        var visibleSTATUS2DIndex = getVisibleIndexofColumn (101);
-	        	if(index == visibleSTATUS2DIndex){ /*STATUS2D*/
-		            if ($(td).html() === "Pending") {
-		                $(td).css("color", "#FF8800");
-		            };
-		            if ($(td).html() === "RUNNING") {
-		                $(td).css("color", "#FF8800");
-		            };
-		            if ($(td).html() === "FAILED") {
-		                $(td).css("color", "#FF3229");
-		            };		            
-		        }  		        
-		    });                        
-		    return nRow;
-	    },
-	} );
-	new FixedColumns(oTable);
-	//, {
-		//"iLeftColumns": 2,
-		//"sLeftWidth": 'relative',
-		//"iLeftWidth": 160
-	//} );
+				$(window).resize( function () {
+			  		oTable.fnAdjustColumnSizing();
+				} );
+				
+				/*Adding plots*/
+				var dataset;
+				d3.json("data/platelist.json", function(error, json){
+					if(error){
+						console.log(error);
+					}else{
+						dataset = json;
+						//console.log(dataset);
+						createSVGs();
+						drawAxes(dataset);
+						drawData(dataset.aaData, false);	
+					}
+				});
 
-	$(window).resize( function () {
-  		oTable.fnAdjustColumnSizing();
-	} );
-	
-	/*Adding plots*/
-	var dataset;
-	d3.json("data/platelist.json", function(error, json){
-		if(error){
-			console.log(error);
-		}else{
-			dataset = json;
-			//console.log(dataset);
-			createSVGs();
-			drawAxes(dataset);
-			drawData(dataset.aaData, false);	
-		}
-	});
-
-	$("a.togglelinks").click(function(e) {
-		selectLink(e);
-	});
-
-
-} );
+				$("a.togglelinks").click(function(e) {
+					selectLink(e);
+				});
 
 
+			} )
+		.on({
+		    mouseenter: function () {
+		        trIndex = $(this).index()+1;
+		        console.log(trIndex);
+		        console.log("tr:eq("+trIndex+")");
+		        $("table.dataTable").each(function(index) {
+		            $(this).find("tr:eq("+trIndex+")").addClass("hover") 
+		        });
+		    },
+		    mouseleave: function () {
+		        trIndex = $(this).index()+1;
+		        $("table.dataTable").each(function(index) {
+		            $(this).find("tr:eq("+trIndex+")").removeClass("hover")
+		        });
+		    }
+		}, ".dataTables_wrapper tr");
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
