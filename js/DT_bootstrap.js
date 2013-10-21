@@ -217,11 +217,7 @@ if ( typeof $.fn.dataTable == "function" && typeof $.fn.dataTableExt.fnVersionCh
                 {
                     table.fnFilter('');
                     if(filteredPlots){
-						d3.select(LRG1vLRG2).selectAll(".filter").remove();
-						d3.select(LRG2vQSO).selectAll(".filter").remove();
-	        			d3.select(SN2_G12vSN2_I12).selectAll(".filter").remove();
-	        			d3.select(SN2_G12vSN2_I12).selectAll(".filter").remove();
-						d3.select(RAvDEC).selectAll(".filter").remove();
+						removePlotPointsWithClass(".filter");
 						filteredPlots = false;
 
 					}
@@ -549,9 +545,15 @@ $(document).ready(function() {
 		.on({
 		    mouseenter: function () {
 		        trIndex = $(this).index()+1;
-		        console.log(trIndex);
-		        console.log("tr:eq("+trIndex+")");
+		        //console.log(trIndex);
+		        try{
+		        	var plate = $(this).find('td').eq(0).html();
+		        	var mjd = $(this).find('td').eq(1).html();
+		        	var identifier = plate + "_" + mjd;
+		        	highlightPlots(identifier);
+		   		}catch(err){};
 		        $("table.dataTable").each(function(index) {
+		        	//console.log($(this).find("tr:eq("+trIndex+")"));
 		            $(this).find("tr:eq("+trIndex+")").addClass("hover") 
 		        });
 		    },
@@ -560,6 +562,7 @@ $(document).ready(function() {
 		        $("table.dataTable").each(function(index) {
 		            $(this).find("tr:eq("+trIndex+")").removeClass("hover")
 		        });
+		        removePlotPointsWithClass(".highlighter");
 		    }
 		}, ".dataTables_wrapper tr");
 
@@ -902,6 +905,7 @@ function drawAxes(dataset){
 
 
 function drawData(nNodes, filter, goodColoring, badColoring, SN2_GI1color, SN2_GI2color , radius){
+	var dataset;
 	d3.json("data/platelist.json", function(error, json){
 		if(error){
 			console.log(error);
@@ -944,7 +948,7 @@ function drawData(nNodes, filter, goodColoring, badColoring, SN2_GI1color, SN2_G
 			    .data(nNodes)
 			    .enter()
 			    .append("circle")
-			    //.attr("id", function(d) {return "LRG1vLRG2_"+d.PLATE+"_"+d.MJD;})
+			    .attr("id", function(d) {return "LRG1vLRG2_"+d.PLATE+"_"+d.MJD;})
 			    .attr("class", function() {
 	    	  		if(filter){
 	    	  			return "filter";
@@ -979,55 +983,59 @@ function drawData(nNodes, filter, goodColoring, badColoring, SN2_GI1color, SN2_G
 					//Update the tooltip value
 					d3.select("#tooltip")						
 						.select("#tooltipLine1")
-						.text("Plate: " + d.PLATE)
+						.text("Plate: " + d.PLATE);
 
 					d3.select("#tooltip")					
 						.select("#tooltipLine2")
 						.text(", MJD: " + d.MJD);
 
 					//draw highlighter dots
-					d3.select(LRG2vQSO).append("circle")
-					  		.attr("id", "highlighter")
-					   		.attr({
-						   		cx: xScaleLRG2vQSO(d.SUCCESS_LRG2),
-						   		cy: yScaleLRG2vQSO(d.SUCCESS_QSO),
-						   		r: highlightRadius,
-						   		fill: highlighterColor1,
-						   		stroke: "black",
-						   		//stroke-width: 0.5,
-							});
-					d3.select(RAvDEC).append("circle")
-					  		.attr("id", "highlighter4")
-					   		.attr({
-						   		cx: xScaleRAvDEC(d.RACEN),
-						   		cy: yScaleRAvDEC(d.DECCEN),
-						   		r: highlightRadius,
-						   		fill: highlighterColor1,
-						   		stroke: "black",
-						   		//stroke-width: 0.5,
-							});
+					
+						d3.select(LRG2vQSO).append("circle")
+						  		.attr("class", "highlighter")
+						   		.attr({
+							   		cx: xScaleLRG2vQSO(d.SUCCESS_LRG2),
+							   		cy: yScaleLRG2vQSO(d.SUCCESS_QSO),
+							   		r: highlightRadius,
+							   		fill: highlighterColor1,
+							   		stroke: "black",
+							   		//stroke-width: 0.5,
+								});
+						d3.select(RAvDEC).append("circle")
+						  		.attr("class", "highlighter")
+						   		.attr({
+							   		cx: xScaleRAvDEC(d.RACEN),
+							   		cy: yScaleRAvDEC(d.DECCEN),
+							   		r: highlightRadius,
+							   		fill: highlighterColor1,
+							   		stroke: "black",
+							   		//stroke-width: 0.5,
+								});
 
-					d3.select(SN2_G12vSN2_I12).append("circle")
-					  		.attr("id", "highlighter2")
-					   		.attr({
-						   		cx: xScaleSN2_G12vSN2_I12(d.DERED_SN2_G2),
-						   		cy: yScaleSN2_G12vSN2_I12(d.DERED_SN2_I2),
-						   		r: highlightRadius,
-						   		fill: highlighterColor1,
-						   		stroke: "black",
-						   		//stroke-width: 0.5,
-							});
+						d3.select(SN2_G12vSN2_I12).append("circle")
+						  		.attr("class", "highlighter")
+						   		.attr({
+							   		cx: xScaleSN2_G12vSN2_I12(d.DERED_SN2_G2),
+							   		cy: yScaleSN2_G12vSN2_I12(d.DERED_SN2_I2),
+							   		r: highlightRadius,
+							   		fill: highlighterColor1,
+							   		stroke: "black",
+							   		//stroke-width: 0.5,
+								});
 
-					d3.select(SN2_G12vSN2_I12).append("circle")
-					  		.attr("id", "highlighter3")
-					   		.attr({
-						   		cx: xScaleSN2_G12vSN2_I12(d.DERED_SN2_G1),
-						   		cy: yScaleSN2_G12vSN2_I12(d.DERED_SN2_I1),
-						   		r: highlightRadius,
-						   		fill: highlighterColor2,
-						   		stroke: "black",
-						   		//stroke-width: 0.5,
-							});
+						d3.select(SN2_G12vSN2_I12).append("circle")
+						  		.attr("class", "highlighter")
+						   		.attr({
+							   		cx: xScaleSN2_G12vSN2_I12(d.DERED_SN2_G1),
+							   		cy: yScaleSN2_G12vSN2_I12(d.DERED_SN2_I1),
+							   		r: highlightRadius,
+							   		fill: highlighterColor2,
+							   		stroke: "black",
+							   		//stroke-width: 0.5,
+								});
+					
+					//console.log(d);
+					//highlightPlots(d);
 
 			   })
 			   .on("click", function(d) {
@@ -1041,12 +1049,7 @@ function drawData(nNodes, filter, goodColoring, badColoring, SN2_GI1color, SN2_G
 					
 			   })
 			   .on("mouseout", function() {
-					//Hide the tooltip
-					//d3.select("#tooltip").classed("hidden", true);
-					d3.select("#highlighter").remove();
-					d3.select("#highlighter2").remove();
-					d3.select("#highlighter3").remove();
-					d3.select("#highlighter4").remove();
+					removePlotPointsWithClass(".highlighter");
 					
 			   });
 			
@@ -1079,7 +1082,7 @@ function drawData(nNodes, filter, goodColoring, badColoring, SN2_GI1color, SN2_G
 			    .data(nNodes)
 			    .enter()
 			    .append("circle")
-			    //.attr("id", function(d) {return "LRG2vQSO_"+d.PLATE+"_"+d.MJD;})
+			    .attr("id", function(d) {return "LRG2vQSO_"+d.PLATE+"_"+d.MJD;})
 			    .attr("class", function() {
 	    	  		if(filter){
 	    	  			return "filter";
@@ -1122,48 +1125,51 @@ function drawData(nNodes, filter, goodColoring, badColoring, SN2_GI1color, SN2_G
 						.text(", MJD: " + d.MJD);
 
 					//draw highlighter dots
-					d3.select(LRG1vLRG2).append("circle")
-					  		.attr("id", "highlighter")
-					   		.attr({
-						   		cx: xScaleLRG1vLRG2(d.SUCCESS_LRG1),
-						   		cy: yScaleLRG1vLRG2(d.SUCCESS_LRG2),
-						   		r: highlightRadius,
-						   		fill: highlighterColor1,
-						   		stroke: "black",
-						   		//stroke-width: 0.5,
-							});
-					d3.select(RAvDEC).append("circle")
-					  		.attr("id", "highlighter4")
-					   		.attr({
-						   		cx: xScaleRAvDEC(d.RACEN),
-						   		cy: yScaleRAvDEC(d.DECCEN),
-						   		r: highlightRadius,
-						   		fill: highlighterColor1,
-						   		stroke: "black",
-						   		//stroke-width: 0.5,
-							});
+					//highlightPlots(d);
+					
+						d3.select(LRG1vLRG2).append("circle")
+						  		.attr("class", "highlighter")
+						   		.attr({
+							   		cx: xScaleLRG1vLRG2(d.SUCCESS_LRG1),
+							   		cy: yScaleLRG1vLRG2(d.SUCCESS_LRG2),
+							   		r: highlightRadius,
+							   		fill: highlighterColor1,
+							   		stroke: "black",
+							   		//stroke-width: 0.5,
+								});
+						d3.select(RAvDEC).append("circle")
+						  		.attr("class", "highlighter")
+						   		.attr({
+							   		cx: xScaleRAvDEC(d.RACEN),
+							   		cy: yScaleRAvDEC(d.DECCEN),
+							   		r: highlightRadius,
+							   		fill: highlighterColor1,
+							   		stroke: "black",
+							   		//stroke-width: 0.5,
+								});
 
-					d3.select(SN2_G12vSN2_I12).append("circle")
-					  		.attr("id", "highlighter2")
-					   		.attr({
-						   		cx: xScaleSN2_G12vSN2_I12(d.DERED_SN2_G2),
-						   		cy: yScaleSN2_G12vSN2_I12(d.DERED_SN2_I2),
-						   		r: highlightRadius,
-						   		fill: highlighterColor1,
-						   		stroke: "black",
-						   		//stroke-width: 0.5,
-							});
+						d3.select(SN2_G12vSN2_I12).append("circle")
+						  		.attr("class", "highlighter")
+						   		.attr({
+							   		cx: xScaleSN2_G12vSN2_I12(d.DERED_SN2_G2),
+							   		cy: yScaleSN2_G12vSN2_I12(d.DERED_SN2_I2),
+							   		r: highlightRadius,
+							   		fill: highlighterColor1,
+							   		stroke: "black",
+							   		//stroke-width: 0.5,
+								});
 
-					d3.select(SN2_G12vSN2_I12).append("circle")
-					  		.attr("id", "highlighter3")
-					   		.attr({
-						   		cx: xScaleSN2_G12vSN2_I12(d.DERED_SN2_G1),
-						   		cy: yScaleSN2_G12vSN2_I12(d.DERED_SN2_I1),
-						   		r: highlightRadius,
-						   		fill: highlighterColor2,
-						   		stroke: "black",
-						   		//stroke-width: 0.5,
-							});
+						d3.select(SN2_G12vSN2_I12).append("circle")
+						  		.attr("class", "highlighter")
+						   		.attr({
+							   		cx: xScaleSN2_G12vSN2_I12(d.DERED_SN2_G1),
+							   		cy: yScaleSN2_G12vSN2_I12(d.DERED_SN2_I1),
+							   		r: highlightRadius,
+							   		fill: highlighterColor2,
+							   		stroke: "black",
+							   		//stroke-width: 0.5,
+								});
+					
 			   })
 			   .on("click", function(d) {
 					//Update the tooltip position and value
@@ -1177,12 +1183,7 @@ function drawData(nNodes, filter, goodColoring, badColoring, SN2_GI1color, SN2_G
 					
 			   })
 			   .on("mouseout", function() {
-					//Hide the tooltip
-					//d3.select("#tooltip").classed("hidden", true);
-					d3.select("#highlighter").remove();
-					d3.select("#highlighter2").remove();
-					d3.select("#highlighter3").remove();
-					d3.select("#highlighter4").remove();
+					removePlotPointsWithClass(".highlighter");
 			   });
 
 
@@ -1220,7 +1221,7 @@ function drawData(nNodes, filter, goodColoring, badColoring, SN2_GI1color, SN2_G
 			    .data(nNodes)
 			    .enter()
 			    .append("circle")
-			    //.attr("id", function(d) {return "SN2_G1vSN2_I1_"+d.PLATE+"_"+d.MJD;})
+			    .attr("id", function(d) {return "SN2_G1vSN2_I1_"+d.PLATE+"_"+d.MJD;})
 			    .attr("class", function() {
 	    	  		if(filter){
 	    	  			return "filter";
@@ -1251,48 +1252,51 @@ function drawData(nNodes, filter, goodColoring, badColoring, SN2_GI1color, SN2_G
 						.text(", MJD: " + d.MJD);
 
 					//hightlighter dots
-					d3.select(LRG1vLRG2).append("circle")
-					  		.attr("id", "highlighter")
-					   		.attr({
-						   		cx: xScaleLRG1vLRG2(d.SUCCESS_LRG1),
-						   		cy: yScaleLRG1vLRG2(d.SUCCESS_LRG2),
-						   		r: highlightRadius,
-						   		fill: highlighterColor1,
-						   		stroke: "black",
-						   		//stroke-width: 0.5,
-							});
+					//highlightPlots(d);
+					
+						d3.select(LRG1vLRG2).append("circle")
+						  		.attr("class", "highlighter")
+						   		.attr({
+							   		cx: xScaleLRG1vLRG2(d.SUCCESS_LRG1),
+							   		cy: yScaleLRG1vLRG2(d.SUCCESS_LRG2),
+							   		r: highlightRadius,
+							   		fill: highlighterColor1,
+							   		stroke: "black",
+							   		//stroke-width: 0.5,
+								});
 
-					d3.select(LRG2vQSO).append("circle")
-					  		.attr("id", "highlighter2")
-					   		.attr({
-						   		cx: xScaleLRG2vQSO(d.SUCCESS_LRG2),
-						   		cy: yScaleLRG2vQSO(d.SUCCESS_QSO),
-						   		r: highlightRadius,
-						   		fill: highlighterColor1,
-						   		stroke: "black",
-						   		//stroke-width: 0.5,
-							});
+						d3.select(LRG2vQSO).append("circle")
+						  		.attr("class", "highlighter")
+						   		.attr({
+							   		cx: xScaleLRG2vQSO(d.SUCCESS_LRG2),
+							   		cy: yScaleLRG2vQSO(d.SUCCESS_QSO),
+							   		r: highlightRadius,
+							   		fill: highlighterColor1,
+							   		stroke: "black",
+							   		//stroke-width: 0.5,
+								});
 
-					d3.select(SN2_G12vSN2_I12).append("circle")
-					  		.attr("id", "highlighter3")
-					   		.attr({
-						   		cx: xScaleSN2_G12vSN2_I12(d.DERED_SN2_G2),
-						   		cy: yScaleSN2_G12vSN2_I12(d.DERED_SN2_I2),
-						   		r: highlightRadius,
-						   		fill: highlighterColor1,
-						   		stroke: "black",
-						   		//stroke-width: 0.5,
-							});					
-					d3.select(RAvDEC).append("circle")
-					  		.attr("id", "highlighter4")
-					   		.attr({
-						   		cx: xScaleRAvDEC(d.RACEN),
-						   		cy: yScaleRAvDEC(d.DECCEN),
-						   		r: highlightRadius,
-						   		fill: highlighterColor1,
-						   		stroke: "black",
-						   		//stroke-width: 0.5,
-							});
+						d3.select(SN2_G12vSN2_I12).append("circle")
+						  		.attr("class", "highlighter")
+						   		.attr({
+							   		cx: xScaleSN2_G12vSN2_I12(d.DERED_SN2_G2),
+							   		cy: yScaleSN2_G12vSN2_I12(d.DERED_SN2_I2),
+							   		r: highlightRadius,
+							   		fill: highlighterColor1,
+							   		stroke: "black",
+							   		//stroke-width: 0.5,
+								});					
+						d3.select(RAvDEC).append("circle")
+						  		.attr("class", "highlighter")
+						   		.attr({
+							   		cx: xScaleRAvDEC(d.RACEN),
+							   		cy: yScaleRAvDEC(d.DECCEN),
+							   		r: highlightRadius,
+							   		fill: highlighterColor1,
+							   		stroke: "black",
+							   		//stroke-width: 0.5,
+								});
+					
 
 			   })
 			   .on("click", function(d) {
@@ -1307,12 +1311,7 @@ function drawData(nNodes, filter, goodColoring, badColoring, SN2_GI1color, SN2_G
 					
 			   })
 			   .on("mouseout", function() {
-					//Hide the tooltip
-					//d3.select("#tooltip").classed("hidden", true);
-					d3.select("#highlighter").remove();
-					d3.select("#highlighter2").remove();
-					d3.select("#highlighter3").remove();
-					d3.select("#highlighter4").remove();
+					removePlotPointsWithClass(".highlighter");
 					
 			   });
 
@@ -1327,7 +1326,7 @@ function drawData(nNodes, filter, goodColoring, badColoring, SN2_GI1color, SN2_G
 			    .data(nNodes)
 			    .enter()
 			    .append("circle")
-			    //.attr("id", function(d) {return "SN2_G2vSN2_I2_"+d.PLATE+"_"+d.MJD;})
+			    .attr("id", function(d) {return "SN2_G2vSN2_I2_"+d.PLATE+"_"+d.MJD;})
 			    .attr("class", function() {
 	    	  		if(filter){
 	    	  			return "filter";
@@ -1358,47 +1357,50 @@ function drawData(nNodes, filter, goodColoring, badColoring, SN2_GI1color, SN2_G
 						.text(", MJD: " + d.MJD);
 
 					//highlighter dots
-					d3.select(LRG1vLRG2).append("circle")
-					  		.attr("id", "highlighter")
-					   		.attr({
-						   		cx: xScaleLRG1vLRG2(d.SUCCESS_LRG1),
-						   		cy: yScaleLRG1vLRG2(d.SUCCESS_LRG2),
-						   		r: highlightRadius,
-						   		fill: highlighterColor1,
-						   		stroke: "black",
-						   		//stroke-width: 0.5,
-							});
+					
+						d3.select(LRG1vLRG2).append("circle")
+						  		.attr("class", "highlighter")
+						   		.attr({
+							   		cx: xScaleLRG1vLRG2(d.SUCCESS_LRG1),
+							   		cy: yScaleLRG1vLRG2(d.SUCCESS_LRG2),
+							   		r: highlightRadius,
+							   		fill: highlighterColor1,
+							   		stroke: "black",
+							   		//stroke-width: 0.5,
+								});
 
-					d3.select(LRG2vQSO).append("circle")
-					  		.attr("id", "highlighter2")
-					   		.attr({
-						   		cx: xScaleLRG2vQSO(d.SUCCESS_LRG2),
-						   		cy: yScaleLRG2vQSO(d.SUCCESS_QSO),
-						   		r: highlightRadius,
-						   		fill: highlighterColor1,
-						   		stroke: "black",
-						   		//stroke-width: 0.5,
-							});
-					d3.select(SN2_G12vSN2_I12).append("circle")
-					  		.attr("id", "highlighter3")
-					   		.attr({
-						   		cx: xScaleSN2_G12vSN2_I12(d.DERED_SN2_G1),
-						   		cy: yScaleSN2_G12vSN2_I12(d.DERED_SN2_I1),
-						   		r: highlightRadius,
-						   		fill: highlighterColor2,
-						   		stroke: "black",
-						   		//stroke-width: 0.5,
-							});	
-					d3.select(RAvDEC).append("circle")
-					  		.attr("id", "highlighter4")
-					   		.attr({
-						   		cx: xScaleRAvDEC(d.RACEN),
-						   		cy: yScaleRAvDEC(d.DECCEN),
-						   		r: highlightRadius,
-						   		fill: highlighterColor1,
-						   		stroke: "black",
-						   		//stroke-width: 0.5,
-							});	
+						d3.select(LRG2vQSO).append("circle")
+						  		.attr("class", "highlighter")
+						   		.attr({
+							   		cx: xScaleLRG2vQSO(d.SUCCESS_LRG2),
+							   		cy: yScaleLRG2vQSO(d.SUCCESS_QSO),
+							   		r: highlightRadius,
+							   		fill: highlighterColor1,
+							   		stroke: "black",
+							   		//stroke-width: 0.5,
+								});
+						d3.select(SN2_G12vSN2_I12).append("circle")
+						  		.attr("class", "highlighter")
+						   		.attr({
+							   		cx: xScaleSN2_G12vSN2_I12(d.DERED_SN2_G1),
+							   		cy: yScaleSN2_G12vSN2_I12(d.DERED_SN2_I1),
+							   		r: highlightRadius,
+							   		fill: highlighterColor2,
+							   		stroke: "black",
+							   		//stroke-width: 0.5,
+								});	
+						d3.select(RAvDEC).append("circle")
+						  		.attr("class", "highlighter")
+						   		.attr({
+							   		cx: xScaleRAvDEC(d.RACEN),
+							   		cy: yScaleRAvDEC(d.DECCEN),
+							   		r: highlightRadius,
+							   		fill: highlighterColor1,
+							   		stroke: "black",
+							   		//stroke-width: 0.5,
+								});	
+					
+					//highlightPlots(d);
 
 			   })
 			   .on("click", function(d) {
@@ -1413,12 +1415,7 @@ function drawData(nNodes, filter, goodColoring, badColoring, SN2_GI1color, SN2_G
 					
 			   })
 			   .on("mouseout", function() {
-					//Hide the tooltip
-					//d3.select("#tooltip").classed("hidden", true);
-					d3.select("#highlighter").remove();
-					d3.select("#highlighter2").remove();
-					d3.select("#highlighter3").remove();
-					d3.select("#highlighter4").remove();
+					removePlotPointsWithClass(".highlighter");
 					
 			   });
 
@@ -1447,7 +1444,7 @@ function drawData(nNodes, filter, goodColoring, badColoring, SN2_GI1color, SN2_G
 			    .data(nNodes)
 			    .enter()
 			    .append("circle")
-			    //.attr("id", function(d) {return "RAvDEC_"+d.PLATE+"_"+d.MJD;})
+			    .attr("id", function(d) {return "RAvDEC_"+d.PLATE+"_"+d.MJD;})
 			    .attr("class", function() {
 	    	  		if(filter){
 	    	  			return "filter";
@@ -1489,50 +1486,53 @@ function drawData(nNodes, filter, goodColoring, badColoring, SN2_GI1color, SN2_G
 						.text(", MJD: " + d.MJD);
 			   
 					//highlighter dots
-					d3.select(LRG1vLRG2).append("circle")
-					  		.attr("id", "highlighter")
-					   		.attr({
-						   		cx: xScaleLRG1vLRG2(d.SUCCESS_LRG1),
-						   		cy: yScaleLRG1vLRG2(d.SUCCESS_LRG2),
-						   		r: highlightRadius,
-						   		fill: highlighterColor1,
-						   		stroke: "black",
-						   		//stroke-width: 0.5,
-							});
+					//highlightPlots(d);
+					
+						d3.select(LRG1vLRG2).append("circle")
+						  		.attr("class", "highlighter")
+						   		.attr({
+							   		cx: xScaleLRG1vLRG2(d.SUCCESS_LRG1),
+							   		cy: yScaleLRG1vLRG2(d.SUCCESS_LRG2),
+							   		r: highlightRadius,
+							   		fill: highlighterColor1,
+							   		stroke: "black",
+							   		//stroke-width: 0.5,
+								});
 
 
-					d3.select(LRG2vQSO).append("circle")
-					  		.attr("id", "highlighter4")
-					   		.attr({
-						   		cx: xScaleLRG2vQSO(d.SUCCESS_LRG2),
-						   		cy: yScaleLRG2vQSO(d.SUCCESS_QSO),
-						   		r: highlightRadius,
-						   		fill: highlighterColor1,
-						   		stroke: "black",
-						   		//stroke-width: 0.5,
-							});
+						d3.select(LRG2vQSO).append("circle")
+						  		.attr("class", "highlighter")
+						   		.attr({
+							   		cx: xScaleLRG2vQSO(d.SUCCESS_LRG2),
+							   		cy: yScaleLRG2vQSO(d.SUCCESS_QSO),
+							   		r: highlightRadius,
+							   		fill: highlighterColor1,
+							   		stroke: "black",
+							   		//stroke-width: 0.5,
+								});
 
-					d3.select(SN2_G12vSN2_I12).append("circle")
-					  		.attr("id", "highlighter2")
-					   		.attr({
-						   		cx: xScaleSN2_G12vSN2_I12(d.DERED_SN2_G2),
-						   		cy: yScaleSN2_G12vSN2_I12(d.DERED_SN2_I2),
-						   		r: highlightRadius,
-						   		fill: highlighterColor1,
-						   		stroke: "black",
-						   		//stroke-width: 0.5,
-							});
+						d3.select(SN2_G12vSN2_I12).append("circle")
+						  		.attr("class", "highlighter")
+						   		.attr({
+							   		cx: xScaleSN2_G12vSN2_I12(d.DERED_SN2_G2),
+							   		cy: yScaleSN2_G12vSN2_I12(d.DERED_SN2_I2),
+							   		r: highlightRadius,
+							   		fill: highlighterColor1,
+							   		stroke: "black",
+							   		//stroke-width: 0.5,
+								});
 
-					d3.select(SN2_G12vSN2_I12).append("circle")
-					  		.attr("id", "highlighter3")
-					   		.attr({
-						   		cx: xScaleSN2_G12vSN2_I12(d.DERED_SN2_G1),
-						   		cy: yScaleSN2_G12vSN2_I12(d.DERED_SN2_I1),
-						   		r: highlightRadius,
-						   		fill: highlighterColor2,
-						   		stroke: "black",
-						   		//stroke-width: 0.5,
-							});
+						d3.select(SN2_G12vSN2_I12).append("circle")
+						  		.attr("class", "highlighter")
+						   		.attr({
+							   		cx: xScaleSN2_G12vSN2_I12(d.DERED_SN2_G1),
+							   		cy: yScaleSN2_G12vSN2_I12(d.DERED_SN2_I1),
+							   		r: highlightRadius,
+							   		fill: highlighterColor2,
+							   		stroke: "black",
+							   		//stroke-width: 0.5,
+								});
+					
 			   })
 			   .on("click", function(d) {
 			   
@@ -1547,13 +1547,7 @@ function drawData(nNodes, filter, goodColoring, badColoring, SN2_GI1color, SN2_G
 					
 			   })
 			   .on("mouseout", function() {
-			   
-					//Hide the tooltip
-					//d3.select("#tooltip").classed("hidden", true);
-					d3.select("#highlighter").remove();
-					d3.select("#highlighter2").remove();
-					d3.select("#highlighter3").remove();
-					d3.select("#highlighter4").remove();
+					removePlotPointsWithClass(".highlighter");
 			   });
 		}
 	});
@@ -1676,4 +1670,236 @@ function manipulateData(nNodes, filter, goodColoring, badColoring, SN2_GI1color,
 
 }
 
+/*
+function highlightPlots(rowIndex){
+	var dataset;
+	var row;
+	d3.json("data/platelist.json", function(error, json){
+			if(error){
+				console.log(error);
+			}else{
 
+				//Width and height
+				var w = 200;
+				var h = 200;
+				var padding = 10;
+
+				//colors
+				highlighterColor1 = "#fffb00";
+				highlighterColor2 = "#ff00fb";
+
+				highlightRadius = 3;
+
+				dataset = json;
+				row = dataset.aaData[rowIndex];
+				//LRG1vLRG2
+				//scale
+				var xMin = d3.min(dataset.aaData, function(d){return d.SUCCESS_LRG1;});
+				var xMax = d3.max(dataset.aaData, function(d){return d.SUCCESS_LRG1;});
+				var yMin = d3.min(dataset.aaData, function(d){return d.SUCCESS_LRG2;});
+				var yMax = d3.max(dataset.aaData, function(d){return d.SUCCESS_LRG2;});
+
+				var xScaleLRG1vLRG2 = d3.scale.linear()
+									 .domain([xMin,xMax])
+									 .range([4.5 * padding,w - padding]);
+				var yScaleLRG1vLRG2 = d3.scale.linear()
+									 .domain([yMin,yMax])
+									 .range([h-(3.5 * padding),padding]);
+
+				d3.select(LRG1vLRG2).append("circle")
+				  		.attr("class", "highlighter")
+				   		.attr({
+					   		cx: xScaleLRG1vLRG2(row.SUCCESS_LRG1),
+					   		cy: yScaleLRG1vLRG2(row.SUCCESS_LRG2),
+					   		r: highlightRadius,
+					   		fill: highlighterColor1,
+					   		stroke: "black",
+					   		//stroke-width: 0.5,
+						});
+
+
+				//%LRG2vQSO
+				//scale
+				var xMin = d3.min(dataset.aaData, function(d){return d.SUCCESS_LRG2;});
+				var xMax = d3.max(dataset.aaData, function(d){return d.SUCCESS_LRG2;});
+				var yMin = d3.min(dataset.aaData, function(d){return d.SUCCESS_QSO;});
+				var yMax = d3.max(dataset.aaData, function(d){return d.SUCCESS_QSO;});
+
+				var xScaleLRG2vQSO = d3.scale.linear()
+									 .domain([xMin,xMax])
+									 .range([4.5 * padding,w-padding]);
+				var yScaleLRG2vQSO = d3.scale.linear()
+									 .domain([yMin,yMax])
+									 .range([h-(3.5 * padding),padding]);
+
+
+				d3.select(LRG2vQSO).append("circle")
+				  		.attr("class", "highlighter")
+				   		.attr({
+					   		cx: xScaleLRG2vQSO(row.SUCCESS_LRG2),
+					   		cy: yScaleLRG2vQSO(row.SUCCESS_QSO),
+					   		r: highlightRadius,
+					   		fill: highlighterColor1,
+					   		stroke: "black",
+					   		//stroke-width: 0.5,
+						});
+
+				//SN2_G12vSN2_I12
+				//scale
+				var xMin = d3.min([d3.min(dataset.aaData, function(d){return d.DERED_SN2_G1;}), 
+								   d3.min(dataset.aaData, function(d){return d.DERED_SN2_G2;})]);
+				var xMax = d3.max([d3.max(dataset.aaData, function(d){return d.DERED_SN2_G1;}), 
+								  d3.max(dataset.aaData, function(d){return d.DERED_SN2_G2;})]);
+				var yMin = d3.min([d3.min(dataset.aaData, function(d){return d.DERED_SN2_I1;}), 
+								  d3.min(dataset.aaData, function(d){return d.DERED_SN2_I2;})]);
+				var yMax = d3.max([d3.max(dataset.aaData, function(d){return d.DERED_SN2_I1;}), 
+								  d3.max(dataset.aaData, function(d){return d.DERED_SN2_I2;})]);
+
+				var xScaleSN2_G12vSN2_I12 = d3.scale.linear()
+									 .domain([xMin,xMax])
+									 .range([4.5 * padding,w-padding]);
+				var yScaleSN2_G12vSN2_I12 = d3.scale.linear()
+									 .domain([yMin,yMax])
+									 .range([h-(3.5 * padding),padding]);
+
+				d3.select(SN2_G12vSN2_I12).append("circle")
+				  		.attr("class", "highlighter")
+				   		.attr({
+					   		cx: xScaleSN2_G12vSN2_I12(row.DERED_SN2_G2),
+					   		cy: yScaleSN2_G12vSN2_I12(row.DERED_SN2_I2),
+					   		r: highlightRadius,
+					   		fill: highlighterColor1,
+					   		stroke: "black",
+					   		//stroke-width: 0.5,
+						});
+
+				d3.select(SN2_G12vSN2_I12).append("circle")
+				  		.attr("class", "highlighter")
+				   		.attr({
+					   		cx: xScaleSN2_G12vSN2_I12(row.DERED_SN2_G1),
+					   		cy: yScaleSN2_G12vSN2_I12(row.DERED_SN2_I1),
+					   		r: highlightRadius,
+					   		fill: highlighterColor2,
+					   		stroke: "black",
+					   		//stroke-width: 0.5,
+						});
+
+				var w= 400;
+				//RAvDEC
+				//scale
+				var xMin = d3.min(dataset.aaData, function(d){return d.RACEN;});
+				var xMax = d3.max(dataset.aaData, function(d){return d.RACEN;});
+				var yMin = d3.min(dataset.aaData, function(d){return d.DECCEN;});
+				var yMax = d3.max(dataset.aaData, function(d){return d.DECCEN;});
+
+				var xScaleRAvDEC = d3.scale.linear()
+									 .domain([xMin,xMax])
+									 .range([4.5 * padding,w-padding]);
+				var yScaleRAvDEC = d3.scale.linear()
+									 .domain([yMin,yMax])
+									 .range([h-(3.5 * padding),padding]);
+
+				d3.select(RAvDEC).append("circle")
+				  		.attr("class", "highlighter")
+				   		.attr({
+					   		cx: xScaleRAvDEC(row.RACEN),
+					   		cy: yScaleRAvDEC(row.DECCEN),
+					   		r: highlightRadius,
+					   		fill: highlighterColor1,
+					   		stroke: "black",
+					   		//stroke-width: 0.5,
+						});	
+
+		}
+
+	});
+}
+*/
+
+function highlightPlots(identifier){
+	//colors
+	highlighterColor1 = "#fffb00";
+	highlighterColor2 = "#ff00fb";
+
+	highlightRadius = 3;
+
+	var xPosition = parseFloat(d3.select("#LRG1vLRG2").select("#LRG1vLRG2"+"_"+identifier).attr("cx")) ;
+    var yPosition = parseFloat(d3.select("#LRG1vLRG2").select("#LRG1vLRG2"+"_"+identifier).attr("cy")) ;
+	
+	d3.select(LRG1vLRG2).append("circle")
+  		.attr("class", "highlighter")
+   		.attr({
+	   		cx: xPosition,
+	   		cy: yPosition,
+	   		r: highlightRadius,
+	   		fill: highlighterColor1,
+	   		stroke: "black",
+	   		//stroke-width: 0.5,
+		});
+
+	var xPosition = parseFloat(d3.select("#LRG2vQSO").select("#LRG2vQSO"+"_"+identifier).attr("cx")) ;
+    var yPosition = parseFloat(d3.select("#LRG2vQSO").select("#LRG2vQSO"+"_"+identifier).attr("cy")) ;
+	
+	d3.select(LRG2vQSO).append("circle")
+  		.attr("class", "highlighter")
+   		.attr({
+	   		cx: xPosition,
+	   		cy: yPosition,
+	   		r: highlightRadius,
+	   		fill: highlighterColor1,
+	   		stroke: "black",
+	   		//stroke-width: 0.5,
+		});
+
+	var xPosition = parseFloat(d3.select("#SN2_G12vSN2_I12").select("#SN2_G1vSN2_I1_"+identifier).attr("cx")) ;
+    var yPosition = parseFloat(d3.select("#SN2_G12vSN2_I12").select("#SN2_G1vSN2_I1_"+identifier).attr("cy")) ;
+	
+	d3.select(SN2_G12vSN2_I12).append("circle")
+  		.attr("class", "highlighter")
+   		.attr({
+	   		cx: xPosition,
+	   		cy: yPosition,
+	   		r: highlightRadius,
+	   		fill: highlighterColor2,
+	   		stroke: "black",
+	   		//stroke-width: 0.5,
+		});
+
+	var xPosition = parseFloat(d3.select("#SN2_G12vSN2_I12").select("#SN2_G2vSN2_I2_"+identifier).attr("cx")) ;
+    var yPosition = parseFloat(d3.select("#SN2_G12vSN2_I12").select("#SN2_G2vSN2_I2_"+identifier).attr("cy")) ;
+	
+	d3.select(SN2_G12vSN2_I12).append("circle")
+  		.attr("class", "highlighter")
+   		.attr({
+	   		cx: xPosition,
+	   		cy: yPosition,
+	   		r: highlightRadius,
+	   		fill: highlighterColor1,
+	   		stroke: "black",
+	   		//stroke-width: 0.5,
+		});
+
+
+	var xPosition = parseFloat(d3.select("#RAvDEC").select("#RAvDEC"+"_"+identifier).attr("cx")) ;
+    var yPosition = parseFloat(d3.select("#RAvDEC").select("#RAvDEC"+"_"+identifier).attr("cy")) ;
+	
+	d3.select(RAvDEC).append("circle")
+  		.attr("class", "highlighter")
+   		.attr({
+	   		cx: xPosition,
+	   		cy: yPosition,
+	   		r: highlightRadius,
+	   		fill: highlighterColor1,
+	   		stroke: "black",
+	   		//stroke-width: 0.5,
+		});
+
+}
+
+function removePlotPointsWithClass(className){
+	d3.select(LRG1vLRG2).selectAll(className).remove();
+	d3.select(LRG2vQSO).selectAll(className).remove();
+	d3.select(SN2_G12vSN2_I12).selectAll(className).remove();
+	d3.select(SN2_G12vSN2_I12).selectAll(className).remove();
+	d3.select(RAvDEC).selectAll(className).remove();
+}

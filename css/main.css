@@ -86,10 +86,10 @@ table tr.odd {background-color: #ddd;}
 table tr.even {background-color: white;}
 
 
-table tr.odd:hover{
+table tr.odd.hover{
 	background-color: #DDFF75;
 }
-table tr.even:hover{
+table tr.even.hover{
 	background-color: #DDFF75;
 }
 
@@ -190,4 +190,8 @@ table tr.even:hover{
 	font-family: sans-serif;
 	font-size: 16px;
 	line-height: 20px;
+}
+
+.hightlighter{
+	pointer-events: none;
 }
