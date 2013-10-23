@@ -1438,6 +1438,12 @@ function drawData(nNodes, filter, goodColoring, badColoring, SN2_GI1color, SN2_G
 			var nodes = nNodes.sort(function(a, b){ 
 			    			return d3.descending(a.SUCCESS_LRG1, b.SUCCESS_LRG1); 
 			    		})
+			console.log(nodes);
+			var colorScaleMin = d3.min(dataset.aaData, function(d){return d.SUCCESS_LRG1;});
+			var colorScaleMax = d3.max(dataset.aaData, function(d){return d.SUCCESS_LRG1;});
+			var colorScale = d3.scale.linear()
+								 .domain([colorScaleMin,colorScaleMax])
+								 .range([0,255]);
 		//scatter plot
 			d3.select(RAvDEC).selectAll("ellipse")
 			    .data(nodes)
@@ -1462,9 +1468,9 @@ function drawData(nNodes, filter, goodColoring, badColoring, SN2_GI1color, SN2_G
 			   		},
 			   		r: radius,
 			   		fill: function(d){
-			   			if(d.SUCCESS_LRG1<92){
-							return "#ff00f7";
-			   			}
+			   			//console.log(d3.round(colorScale(d.SUCCESS_LRG1)));
+			   			return "rgb("+ (d3.round(colorScale(d.SUCCESS_LRG1))) +","+(d3.round(colorScale(d.SUCCESS_LRG2)))+","+(d3.round(colorScale(d.SUCCESS_QSO)))+")";
+			   			
 			   			/*
 			   			if(d.MJD<55171){
 			   				return greyedOut;
