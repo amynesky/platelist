@@ -43,7 +43,7 @@ $.fn.dataTableExt.oApi.fnPagingInfo = function ( oSettings ){
         	for ( var i=0 ; i<nNodes.length ; i++ ){  /* iterate through and get the PLATE name */
         		//console.log(i + ":" + nNodes[i].PLATE); /* this is just for logging purposes, you probably want to remove */
         	}
-    		manipulateData(nNodes, true, "#00780e", "#ff0000", "#1e00b3", "#ff5900");
+    		addFilteredPlotPoints(nNodes, true, "#00780e", "#ff0000", "#1e00b3", "#ff5900");
     	}
     });
     return {
@@ -225,7 +225,7 @@ if ( typeof $.fn.dataTable == "function" && typeof $.fn.dataTableExt.fnVersionCh
         $(oSettings.nTableWrapper).find('div.dataTables_filter').append(clearSearch);
         $(oSettings.nTableWrapper).find('div.dataTables_filter label').css('margin-right', '-16px');//16px the image width
         $(oSettings.nTableWrapper).find('div.dataTables_filter input').css('padding-right', '16px');
-        $("#project_table_filter").append("<span>  Press enter to filter the plots.</span>");
+        $("#project_table_filter").append("<span>  Press enter to plot filtered results.</span>");
     }
  
     //auto-execute, no code needs to be added
@@ -284,14 +284,14 @@ $(document).ready(function() {
 				oTable = $('#project_table').dataTable( {
 					"sDom": "<'row'<'col-lg-6'f><'col-lg-6'l>r>t<'row'<ip>>",
 					"sPaginationType": "bootstrap",
-					"aaSorting": [[ 1, "desc" ]],
+					"aaSorting": [[ 1, "desc" ]], /*default sort rows by second column in descending order*/
 					"bPaginate": true,
 					"bLengthChange": true, /*records per page drop down*/
 					"bDeferRender": false, /*defers rendering till after.. what?*/ 
 					/* SP 2013-10-07 - I updated this to false, so that it renders the entire
 					 table on load vs only the visible table elements; this is needed to retrieve 
 					 all filtered items, not just the visible filtered items */
-					"sScrollY": "500px",
+					"sScrollY": "340px",
 					"sScrollX": "100%",
 					"sScrollXInner": "275%",
 					"bScrollCollapse": true,
@@ -539,13 +539,10 @@ $(document).ready(function() {
 				$("a.togglelinks").click(function(e) {
 					selectLink(e);
 				});
-
-
 			} )
 		.on({
 		    mouseenter: function () {
 		        trIndex = $(this).index()+1;
-		        //console.log(trIndex);
 		        try{
 		        	var plate = $(this).find('td').eq(0).html();
 		        	var mjd = $(this).find('td').eq(1).html();
@@ -1438,10 +1435,12 @@ function drawData(nNodes, filter, goodColoring, badColoring, SN2_GI1color, SN2_G
 								 .domain([yMin,yMax])
 								 .range([h-(3.5 * padding),padding]);
 
-						
+			var nodes = nNodes.sort(function(a, b){ 
+			    			return d3.descending(a.SUCCESS_LRG1, b.SUCCESS_LRG1); 
+			    		})
 		//scatter plot
 			d3.select(RAvDEC).selectAll("ellipse")
-			    .data(nNodes)
+			    .data(nodes)
 			    .enter()
 			    .append("circle")
 			    .attr("id", function(d) {return "RAvDEC_"+d.PLATE+"_"+d.MJD;})
@@ -1463,6 +1462,10 @@ function drawData(nNodes, filter, goodColoring, badColoring, SN2_GI1color, SN2_G
 			   		},
 			   		r: radius,
 			   		fill: function(d){
+			   			if(d.SUCCESS_LRG1<92){
+							return "#ff00f7";
+			   			}
+			   			/*
 			   			if(d.MJD<55171){
 			   				return greyedOut;
 			   			}else{
@@ -1473,6 +1476,7 @@ function drawData(nNodes, filter, goodColoring, badColoring, SN2_GI1color, SN2_G
 			   					return badColoring;
 			   				}
 			   			}
+			   			*/
 			   		}
 				})
 			   .on("mouseover", function(d) {
@@ -1561,111 +1565,113 @@ function drawData(nNodes, filter, goodColoring, badColoring, SN2_GI1color, SN2_G
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
-function manipulateData(nNodes, filter, goodColoring, badColoring, SN2_GI1color, SN2_GI2color){
+function changeExistingPlotPointColors(nNodes, gray, goodColoring, badColoring, SN2_GI1color, SN2_GI2color){
 	if(typeof(badColoring) === "undefined"){badColoring = "#f76060";}
 	if(typeof(SN2_GI1color) === "undefined"){SN2_GI1color = "#5c69ff";}
 	if(typeof(SN2_GI2color) === "undefined"){SN2_GI2color = "#ffa85c";}
 	greyedOut = "#c4c4c4";
+	if(gray){
+		d3.select(LRG1vLRG2).selectAll("circle")	      
+			.attr({
+					fill: greyedOut
+			  });
+		d3.select(LRG2vQSO).selectAll("circle")	      
+			.attr({
+					fill: greyedOut
+			  });
+		d3.select(SN2_G12vSN2_I12).selectAll("circle")	      
+			.attr({
+					fill: greyedOut
+			  });
+		d3.select(RAvDEC).selectAll("circle")	      
+			.attr({
+					fill: greyedOut
+			  });
+	}else{
 
-	for (var d = 0; d < nNodes.length; d++) {
-
-	//d3.select("#LRG1vLRG2").select("#LRG1vLRG2"+"_"+nNodes[d].PLATE+"_"+nNodes[d].MJD).remove();
-	//d3.select("#LRG2vQSO").select("#LRG2vQSO"+"_"+nNodes[d].PLATE+"_"+nNodes[d].MJD).remove();
-	//d3.select("#SN2_G12vSN2_I12").select("#SN2_G1vSN2_I1_"+nNodes[d].PLATE+"_"+nNodes[d].MJD).remove();
-	//d3.select("#SN2_G12vSN2_I12").select("#SN2_G2vSN2_I2_"+nNodes[d].PLATE+"_"+nNodes[d].MJD).remove();
-	//d3.select("#RAvDEC").select("#RAvDEC"+"_"+nNodes[d].PLATE+"_"+nNodes[d].MJD).remove();
-	/*
-		d3.select("#LRG1vLRG2")
-		  .select("#LRG1vLRG2"+"_"+nNodes[d].PLATE+"_"+nNodes[d].MJD)
-		  .attr("class", function() {
-	    	  if(filter){
-	    	  	return "filter";
-	    	  };
-	      })
-	      .attr({
-			  fill: function(){
-				  if(nNodes[d].MJD<55171){
-					  return greyedOut;
-				  }else{
-					  if(nNodes[d].PLATEQUALITY=="good"){
-						  return goodColoring;
-					  }
-					  else{
-						  return badColoring;
-					  }
-				  }
-			  }
-		  });
-
-		d3.select("#LRG2vQSO")
-		  .select("#LRG2vQSO"+"_"+nNodes[d].PLATE+"_"+nNodes[d].MJD)
-		  .attr("class", function() {
-	    	  if(filter){
-	    	  	return "filter";
-	    	  };
-	      })
-	      .attr({
-			  fill: function(){
-				  if(nNodes[d].MJD<55171){
-					  return greyedOut;
-				  }else{
-					  if(nNodes[d].PLATEQUALITY=="good"){
-						  return goodColoring;
-					  }
-					  else{
-						  return badColoring;
+		for (var d = 0; d < nNodes.length; d++) {
+			d3.select("#LRG1vLRG2")
+			  .select("#LRG1vLRG2"+"_"+nNodes[d].PLATE+"_"+nNodes[d].MJD)
+		      .attr({
+				  fill: function(){
+					  if(nNodes[d].MJD<55171){
+						  return greyedOut;
+					  }else{
+						  if(nNodes[d].PLATEQUALITY=="good"){
+							  return goodColoring;
+						  }
+						  else{
+							  return badColoring;
+						  }
 					  }
 				  }
-			  }
-		  });
+			  });
 
-		d3.select("#SN2_G12vSN2_I12")
-		  .select("#SN2_G12vSN2_I12_"+nNodes[d].PLATE+"_"+nNodes[d].MJD)
-		  .attr("class", function() {
-	    	  if(filter){
-	    	  	return "filter";
-	    	  };
-	      })
-	      .attr({
-				fill: SN2_GI1color
-		  });
-
-		d3.select("#SN2_G12vSN2_I12")
-		  .select("#ellipse_SN2_G12vSN2_I12_"+nNodes[d].PLATE+"_"+nNodes[d].MJD)
-		  .attr("class", function() {
-	    	  if(filter){
-	    	  	return "filter";
-	    	  };
-	      })
-	      .attr({
-				fill: SN2_GI2color
-		  });
-
-		d3.select("#RAvDEC")
-		  .select("#RAvDEC"+"_"+nNodes[d].PLATE+"_"+nNodes[d].MJD)
-		  .attr("class", function() {
-	    	  if(filter){
-	    	  	return "filter";
-	    	  };
-	      })
-	      .attr({
-			  fill: function(){
-				  if(nNodes[d].MJD<55171){
-					  return greyedOut;
-				  }else{
-					  if(nNodes[d].PLATEQUALITY=="good"){
-						  return goodColoring;
-					  }
-					  else{
-						  return badColoring;
+			d3.select("#LRG2vQSO")
+			  .select("#LRG2vQSO"+"_"+nNodes[d].PLATE+"_"+nNodes[d].MJD)
+		      .attr({
+				  fill: function(){
+					  if(nNodes[d].MJD<55171){
+						  return greyedOut;
+					  }else{
+						  if(nNodes[d].PLATEQUALITY=="good"){
+							  return goodColoring;
+						  }
+						  else{
+							  return badColoring;
+						  }
 					  }
 				  }
-			  }
-		  });
-	*/
+			  });
 
+			d3.select("#SN2_G12vSN2_I12")
+			  .select("#SN2_G12vSN2_I12_"+nNodes[d].PLATE+"_"+nNodes[d].MJD)
+		      .attr({
+					fill: SN2_GI1color
+			  });
+
+			d3.select("#SN2_G12vSN2_I12")
+			  .select("#ellipse_SN2_G12vSN2_I12_"+nNodes[d].PLATE+"_"+nNodes[d].MJD)
+		      .attr({
+					fill: SN2_GI2color
+			  });
+
+			d3.select("#RAvDEC")
+			  .select("#RAvDEC"+"_"+nNodes[d].PLATE+"_"+nNodes[d].MJD)
+		      .attr({
+				  fill: function(){
+					  if(nNodes[d].MJD<55171){
+						  return greyedOut;
+					  }else{
+						  if(nNodes[d].PLATEQUALITY=="good"){
+							  return goodColoring;
+						  }
+						  else{
+							  return badColoring;
+						  }
+					  }
+				  }
+			  });
+		}
   	}
+}
+
+function addFilteredPlotPoints(nNodes, filter, goodColoring, badColoring, SN2_GI1color, SN2_GI2color){
+	if(typeof(badColoring) === "undefined"){badColoring = "#f76060";}
+	if(typeof(SN2_GI1color) === "undefined"){SN2_GI1color = "#5c69ff";}
+	if(typeof(SN2_GI2color) === "undefined"){SN2_GI2color = "#ffa85c";}
+	greyedOut = "#c4c4c4";
+	/*
+	var dataset;
+	d3.json("data/platelist.json", function(error, json){
+		if(error){
+			console.log(error);
+		}else{
+			dataset = json;
+			changeExistingPlotPointColors(dataset.aaData, true);
+		}
+	});
+	*/
   	drawData(nNodes, filter, goodColoring, badColoring, SN2_GI1color, SN2_GI2color);
 
 }
