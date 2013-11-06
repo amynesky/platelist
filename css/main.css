@@ -195,3 +195,10 @@ table tr.even.hover{
 .hightlighter{
 	pointer-events: none;
 }
+
+
+
+.overlay {
+  fill: none;
+  pointer-events: all;
+}

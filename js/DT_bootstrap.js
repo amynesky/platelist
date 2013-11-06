@@ -1,5 +1,4 @@
 /* Set the defaults for DataTables initialisation */
-
 $.extend( true, $.fn.dataTable.defaults, {
 	"sDom": "<'row'<'col-lg-6'l><'col-lg-6'f>r>t<'row'<'col-lg-6'i><'col-lg-6'p>>",
 	"sPaginationType": "bootstrap",
@@ -27,23 +26,27 @@ $.fn.dataTableExt.oApi.fnPagingInfo = function ( oSettings ){
    		if ($(this).val().length < 3 && e.keyCode != 13) {return;}	
        	else{
         	oTable.fnFilter($(this).val()); 
-
-        	/*
-        	d3.select(LRG2vQSO).selectAll("circle").attr("fill", "#b3b3b3")
-        	d3.select(SN2_G12vSN2_I12).selectAll("circle").attr("fill", "#b3b3b3")
-        	d3.select(SN2_G12vSN2_I12).selectAll("ellipse").attr("fill", "#b3b3b3")
-        	d3.select(RAvDEC).selectAll("circle").attr("fill", "#b3b3b3")
-			*/
-        
     	}
     	if(e.keyCode == 13) {
     		filteredPlots = true;
-    		/* SP 2013-10-07 - this is a hook to retrieve the nodes that are filters */ 
+    		/* this is a hook to retrieve the nodes that are filters */ 
         	nNodes = oTable._('tr', {"filter":"applied"}); /* get all the filtered table rows */
-        	for ( var i=0 ; i<nNodes.length ; i++ ){  /* iterate through and get the PLATE name */
-        		//console.log(i + ":" + nNodes[i].PLATE); /* this is just for logging purposes, you probably want to remove */
-        	}
     		addFilteredPlotPoints(nNodes, true, "#00780e", "#ff0000", "#1e00b3", "#ff5900");
+    				/*
+    				var w = $(window);
+    				var row = $('table').find('tr')
+        							.removeClass('hover')
+       								 .eq( +$('#project_table_filter input').val())
+        							.addClass(function(){
+        								console.log("hi");
+        								return 'hover';
+        							});
+    
+    				if (row.length){
+    					console.log("should move window");
+        				w.scrollTop( row.offset().top - (w.height()/2) );
+    				}
+    				*/
     	}
     });
     return {
@@ -57,12 +60,6 @@ $.fn.dataTableExt.oApi.fnPagingInfo = function ( oSettings ){
 		"iTotalPages":    oSettings._iDisplayLength === -1 ?
 			0 : Math.ceil( oSettings.fnRecordsDisplay() / oSettings._iDisplayLength )
 	};
-
-        /*
-        "iPage":          Math.ceil( oSettings._iDisplayStart / oSettings._iDisplayLength ),
-        "iTotalPages":    Math.ceil( oSettings.fnRecordsDisplay() / oSettings._iDisplayLength )
-    };
-    */
 }
 
 /* pagination control */
@@ -196,7 +193,6 @@ $.fn.dataTableExt.oApi.fnGetTd  = function ( oSettings, iTd ){
 
 function getVisibleIndexofColumn(index){
 	var nTd = oTable.fnGetTd( index );
-	//console.log( nTd );
 	return nTd;
 }
 
@@ -238,6 +234,22 @@ if ( typeof $.fn.dataTable == "function" && typeof $.fn.dataTableExt.fnVersionCh
 
 /* Table initialisation */
 var oTable;
+var dataset;
+
+/*plot width, height and padding*/
+var w = 200;
+var RAvDECwidth = 400;
+var h = 200;
+var padding = 10;
+/*plot scales*/
+var xScaleLRG1vLRG2;
+var yScaleLRG1vLRG2;
+var xScaleLRG2vQSO;
+var yScaleLRG2vQSO;
+var xScaleSN2_G12vSN2_I12;
+var yScaleSN2_G12vSN2_I12;
+var xScaleRAvDEC;
+var yScaleRAvDEC;
 
 
 function fnShowHide( iCol ){
@@ -287,10 +299,10 @@ $(document).ready(function() {
 					"aaSorting": [[ 1, "desc" ]], /*default sort rows by second column in descending order*/
 					"bPaginate": true,
 					"bLengthChange": true, /*records per page drop down*/
-					"bDeferRender": false, /*defers rendering till after.. what?*/ 
-					/* SP 2013-10-07 - I updated this to false, so that it renders the entire
-					 table on load vs only the visible table elements; this is needed to retrieve 
-					 all filtered items, not just the visible filtered items */
+					"bDeferRender": false, 
+					/* false, so that it renders the entire table on load vs only 
+					   the visible table elements; this is needed to retrieve 
+					    all filtered items, not just the visible filtered items */
 					"sScrollY": "340px",
 					"sScrollX": "100%",
 					"sScrollXInner": "275%",
@@ -523,24 +535,84 @@ $(document).ready(function() {
 				} );
 				
 				/*Adding plots*/
-				var dataset;
 				d3.json("data/platelist.json", function(error, json){
 					if(error){
 						console.log(error);
 					}else{
 						dataset = json;
-						//console.log(dataset);
+						//%LRG1v%LRG2
+						//scale
+						var xMin = d3.min(dataset.aaData, function(d){return d.SUCCESS_LRG1;});
+						var xMax = d3.max(dataset.aaData, function(d){return d.SUCCESS_LRG1;});
+						var yMin = d3.min(dataset.aaData, function(d){return d.SUCCESS_LRG2;});
+						var yMax = d3.max(dataset.aaData, function(d){return d.SUCCESS_LRG2;});
+
+						xScaleLRG1vLRG2 = d3.scale.linear()
+											 .domain([xMin,xMax])
+											 .range([4.5 * padding,w-padding]);
+						yScaleLRG1vLRG2 = d3.scale.linear()
+											 .domain([yMin,yMax])
+											 .range([h-(3.5 * padding),padding]);
+
+						//%LRG2vQSO			
+						xMin = d3.min(dataset.aaData, function(d){return d.SUCCESS_LRG2;});
+						xMax = d3.max(dataset.aaData, function(d){return d.SUCCESS_LRG2;});
+						yMin = d3.min(dataset.aaData, function(d){return d.SUCCESS_QSO;});
+						yMax = d3.max(dataset.aaData, function(d){return d.SUCCESS_QSO;});
+
+						xScaleLRG2vQSO = d3.scale.linear()
+											 .domain([xMin,xMax])
+											 .range([4.5 * padding,w-padding]);
+						yScaleLRG2vQSO = d3.scale.linear()
+											 .domain([yMin,yMax])
+											 .range([h-(3.5 * padding),padding]);
+
+						//SN2_G12vSN2_I12
+						//scale
+						xMin = d3.min([d3.min(dataset.aaData, function(d){return d.DERED_SN2_G1;}), 
+										   d3.min(dataset.aaData, function(d){return d.DERED_SN2_G2;})]);
+						xMax = d3.max([d3.max(dataset.aaData, function(d){return d.DERED_SN2_G1;}), 
+										  d3.max(dataset.aaData, function(d){return d.DERED_SN2_G2;})]);
+						yMin = d3.min([d3.min(dataset.aaData, function(d){return d.DERED_SN2_I1;}), 
+										  d3.min(dataset.aaData, function(d){return d.DERED_SN2_I2;})]);
+						yMax = d3.max([d3.max(dataset.aaData, function(d){return d.DERED_SN2_I1;}), 
+										  d3.max(dataset.aaData, function(d){return d.DERED_SN2_I2;})]);
+
+						xScaleSN2_G12vSN2_I12 = d3.scale.linear()
+											 .domain([xMin,xMax])
+											 .range([4.5 * padding,w-padding]);
+						yScaleSN2_G12vSN2_I12 = d3.scale.linear()
+											 .domain([yMin,yMax])
+											 .range([h-(3.5 * padding),padding]);
+
+						
+						//RAvDEC
+						//scale
+						xMin = d3.min(dataset.aaData, function(d){return d.RACEN;});
+						xMax = d3.max(dataset.aaData, function(d){return d.RACEN;});
+						yMin = d3.min(dataset.aaData, function(d){return d.DECCEN;});
+						yMax = d3.max(dataset.aaData, function(d){return d.DECCEN;});
+
+						xScaleRAvDEC = d3.scale.linear()
+											 .domain([xMin,xMax])
+											 .range([4.5 * padding,RAvDECwidth-padding]);
+						yScaleRAvDEC = d3.scale.linear()
+											 .domain([yMin,yMax])
+											 .range([h-(3.5 * padding),padding]);
+
 						createSVGs();
-						drawAxes(dataset);
-						drawData(dataset.aaData, false);	
+						drawAxes();
+						drawData(dataset.aaData);	
 					}
+											
+
 				});
 
 				$("a.togglelinks").click(function(e) {
 					selectLink(e);
 				});
 			} )
-		.on({
+		.on({ /*hovering over table row highlights row and plot points*/
 		    mouseenter: function () {
 		        trIndex = $(this).index()+1;
 		        try{
@@ -550,7 +622,6 @@ $(document).ready(function() {
 		        	highlightPlots(identifier);
 		   		}catch(err){};
 		        $("table.dataTable").each(function(index) {
-		        	//console.log($(this).find("tr:eq("+trIndex+")"));
 		            $(this).find("tr:eq("+trIndex+")").addClass("hover") 
 		        });
 		    },
@@ -571,21 +642,20 @@ $(document).ready(function() {
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-function createSVGs(){
-	//Width and height
-	var w = 200;
-	var h = 200;
-	var padding = 10;
 
+
+function createSVGs(){
 	//Create SVG element for %LRG1v%LRG2
 	var LRG1vLRG2 = d3.select("#plots")
 					.append("svg")
+					.attr("class", "plot")
+					.attr("id", "LRG1vLRG2")
 					.attr({
 						width: w,
 						height: h,
-					})
-					.attr("class", "plot")
-					.attr("id", "LRG1vLRG2");
+					});  
+
+
 	//Create SVG element for %LRG2v%QSO
     var LRG2vQSO = d3.select("#plots")
 			.append("svg")
@@ -607,11 +677,10 @@ function createSVGs(){
 			.attr("id", "SN2_G12vSN2_I12");
 
 	//Create SVG element for RAvDEC
-	var w= 400;
     var RAvDEC = d3.select("#plots")
 			.append("svg")
 			.attr({
-				width: w,
+				width: RAvDECwidth,
 				height: h,
 			})
 			.attr("class", "plot")
@@ -626,32 +695,15 @@ function createSVGs(){
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-function drawAxes(dataset){
-	//Width and height
-	var w = 200;
-	var h = 200;
-	var padding = 10;
-
+function drawAxes(){
 	//%LRG1v%LRG2
-	//scale
-	var xMin = d3.min(dataset.aaData, function(d){return d.SUCCESS_LRG1;});
-	var xMax = d3.max(dataset.aaData, function(d){return d.SUCCESS_LRG1;});
-	var yMin = d3.min(dataset.aaData, function(d){return d.SUCCESS_LRG2;});
-	var yMax = d3.max(dataset.aaData, function(d){return d.SUCCESS_LRG2;});
-
-	var xScaleLRG1vLRG2 = d3.scale.linear()
-						 .domain([xMin,xMax])
-						 .range([4.5 * padding,w-padding]);
-	var yScaleLRG1vLRG2 = d3.scale.linear()
-						 .domain([yMin,yMax])
-						 .range([h-(3.5 * padding),padding]);
 	var xAxis= d3.svg.axis()
 					 .scale(xScaleLRG1vLRG2)
 					 .orient("bottom");
 	var yAxis= d3.svg.axis()
 				 .scale(yScaleLRG1vLRG2)
 				 .orient("left");
-	/*axis*/
+	/*axes*/
 	d3.select(LRG1vLRG2).append("g")
 	   .attr({
 	   		class: "axis",
@@ -691,25 +743,14 @@ function drawAxes(dataset){
 	   .attr("fill", "black");
 
 	//%LRG2vQSO
-	//scale
-	var xMin = d3.min(dataset.aaData, function(d){return d.SUCCESS_LRG2;});
-	var xMax = d3.max(dataset.aaData, function(d){return d.SUCCESS_LRG2;});
-	var yMin = d3.min(dataset.aaData, function(d){return d.SUCCESS_QSO;});
-	var yMax = d3.max(dataset.aaData, function(d){return d.SUCCESS_QSO;});
 
-	var xScaleLRG2vQSO = d3.scale.linear()
-						 .domain([xMin,xMax])
-						 .range([4.5 * padding,w-padding]);
-	var yScaleLRG2vQSO = d3.scale.linear()
-						 .domain([yMin,yMax])
-						 .range([h-(3.5 * padding),padding]);
 	var xAxis= d3.svg.axis()
 					 .scale(xScaleLRG2vQSO)
 					 .orient("bottom");
 	var yAxis= d3.svg.axis()
 				 .scale(yScaleLRG2vQSO)
 				 .orient("left");
-	/*axis*/
+	/*axes*/
 	d3.select(LRG2vQSO).append("g")
 	   .attr({
 	   		class: "axis",
@@ -747,23 +788,8 @@ function drawAxes(dataset){
 	   .attr("font-family", "sans-serif")
 	   .attr("font-size", "11px")
 	   .attr("fill", "black");
-	//SN2_G12vSN2_I12
-	//scale
-	var xMin = d3.min([d3.min(dataset.aaData, function(d){return d.DERED_SN2_G1;}), 
-					   d3.min(dataset.aaData, function(d){return d.DERED_SN2_G2;})]);
-	var xMax = d3.max([d3.max(dataset.aaData, function(d){return d.DERED_SN2_G1;}), 
-					  d3.max(dataset.aaData, function(d){return d.DERED_SN2_G2;})]);
-	var yMin = d3.min([d3.min(dataset.aaData, function(d){return d.DERED_SN2_I1;}), 
-					  d3.min(dataset.aaData, function(d){return d.DERED_SN2_I2;})]);
-	var yMax = d3.max([d3.max(dataset.aaData, function(d){return d.DERED_SN2_I1;}), 
-					  d3.max(dataset.aaData, function(d){return d.DERED_SN2_I2;})]);
 
-	var xScaleSN2_G12vSN2_I12 = d3.scale.linear()
-						 .domain([xMin,xMax])
-						 .range([4.5 * padding,w-padding]);
-	var yScaleSN2_G12vSN2_I12 = d3.scale.linear()
-						 .domain([yMin,yMax])
-						 .range([h-(3.5 * padding),padding]);
+	//SN2_G12vSN2_I12
 	var xAxis= d3.svg.axis()
 					 .scale(xScaleSN2_G12vSN2_I12)
 					 .orient("bottom");
@@ -831,27 +857,14 @@ function drawAxes(dataset){
 	   .attr("font-size", "11px")
 	   .attr("fill", "#ff6600");
 
-	var w= 400;
 	//RAvDEC
-	//scale
-	var xMin = d3.min(dataset.aaData, function(d){return d.RACEN;});
-	var xMax = d3.max(dataset.aaData, function(d){return d.RACEN;});
-	var yMin = d3.min(dataset.aaData, function(d){return d.DECCEN;});
-	var yMax = d3.max(dataset.aaData, function(d){return d.DECCEN;});
-
-	var xScaleRAvDEC = d3.scale.linear()
-						 .domain([xMin,xMax])
-						 .range([4.5 * padding,w-padding]);
-	var yScaleRAvDEC = d3.scale.linear()
-						 .domain([yMin,yMax])
-						 .range([h-(3.5 * padding),padding]);
 	var xAxis= d3.svg.axis()
 					 .scale(xScaleRAvDEC)
 					 .orient("bottom");
 	var yAxis= d3.svg.axis()
 				 .scale(yScaleRAvDEC)
 				 .orient("left");
-	/*axis*/
+	/*axes*/
 	d3.select(RAvDEC).append("g")
 	   .attr({
 	   		class: "axis",
@@ -870,7 +883,7 @@ function drawAxes(dataset){
 	d3.select(RAvDEC).append("text")
 	   .attr("class", "x label")
 	   .attr("text-anchor", "middle")
-	   .attr("x", w /2 )
+	   .attr("x", RAvDECwidth /2 )
 	   .attr("y", h - 6)
 	   .text("RA")
 	   .attr("font-family", "sans-serif")
@@ -902,669 +915,586 @@ function drawAxes(dataset){
 
 
 function drawData(nNodes, filter, goodColoring, badColoring, SN2_GI1color, SN2_GI2color , radius){
-	var dataset;
-	d3.json("data/platelist.json", function(error, json){
-		if(error){
-			console.log(error);
-		}else{
-			//Width and height
-			var w = 200;
-			var h = 200;
-			var padding = 10;
+	//colors
+	if(typeof(goodColoring) === "undefined"){ goodColoring = "#5cba57";}
+	if(typeof(badColoring) === "undefined"){badColoring = "#f76060";}
+	if(typeof(SN2_GI1color) === "undefined"){SN2_GI1color = "#5c69ff";}
+	if(typeof(SN2_GI2color) === "undefined"){SN2_GI2color = "#ffa85c";}
+	greyedOut = "#c4c4c4";
+	highlighterColor1 = "#fffb00"; /*yellow*/
+	highlighterColor2 = "#ff00fb"; /*purple*/
 
-			//colors
-			if(typeof(goodColoring) === "undefined"){ goodColoring = "#5cba57";}
-			if(typeof(badColoring) === "undefined"){badColoring = "#f76060";}
-			if(typeof(SN2_GI1color) === "undefined"){SN2_GI1color = "#5c69ff";}
-			if(typeof(SN2_GI2color) === "undefined"){SN2_GI2color = "#ffa85c";}
-			greyedOut = "#c4c4c4";
-			highlighterColor1 = "#fffb00";
-			highlighterColor2 = "#ff00fb";
+	if(typeof(filter) === "undefined"){filter = false;}
 
-			if(typeof(radius) === "undefined"){radius = 2;}
-			highlightRadius = radius + 1;
+	if(typeof(radius) === "undefined"){radius = 2;}
+	highlightRadius = radius + 1;
 
-			dataset = json;
-			//console.log(nNodes);
-			//LRG1vLRG2
-			//scale
-			var xMin = d3.min(dataset.aaData, function(d){return d.SUCCESS_LRG1;});
-			var xMax = d3.max(dataset.aaData, function(d){return d.SUCCESS_LRG1;});
-			var yMin = d3.min(dataset.aaData, function(d){return d.SUCCESS_LRG2;});
-			var yMax = d3.max(dataset.aaData, function(d){return d.SUCCESS_LRG2;});
+	//LRG1vLRG2
+	d3.select(LRG1vLRG2).selectAll("ellipse")
+	    .data(nNodes)
+	    .enter()
+	    .append("circle")
+	    .attr("id", function(d) {return "LRG1vLRG2_"+d.PLATE+"_"+d.MJD;})
+	    .attr("class", function() {
+	  		if(filter){
+	  			return "filter";
+	  		};
+  		})
+	    .attr({
+	   		cx: function(d) {
+	   			var x= xScaleLRG1vLRG2(d.SUCCESS_LRG1); 
+	   			return x;
+	   		},
+	   		cy: function(d) {				   			
+	   			var y= yScaleLRG1vLRG2(d.SUCCESS_LRG2); 
+	   			return y;
+	   		},
+	   		r: radius,
+	   		fill: function(d){
+	   			//if(d.MJD<55171){
+	   				//return greyedOut;
+	   		//	}else{
+	   				if(d.PLATEQUALITY=="good"){
+	   					return goodColoring;
+	   				}
+	   				else{
+	   					return badColoring;
+	   				}
+	   			//}
+	   		},
+		})
+	   .on("mouseover", function(d) {
+			//Update the tooltip value
+			d3.select("#tooltip")						
+				.select("#tooltipLine1")
+				.text("Plate: " + d.PLATE);
 
-			var xScaleLRG1vLRG2 = d3.scale.linear()
-								 .domain([xMin,xMax])
-								 .range([4.5 * padding,w - padding]);
-			var yScaleLRG1vLRG2 = d3.scale.linear()
-								 .domain([yMin,yMax])
-								 .range([h-(3.5 * padding),padding]);
-						
-			//scatter plot
-			d3.select(LRG1vLRG2).selectAll("ellipse")
-			    .data(nNodes)
-			    .enter()
-			    .append("circle")
-			    .attr("id", function(d) {return "LRG1vLRG2_"+d.PLATE+"_"+d.MJD;})
-			    .attr("class", function() {
-	    	  		if(filter){
-	    	  			return "filter";
-	    	  		};
-	      		})
-			    .attr({
-			   		cx: function(d) {
-			   			var x= xScaleLRG1vLRG2(d.SUCCESS_LRG1); 
-			   			//console.log("x = "+ x);
-			   			return x;
-			   		},
-			   		cy: function(d) {				   			
-			   			var y= yScaleLRG1vLRG2(d.SUCCESS_LRG2); 
-			   			//console.log("y = "+ y); 
-			   			return y;
-			   		},
-			   		r: radius,
-			   		fill: function(d){
-			   			if(d.MJD<55171){
-			   				return greyedOut;
-			   			}else{
-			   				if(d.PLATEQUALITY=="good"){
-			   					return goodColoring;
-			   				}
-			   				else{
-			   					return badColoring;
-			   				}
-			   			}
-			   		},
-				})
-			   .on("mouseover", function(d) {
-					//Update the tooltip value
-					d3.select("#tooltip")						
-						.select("#tooltipLine1")
-						.text("Plate: " + d.PLATE);
+			d3.select("#tooltip")					
+				.select("#tooltipLine2")
+				.text(", MJD: " + d.MJD);
 
-					d3.select("#tooltip")					
-						.select("#tooltipLine2")
-						.text(", MJD: " + d.MJD);
+			//draw highlighter dots
+			d3.select(LRG2vQSO).append("circle")
+			  		.attr("class", "highlighter")
+			   		.attr({
+				   		cx: xScaleLRG2vQSO(d.SUCCESS_LRG2),
+				   		cy: yScaleLRG2vQSO(d.SUCCESS_QSO),
+				   		r: highlightRadius,
+				   		fill: highlighterColor1,
+				   		stroke: "black",
+					});
+			d3.select(RAvDEC).append("circle")
+			  		.attr("class", "highlighter")
+			   		.attr({
+				   		cx: xScaleRAvDEC(d.RACEN),
+				   		cy: yScaleRAvDEC(d.DECCEN),
+				   		r: highlightRadius,
+				   		fill: highlighterColor1,
+				   		stroke: "black",
+					});
 
-					//draw highlighter dots
-					
-						d3.select(LRG2vQSO).append("circle")
-						  		.attr("class", "highlighter")
-						   		.attr({
-							   		cx: xScaleLRG2vQSO(d.SUCCESS_LRG2),
-							   		cy: yScaleLRG2vQSO(d.SUCCESS_QSO),
-							   		r: highlightRadius,
-							   		fill: highlighterColor1,
-							   		stroke: "black",
-							   		//stroke-width: 0.5,
-								});
-						d3.select(RAvDEC).append("circle")
-						  		.attr("class", "highlighter")
-						   		.attr({
-							   		cx: xScaleRAvDEC(d.RACEN),
-							   		cy: yScaleRAvDEC(d.DECCEN),
-							   		r: highlightRadius,
-							   		fill: highlighterColor1,
-							   		stroke: "black",
-							   		//stroke-width: 0.5,
-								});
+			d3.select(SN2_G12vSN2_I12).append("circle")
+			  		.attr("class", "highlighter")
+			   		.attr({
+				   		cx: xScaleSN2_G12vSN2_I12(d.DERED_SN2_G2),
+				   		cy: yScaleSN2_G12vSN2_I12(d.DERED_SN2_I2),
+				   		r: highlightRadius,
+				   		fill: highlighterColor1,
+				   		stroke: "black",
+					});
 
-						d3.select(SN2_G12vSN2_I12).append("circle")
-						  		.attr("class", "highlighter")
-						   		.attr({
-							   		cx: xScaleSN2_G12vSN2_I12(d.DERED_SN2_G2),
-							   		cy: yScaleSN2_G12vSN2_I12(d.DERED_SN2_I2),
-							   		r: highlightRadius,
-							   		fill: highlighterColor1,
-							   		stroke: "black",
-							   		//stroke-width: 0.5,
-								});
+			d3.select(SN2_G12vSN2_I12).append("circle")
+			  		.attr("class", "highlighter")
+			   		.attr({
+				   		cx: xScaleSN2_G12vSN2_I12(d.DERED_SN2_G1),
+				   		cy: yScaleSN2_G12vSN2_I12(d.DERED_SN2_I1),
+				   		r: highlightRadius,
+				   		fill: highlighterColor2,
+				   		stroke: "black",
+					});
 
-						d3.select(SN2_G12vSN2_I12).append("circle")
-						  		.attr("class", "highlighter")
-						   		.attr({
-							   		cx: xScaleSN2_G12vSN2_I12(d.DERED_SN2_G1),
-							   		cy: yScaleSN2_G12vSN2_I12(d.DERED_SN2_I1),
-							   		r: highlightRadius,
-							   		fill: highlighterColor2,
-							   		stroke: "black",
-							   		//stroke-width: 0.5,
-								});
-					
-					//console.log(d);
-					//highlightPlots(d);
+	   })
+	   .on("click", function(d) {
+			d3.select("#tooltip")				
+				.select("#selectedTooltipLine1")
+				.text(" Plate: " + d.PLATE)
 
-			   })
-			   .on("click", function(d) {
-					d3.select("#tooltip")				
-						.select("#selectedTooltipLine1")
-						.text(" Plate: " + d.PLATE)
-
-					d3.select("#tooltip")					
-						.select("#selectedTooltipLine2")
-						.text(", MJD: " + d.MJD);
-					
-			   })
-			   .on("mouseout", function() {
-					removePlotPointsWithClass(".highlighter");
-					
-			   });
+			d3.select("#tooltip")					
+				.select("#selectedTooltipLine2")
+				.text(", MJD: " + d.MJD);
+	   })
+	   .on("mouseout", function() {
+			removePlotPointsWithClass(".highlighter");
 			
+	   });
+	
 
 
-		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-			//LRG2vQSO
-			//scale
-			var xMin = d3.min(dataset.aaData, function(d){return d.SUCCESS_LRG2;});
-			var xMax = d3.max(dataset.aaData, function(d){return d.SUCCESS_LRG2;});
-			var yMin = d3.min(dataset.aaData, function(d){return d.SUCCESS_QSO;});
-			var yMax = d3.max(dataset.aaData, function(d){return d.SUCCESS_QSO;});
+	//LRG2vQSO
+	d3.select(LRG2vQSO).selectAll("ellipse")
+	    .data(nNodes)
+	    .enter()
+	    .append("circle")
+	    .attr("id", function(d) {return "LRG2vQSO_"+d.PLATE+"_"+d.MJD;})
+	    .attr("class", function() {
+	  		if(filter){
+	  			return "filter";
+	  		};
+  		})
+	    .attr({
+	   		cx: function(d) {
+	   			var x= xScaleLRG2vQSO(d.SUCCESS_LRG2); 
+	   			return x;
+	   		},
+	   		cy: function(d) {				   			
+	   			var y= yScaleLRG2vQSO(d.SUCCESS_QSO); 
+	   			return y;
+	   		},
+	   		r: radius,
+			fill: function(d){
+	   			//if(d.MJD<55171){
+	   				//return greyedOut;
+	   			//}else{
+	   				if(d.PLATEQUALITY=="good"){
+	   					return goodColoring;
+	   				}
+	   				else{
+	   					return badColoring;
+	   				}
+	   			//}
+	   		},
+		})
+	   .on("mouseover", function(d) {
 
-			var xScaleLRG2vQSO = d3.scale.linear()
-								 .domain([xMin,xMax])
-								 .range([4.5 * padding,w-padding]);
-			var yScaleLRG2vQSO = d3.scale.linear()
-								 .domain([yMin,yMax])
-								 .range([h-(3.5 * padding),padding]);
+			//Update the tooltip value
+			d3.select("#tooltip")					
+				.select("#tooltipLine1")
+				.text("Plate: " + d.PLATE)
 
-						
-		//scatter plot
-			d3.select(LRG2vQSO).selectAll("ellipse")
-			    .data(nNodes)
-			    .enter()
-			    .append("circle")
-			    .attr("id", function(d) {return "LRG2vQSO_"+d.PLATE+"_"+d.MJD;})
-			    .attr("class", function() {
-	    	  		if(filter){
-	    	  			return "filter";
-	    	  		};
-	      		})
-			    .attr({
-			   		cx: function(d) {
-			   			var x= xScaleLRG2vQSO(d.SUCCESS_LRG2); 
-			   			//console.log("x ="+x);
-			   			return x;
-			   		},
-			   		cy: function(d) {				   			
-			   			var y= yScaleLRG2vQSO(d.SUCCESS_QSO); 
-			   			//console.log("y ="+ y); 
-			   			return y;
-			   		},
-			   		r: radius,
-					fill: function(d){
-			   			if(d.MJD<55171){
-			   				return greyedOut;
-			   			}else{
-			   				if(d.PLATEQUALITY=="good"){
-			   					return goodColoring;
-			   				}
-			   				else{
-			   					return badColoring;
-			   				}
-			   			}
-			   		},
-				})
-			   .on("mouseover", function(d) {
+			d3.select("#tooltip")				
+				.select("#tooltipLine2")
+				.text(", MJD: " + d.MJD);
 
-					//Update the tooltip value
-					d3.select("#tooltip")					
-						.select("#tooltipLine1")
-						.text("Plate: " + d.PLATE)
+			//draw highlighter dots
+			d3.select(LRG1vLRG2).append("circle")
+			  		.attr("class", "highlighter")
+			   		.attr({
+				   		cx: xScaleLRG1vLRG2(d.SUCCESS_LRG1),
+				   		cy: yScaleLRG1vLRG2(d.SUCCESS_LRG2),
+				   		r: highlightRadius,
+				   		fill: highlighterColor1,
+				   		stroke: "black",
+					});
+			d3.select(RAvDEC).append("circle")
+			  		.attr("class", "highlighter")
+			   		.attr({
+				   		cx: xScaleRAvDEC(d.RACEN),
+				   		cy: yScaleRAvDEC(d.DECCEN),
+				   		r: highlightRadius,
+				   		fill: highlighterColor1,
+				   		stroke: "black",
+					});
 
-					d3.select("#tooltip")				
-						.select("#tooltipLine2")
-						.text(", MJD: " + d.MJD);
+			d3.select(SN2_G12vSN2_I12).append("circle")
+			  		.attr("class", "highlighter")
+			   		.attr({
+				   		cx: xScaleSN2_G12vSN2_I12(d.DERED_SN2_G2),
+				   		cy: yScaleSN2_G12vSN2_I12(d.DERED_SN2_I2),
+				   		r: highlightRadius,
+				   		fill: highlighterColor1,
+				   		stroke: "black",
+					});
 
-					//draw highlighter dots
-					//highlightPlots(d);
-					
-						d3.select(LRG1vLRG2).append("circle")
-						  		.attr("class", "highlighter")
-						   		.attr({
-							   		cx: xScaleLRG1vLRG2(d.SUCCESS_LRG1),
-							   		cy: yScaleLRG1vLRG2(d.SUCCESS_LRG2),
-							   		r: highlightRadius,
-							   		fill: highlighterColor1,
-							   		stroke: "black",
-							   		//stroke-width: 0.5,
-								});
-						d3.select(RAvDEC).append("circle")
-						  		.attr("class", "highlighter")
-						   		.attr({
-							   		cx: xScaleRAvDEC(d.RACEN),
-							   		cy: yScaleRAvDEC(d.DECCEN),
-							   		r: highlightRadius,
-							   		fill: highlighterColor1,
-							   		stroke: "black",
-							   		//stroke-width: 0.5,
-								});
-
-						d3.select(SN2_G12vSN2_I12).append("circle")
-						  		.attr("class", "highlighter")
-						   		.attr({
-							   		cx: xScaleSN2_G12vSN2_I12(d.DERED_SN2_G2),
-							   		cy: yScaleSN2_G12vSN2_I12(d.DERED_SN2_I2),
-							   		r: highlightRadius,
-							   		fill: highlighterColor1,
-							   		stroke: "black",
-							   		//stroke-width: 0.5,
-								});
-
-						d3.select(SN2_G12vSN2_I12).append("circle")
-						  		.attr("class", "highlighter")
-						   		.attr({
-							   		cx: xScaleSN2_G12vSN2_I12(d.DERED_SN2_G1),
-							   		cy: yScaleSN2_G12vSN2_I12(d.DERED_SN2_I1),
-							   		r: highlightRadius,
-							   		fill: highlighterColor2,
-							   		stroke: "black",
-							   		//stroke-width: 0.5,
-								});
-					
-			   })
-			   .on("click", function(d) {
-					//Update the tooltip position and value
-					d3.select("#tooltip")				
-						.select("#selectedTooltipLine1")
-						.text(" Plate: " + d.PLATE)
-
-					d3.select("#tooltip")				
-						.select("#selectedTooltipLine2")
-						.text(", MJD: " + d.MJD);
-					
-			   })
-			   .on("mouseout", function() {
-					removePlotPointsWithClass(".highlighter");
-			   });
-
-
-
-		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-			var xMin = d3.min([d3.min(dataset.aaData, function(d){return d.DERED_SN2_G1;}), 
-							  d3.min(dataset.aaData, function(d){return d.DERED_SN2_G2;})]);
-			var xMax = d3.max([d3.max(dataset.aaData, function(d){return d.DERED_SN2_G1;}), 
-							  d3.max(dataset.aaData, function(d){return d.DERED_SN2_G2;})]);
-			var yMin = d3.min([d3.min(dataset.aaData, function(d){return d.DERED_SN2_I1;}), 
-							  d3.min(dataset.aaData, function(d){return d.DERED_SN2_I2;})]);
-			var yMax = d3.max([d3.max(dataset.aaData, function(d){return d.DERED_SN2_I1;}), 
-							  d3.max(dataset.aaData, function(d){return d.DERED_SN2_I2;})]);
-
-			var xScaleSN2_G12vSN2_I12 = d3.scale.linear()
-								 .domain([xMin,xMax])
-								 .range([4.5 * padding,w-padding]);
-			var yScaleSN2_G12vSN2_I12 = d3.scale.linear()
-								 .domain([yMin,yMax])
-								 .range([h-(3.5 * padding),padding]);
-
-						
-		//scatter plot
-
-			d3.select(SN2_G12vSN2_I12).selectAll("ellipse")
-			    .data(nNodes)
-			    .enter()
-			    .append("circle")
-			    .attr("id", function(d) {return "SN2_G1vSN2_I1_"+d.PLATE+"_"+d.MJD;})
-			    .attr("class", function() {
-	    	  		if(filter){
-	    	  			return "filter";
-	    	  		};
-	      		})
-			    .attr({
-			   		cx: function(d) {
-			   			var x= xScaleSN2_G12vSN2_I12(d.DERED_SN2_G1); 
-			   			//console.log(x);
-			   			return x;
-			   		},
-			   		cy: function(d) {				   			
-			   			var y= yScaleSN2_G12vSN2_I12(d.DERED_SN2_I1); 
-			   			//console.log(""+ y); 
-			   			return y;
-			   		},
-			   		r: radius,
-			   		fill: SN2_GI1color
-				})
-				.on("mouseover", function(d) {
-					//Update the tooltip value
-					d3.select("#tooltip")				
-						.select("#tooltipLine1")
-						.text("Plate: " + d.PLATE)
-
-					d3.select("#tooltip")				
-						.select("#tooltipLine2")
-						.text(", MJD: " + d.MJD);
-
-					//hightlighter dots
-					//highlightPlots(d);
-					
-						d3.select(LRG1vLRG2).append("circle")
-						  		.attr("class", "highlighter")
-						   		.attr({
-							   		cx: xScaleLRG1vLRG2(d.SUCCESS_LRG1),
-							   		cy: yScaleLRG1vLRG2(d.SUCCESS_LRG2),
-							   		r: highlightRadius,
-							   		fill: highlighterColor1,
-							   		stroke: "black",
-							   		//stroke-width: 0.5,
-								});
-
-						d3.select(LRG2vQSO).append("circle")
-						  		.attr("class", "highlighter")
-						   		.attr({
-							   		cx: xScaleLRG2vQSO(d.SUCCESS_LRG2),
-							   		cy: yScaleLRG2vQSO(d.SUCCESS_QSO),
-							   		r: highlightRadius,
-							   		fill: highlighterColor1,
-							   		stroke: "black",
-							   		//stroke-width: 0.5,
-								});
-
-						d3.select(SN2_G12vSN2_I12).append("circle")
-						  		.attr("class", "highlighter")
-						   		.attr({
-							   		cx: xScaleSN2_G12vSN2_I12(d.DERED_SN2_G2),
-							   		cy: yScaleSN2_G12vSN2_I12(d.DERED_SN2_I2),
-							   		r: highlightRadius,
-							   		fill: highlighterColor1,
-							   		stroke: "black",
-							   		//stroke-width: 0.5,
-								});					
-						d3.select(RAvDEC).append("circle")
-						  		.attr("class", "highlighter")
-						   		.attr({
-							   		cx: xScaleRAvDEC(d.RACEN),
-							   		cy: yScaleRAvDEC(d.DECCEN),
-							   		r: highlightRadius,
-							   		fill: highlighterColor1,
-							   		stroke: "black",
-							   		//stroke-width: 0.5,
-								});
-					
-
-			   })
-			   .on("click", function(d) {
-					//Update the tooltip position and value
-					d3.select("#tooltip")					
-						.select("#selectedTooltipLine1")
-						.text(" Plate: " + d.PLATE)
-
-					d3.select("#tooltip")					
-						.select("#selectedTooltipLine2")
-						.text(", MJD: " + d.MJD);
-					
-			   })
-			   .on("mouseout", function() {
-					removePlotPointsWithClass(".highlighter");
-					
-			   });
-
-		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////			    
+			d3.select(SN2_G12vSN2_I12).append("circle")
+			  		.attr("class", "highlighter")
+			   		.attr({
+				   		cx: xScaleSN2_G12vSN2_I12(d.DERED_SN2_G1),
+				   		cy: yScaleSN2_G12vSN2_I12(d.DERED_SN2_I1),
+				   		r: highlightRadius,
+				   		fill: highlighterColor2,
+				   		stroke: "black",
+					});
 			
+	   })
+	   .on("click", function(d) {
+			//Update the tooltip value
+			d3.select("#tooltip")				
+				.select("#selectedTooltipLine1")
+				.text(" Plate: " + d.PLATE)
 
-			d3.select(SN2_G12vSN2_I12).selectAll("ellipse")
-			    .data(nNodes)
-			    .enter()
-			    .append("circle")
-			    .attr("id", function(d) {return "SN2_G2vSN2_I2_"+d.PLATE+"_"+d.MJD;})
-			    .attr("class", function() {
-	    	  		if(filter){
-	    	  			return "filter";
-	    	  		};
-	      		})			    
-	      		.attr({
-			   		cx: function(d) {
-			   			var x= xScaleSN2_G12vSN2_I12(d.DERED_SN2_G2); 
-			   			//console.log(x);
-			   			return x;
-			   		},
-			   		cy: function(d) {				   			
-			   			var y= yScaleSN2_G12vSN2_I12(d.DERED_SN2_I2); 
-			   			//console.log(""+ y); 
-			   			return y;
-			   		},
-			   		r: radius,
-			   		fill: SN2_GI2color
-				})
-				.on("mouseover", function(d) {
-					//Update the tooltip value
-					d3.select("#tooltip")				
-						.select("#tooltipLine1")
-						.text("Plate: " + d.PLATE)
+			d3.select("#tooltip")				
+				.select("#selectedTooltipLine2")
+				.text(", MJD: " + d.MJD);
+			
+	   })
+	   .on("mouseout", function() {
+			removePlotPointsWithClass(".highlighter");
+	   });
 
-					d3.select("#tooltip")					
-						.select("#tooltipLine2")
-						.text(", MJD: " + d.MJD);
 
-					//highlighter dots
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 					
-						d3.select(LRG1vLRG2).append("circle")
-						  		.attr("class", "highlighter")
-						   		.attr({
-							   		cx: xScaleLRG1vLRG2(d.SUCCESS_LRG1),
-							   		cy: yScaleLRG1vLRG2(d.SUCCESS_LRG2),
-							   		r: highlightRadius,
-							   		fill: highlighterColor1,
-							   		stroke: "black",
-							   		//stroke-width: 0.5,
-								});
+	//scatter plot
+	d3.select(SN2_G12vSN2_I12).selectAll("ellipse")
+	    .data(nNodes)
+	    .enter()
+	    .append("circle")
+	    .attr("id", function(d) {return "SN2_G1vSN2_I1_"+d.PLATE+"_"+d.MJD;})
+	    .attr("class", function() {
+	  		if(filter){
+	  			return "filter";
+	  		};
+  		})
+	    .attr({
+	   		cx: function(d) {
+	   			var x= xScaleSN2_G12vSN2_I12(d.DERED_SN2_G1); 
+	   			//console.log(x);
+	   			return x;
+	   		},
+	   		cy: function(d) {				   			
+	   			var y= yScaleSN2_G12vSN2_I12(d.DERED_SN2_I1); 
+	   			//console.log(""+ y); 
+	   			return y;
+	   		},
+	   		r: radius,
+	   		fill: SN2_GI1color
+		})
+		.on("mouseover", function(d) {
+			//Update the tooltip value
+			d3.select("#tooltip")				
+				.select("#tooltipLine1")
+				.text("Plate: " + d.PLATE)
 
-						d3.select(LRG2vQSO).append("circle")
-						  		.attr("class", "highlighter")
-						   		.attr({
-							   		cx: xScaleLRG2vQSO(d.SUCCESS_LRG2),
-							   		cy: yScaleLRG2vQSO(d.SUCCESS_QSO),
-							   		r: highlightRadius,
-							   		fill: highlighterColor1,
-							   		stroke: "black",
-							   		//stroke-width: 0.5,
-								});
-						d3.select(SN2_G12vSN2_I12).append("circle")
-						  		.attr("class", "highlighter")
-						   		.attr({
-							   		cx: xScaleSN2_G12vSN2_I12(d.DERED_SN2_G1),
-							   		cy: yScaleSN2_G12vSN2_I12(d.DERED_SN2_I1),
-							   		r: highlightRadius,
-							   		fill: highlighterColor2,
-							   		stroke: "black",
-							   		//stroke-width: 0.5,
-								});	
-						d3.select(RAvDEC).append("circle")
-						  		.attr("class", "highlighter")
-						   		.attr({
-							   		cx: xScaleRAvDEC(d.RACEN),
-							   		cy: yScaleRAvDEC(d.DECCEN),
-							   		r: highlightRadius,
-							   		fill: highlighterColor1,
-							   		stroke: "black",
-							   		//stroke-width: 0.5,
-								});	
-					
-					//highlightPlots(d);
+			d3.select("#tooltip")				
+				.select("#tooltipLine2")
+				.text(", MJD: " + d.MJD);
 
-			   })
-			   .on("click", function(d) {
-					//Update the tooltip position and value
-					d3.select("#tooltip")				
-						.select("#selectedTooltipLine1")
-						.text(" Plate: " + d.PLATE)
+			//hightlighter dots
+			d3.select(LRG1vLRG2).append("circle")
+			  		.attr("class", "highlighter")
+			   		.attr({
+				   		cx: xScaleLRG1vLRG2(d.SUCCESS_LRG1),
+				   		cy: yScaleLRG1vLRG2(d.SUCCESS_LRG2),
+				   		r: highlightRadius,
+				   		fill: highlighterColor1,
+				   		stroke: "black",
+					});
 
-					d3.select("#tooltip")					
-						.select("#selectedTooltipLine2")
-						.text(", MJD: " + d.MJD);
-					
-			   })
-			   .on("mouseout", function() {
-					removePlotPointsWithClass(".highlighter");
-					
-			   });
+			d3.select(LRG2vQSO).append("circle")
+			  		.attr("class", "highlighter")
+			   		.attr({
+				   		cx: xScaleLRG2vQSO(d.SUCCESS_LRG2),
+				   		cy: yScaleLRG2vQSO(d.SUCCESS_QSO),
+				   		r: highlightRadius,
+				   		fill: highlighterColor1,
+				   		stroke: "black",
+					});
 
-		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		var w = 400;
+			d3.select(SN2_G12vSN2_I12).append("circle")
+			  		.attr("class", "highlighter")
+			   		.attr({
+				   		cx: xScaleSN2_G12vSN2_I12(d.DERED_SN2_G2),
+				   		cy: yScaleSN2_G12vSN2_I12(d.DERED_SN2_I2),
+				   		r: highlightRadius,
+				   		fill: highlighterColor1,
+				   		stroke: "black",
+					});					
+			d3.select(RAvDEC).append("circle")
+			  		.attr("class", "highlighter")
+			   		.attr({
+				   		cx: xScaleRAvDEC(d.RACEN),
+				   		cy: yScaleRAvDEC(d.DECCEN),
+				   		r: highlightRadius,
+				   		fill: highlighterColor1,
+				   		stroke: "black",
+					});
+		
 
-			var xMin = d3.min(dataset.aaData, function(d){return d.RACEN;});
-			var xMax = d3.max(dataset.aaData, function(d){return d.RACEN;});
-			var yMin = d3.min(dataset.aaData, function(d){return d.DECCEN;});
-			var yMax = d3.max(dataset.aaData, function(d){return d.DECCEN;});
+	   })
+	   .on("click", function(d) {
+			//Update the tooltip value
+			d3.select("#tooltip")					
+				.select("#selectedTooltipLine1")
+				.text(" Plate: " + d.PLATE)
 
-			var xScaleRAvDEC = d3.scale.linear()
-								 .domain([xMin,xMax])
-								 .range([4.5 * padding,w-padding]);
-			var yScaleRAvDEC = d3.scale.linear()
-								 .domain([yMin,yMax])
-								 .range([h-(3.5 * padding),padding]);
+			d3.select("#tooltip")					
+				.select("#selectedTooltipLine2")
+				.text(", MJD: " + d.MJD);
+			
+	   })
+	   .on("mouseout", function() {
+			removePlotPointsWithClass(".highlighter");
+			
+	   });
 
-			var nodes = nNodes.sort(function(a, b){ 
-			    			return d3.descending(a.SUCCESS_LRG1, b.SUCCESS_LRG1); 
-			    		})
-			console.log(nodes);
-			var colorScaleMin = d3.min(dataset.aaData, function(d){return d.SUCCESS_LRG1;});
-			var colorScaleMax = d3.max(dataset.aaData, function(d){return d.SUCCESS_LRG1;});
-			var colorScale = d3.scale.linear()
-								 .domain([colorScaleMin,colorScaleMax])
-								 .range([0,255]);
-		//scatter plot
-			d3.select(RAvDEC).selectAll("ellipse")
-			    .data(nodes)
-			    .enter()
-			    .append("circle")
-			    .attr("id", function(d) {return "RAvDEC_"+d.PLATE+"_"+d.MJD;})
-			    .attr("class", function() {
-	    	  		if(filter){
-	    	  			return "filter";
-	    	  		};
-	      		})
-			    .attr({
-			   		cx: function(d) {
-			   			var x= xScaleRAvDEC(d.RACEN); 
-			   			//console.log(x);
-			   			return x;
-			   		},
-			   		cy: function(d) {				   			
-			   			var y= yScaleRAvDEC(d.DECCEN); 
-			   			//console.log(""+ y); 
-			   			return y;
-			   		},
-			   		r: radius,
-			   		fill: function(d){
-			   			//console.log(d3.round(colorScale(d.SUCCESS_LRG1)));
-			   			return "rgb("+ (d3.round(colorScale(d.SUCCESS_LRG1))) +","+(d3.round(colorScale(d.SUCCESS_LRG2)))+","+(d3.round(colorScale(d.SUCCESS_QSO)))+")";
-			   			
-			   			/*
-			   			if(d.MJD<55171){
-			   				return greyedOut;
-			   			}else{
-			   				if(d.PLATEQUALITY=="good"){
-			   					return goodColoring;
-			   				}
-			   				else{
-			   					return badColoring;
-			   				}
-			   			}
-			   			*/
-			   		}
-				})
-			   .on("mouseover", function(d) {
-					//Update the tooltip value
-					d3.select("#tooltip")					
-						.select("#tooltipLine1")
-						.text("Plate: " + d.PLATE)
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////			    
+		
 
-					d3.select("#tooltip")				
-						.select("#tooltipLine2")
-						.text(", MJD: " + d.MJD);
-			   
-					//highlighter dots
-					//highlightPlots(d);
-					
-						d3.select(LRG1vLRG2).append("circle")
-						  		.attr("class", "highlighter")
-						   		.attr({
-							   		cx: xScaleLRG1vLRG2(d.SUCCESS_LRG1),
-							   		cy: yScaleLRG1vLRG2(d.SUCCESS_LRG2),
-							   		r: highlightRadius,
-							   		fill: highlighterColor1,
-							   		stroke: "black",
-							   		//stroke-width: 0.5,
-								});
+	d3.select(SN2_G12vSN2_I12).selectAll("ellipse")
+	    .data(nNodes)
+	    .enter()
+	    .append("circle")
+	    .attr("id", function(d) {return "SN2_G2vSN2_I2_"+d.PLATE+"_"+d.MJD;})
+	    .attr("class", function() {
+	  		if(filter){
+	  			return "filter";
+	  		};
+  		})			    
+  		.attr({
+	   		cx: function(d) {
+	   			var x= xScaleSN2_G12vSN2_I12(d.DERED_SN2_G2); 
+	   			return x;
+	   		},
+	   		cy: function(d) {				   			
+	   			var y= yScaleSN2_G12vSN2_I12(d.DERED_SN2_I2); 
+	   			return y;
+	   		},
+	   		r: radius,
+	   		fill: SN2_GI2color
+		})
+		.on("mouseover", function(d) {
+			//Update the tooltip value
+			d3.select("#tooltip")				
+				.select("#tooltipLine1")
+				.text("Plate: " + d.PLATE)
 
+			d3.select("#tooltip")					
+				.select("#tooltipLine2")
+				.text(", MJD: " + d.MJD);
 
-						d3.select(LRG2vQSO).append("circle")
-						  		.attr("class", "highlighter")
-						   		.attr({
-							   		cx: xScaleLRG2vQSO(d.SUCCESS_LRG2),
-							   		cy: yScaleLRG2vQSO(d.SUCCESS_QSO),
-							   		r: highlightRadius,
-							   		fill: highlighterColor1,
-							   		stroke: "black",
-							   		//stroke-width: 0.5,
-								});
+			//highlighter dots
+			d3.select(LRG1vLRG2).append("circle")
+			  		.attr("class", "highlighter")
+			   		.attr({
+				   		cx: xScaleLRG1vLRG2(d.SUCCESS_LRG1),
+				   		cy: yScaleLRG1vLRG2(d.SUCCESS_LRG2),
+				   		r: highlightRadius,
+				   		fill: highlighterColor1,
+				   		stroke: "black",
+					});
 
-						d3.select(SN2_G12vSN2_I12).append("circle")
-						  		.attr("class", "highlighter")
-						   		.attr({
-							   		cx: xScaleSN2_G12vSN2_I12(d.DERED_SN2_G2),
-							   		cy: yScaleSN2_G12vSN2_I12(d.DERED_SN2_I2),
-							   		r: highlightRadius,
-							   		fill: highlighterColor1,
-							   		stroke: "black",
-							   		//stroke-width: 0.5,
-								});
+			d3.select(LRG2vQSO).append("circle")
+			  		.attr("class", "highlighter")
+			   		.attr({
+				   		cx: xScaleLRG2vQSO(d.SUCCESS_LRG2),
+				   		cy: yScaleLRG2vQSO(d.SUCCESS_QSO),
+				   		r: highlightRadius,
+				   		fill: highlighterColor1,
+				   		stroke: "black",
+					});
+			d3.select(SN2_G12vSN2_I12).append("circle")
+			  		.attr("class", "highlighter")
+			   		.attr({
+				   		cx: xScaleSN2_G12vSN2_I12(d.DERED_SN2_G1),
+				   		cy: yScaleSN2_G12vSN2_I12(d.DERED_SN2_I1),
+				   		r: highlightRadius,
+				   		fill: highlighterColor2,
+				   		stroke: "black",
+					});	
+			d3.select(RAvDEC).append("circle")
+			  		.attr("class", "highlighter")
+			   		.attr({
+				   		cx: xScaleRAvDEC(d.RACEN),
+				   		cy: yScaleRAvDEC(d.DECCEN),
+				   		r: highlightRadius,
+				   		fill: highlighterColor1,
+				   		stroke: "black",
+					});	
 
-						d3.select(SN2_G12vSN2_I12).append("circle")
-						  		.attr("class", "highlighter")
-						   		.attr({
-							   		cx: xScaleSN2_G12vSN2_I12(d.DERED_SN2_G1),
-							   		cy: yScaleSN2_G12vSN2_I12(d.DERED_SN2_I1),
-							   		r: highlightRadius,
-							   		fill: highlighterColor2,
-							   		stroke: "black",
-							   		//stroke-width: 0.5,
-								});
-					
-			   })
-			   .on("click", function(d) {
-			   
-					//Update the tooltip position and value
-					d3.select("#tooltip")					
-						.select("#selectedTooltipLine1")
-						.text(" Plate: " + d.PLATE)
+	   })
+	   .on("click", function(d) {
+			//Update the tooltip value
+			d3.select("#tooltip")				
+				.select("#selectedTooltipLine1")
+				.text(" Plate: " + d.PLATE)
 
-					d3.select("#tooltip")					
-						.select("#selectedTooltipLine2")
-						.text(", MJD: " + d.MJD);
-					
-			   })
-			   .on("mouseout", function() {
-					removePlotPointsWithClass(".highlighter");
-			   });
-		}
-	});
+			d3.select("#tooltip")					
+				.select("#selectedTooltipLine2")
+				.text(", MJD: " + d.MJD);
+			
+	   })
+	   .on("mouseout", function() {
+			removePlotPointsWithClass(".highlighter");
+			
+	   });
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	drawRAvDECData(nNodes, "SUCCESS_LRG1", filter, goodColoring, badColoring, SN2_GI1color, SN2_GI2color , radius);
+
 
 }
 
+function sortAndDrawRAvDECData(columnName){
 
+	d3.select(RAvDEC).selectAll("circle").remove();
+	drawRAvDECData(dataset.aaData, columnName);
+
+}
+
+function drawRAvDECData(nNodes, columnName, filter, goodColoring, badColoring, SN2_GI1color, SN2_GI2color , radius){
+
+	//colors
+	if(typeof(goodColoring) === "undefined"){ goodColoring = "#5cba57";}
+	if(typeof(badColoring) === "undefined"){badColoring = "#f76060";}
+	if(typeof(SN2_GI1color) === "undefined"){SN2_GI1color = "#5c69ff";}
+	if(typeof(SN2_GI2color) === "undefined"){SN2_GI2color = "#ffa85c";}
+	greyedOut = "#c4c4c4";
+	highlighterColor1 = "#fffb00"; /*yellow*/
+	highlighterColor2 = "#ff00fb"; /*purple*/
+
+	if(typeof(filter) === "undefined"){filter = false;}
+
+	if(typeof(radius) === "undefined"){radius = 2;}
+	highlightRadius = radius + 1;
+	var nodes = nNodes.sort(function(a, b){ 
+    							return d3.descending(a[columnName], b[columnName]); 
+    						});
+
+	var Min = d3.min(dataset.aaData, function(d){return d[columnName];});
+	var Max = d3.max(dataset.aaData, function(d){return d[columnName];});
+	var colors = ["red", "orange", "yellow", "green", "blue", "violet"];
+	var intermediateScale = d3.scale.linear()
+      								.domain([Min, Max])
+      								.range([0, colors.length - 1]);					 
+	var colorScale = d3.scale.linear()
+      						.domain([0, 1, 2, 3, 4, 5])
+      						.range(["red", "orange", "yellow", "green", "blue", "violet"]);
+	//scatter plot
+	d3.select(RAvDEC).selectAll("ellipse")
+	    .data(nodes)
+	    .enter()
+	    .append("circle")
+	    .attr("id", function(d) {return "RAvDEC_"+d.PLATE+"_"+d.MJD;})
+	    .attr("class", function() {
+	  		if(filter){
+	  			return "filter";
+	  		};
+  		})
+	    .attr({
+	   		cx: function(d) {
+	   			var x= xScaleRAvDEC(d.RACEN); 
+	   			return x;
+	   		},
+	   		cy: function(d) {				   			
+	   			var y= yScaleRAvDEC(d.DECCEN); 
+	   			return y;
+	   		},
+	   		r: radius,
+	   		fill: function(d){
+	   			if(filter){
+		   			//if(d.MJD<55171){
+		   				//return greyedOut;
+		   			//}else{
+		   				if(d.PLATEQUALITY=="good"){
+		   					return goodColoring;
+		   				}
+		   				else{
+		   					return badColoring;
+		   				}
+		   			//}
+	   			}else{
+	   				//console.log(d3.round(colorScale(d[columnName])));
+	   				//console.log(d.PLATE);
+	   				//return "rgb("+ (255- d3.round(colorScale(d[columnName]))) +", 0,"+ (d3.round(colorScale(d[columnName]))) +")";
+	   				//console.log(d3.round(intermediateScale(d[columnName])));
+	   				//console.log(colorScale(d3.round(intermediateScale(d[columnName]))));
+	   				return colorScale(d3.round(intermediateScale(d[columnName])));
+	   			}
+	   		}
+		})
+	   .on("mouseover", function(d) {
+			//Update the tooltip value
+			d3.select("#tooltip")					
+				.select("#tooltipLine1")
+				.text("Plate: " + d.PLATE)
+
+			d3.select("#tooltip")				
+				.select("#tooltipLine2")
+				.text(", MJD: " + d.MJD);
+	   
+			//highlighter dots
+			d3.select(LRG1vLRG2).append("circle")
+			  		.attr("class", "highlighter")
+			   		.attr({
+				   		cx: xScaleLRG1vLRG2(d.SUCCESS_LRG1),
+				   		cy: yScaleLRG1vLRG2(d.SUCCESS_LRG2),
+				   		r: highlightRadius,
+				   		fill: highlighterColor1,
+				   		stroke: "black",
+					});
+
+
+			d3.select(LRG2vQSO).append("circle")
+			  		.attr("class", "highlighter")
+			   		.attr({
+				   		cx: xScaleLRG2vQSO(d.SUCCESS_LRG2),
+				   		cy: yScaleLRG2vQSO(d.SUCCESS_QSO),
+				   		r: highlightRadius,
+				   		fill: highlighterColor1,
+				   		stroke: "black",
+					});
+
+			d3.select(SN2_G12vSN2_I12).append("circle")
+			  		.attr("class", "highlighter")
+			   		.attr({
+				   		cx: xScaleSN2_G12vSN2_I12(d.DERED_SN2_G2),
+				   		cy: yScaleSN2_G12vSN2_I12(d.DERED_SN2_I2),
+				   		r: highlightRadius,
+				   		fill: highlighterColor1,
+				   		stroke: "black",
+					});
+
+			d3.select(SN2_G12vSN2_I12).append("circle")
+			  		.attr("class", "highlighter")
+			   		.attr({
+				   		cx: xScaleSN2_G12vSN2_I12(d.DERED_SN2_G1),
+				   		cy: yScaleSN2_G12vSN2_I12(d.DERED_SN2_I1),
+				   		r: highlightRadius,
+				   		fill: highlighterColor2,
+				   		stroke: "black",
+					});
+			
+	   })
+	   .on("click", function(d) {
+			//Update the tooltip  value
+			d3.select("#tooltip")					
+				.select("#selectedTooltipLine1")
+				.text(" Plate: " + d.PLATE)
+
+			d3.select("#tooltip")					
+				.select("#selectedTooltipLine2")
+				.text(", MJD: " + d.MJD);
+			
+	   })
+	   .on("mouseout", function() {
+			removePlotPointsWithClass(".highlighter");
+	   });
+}
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1577,256 +1507,89 @@ function changeExistingPlotPointColors(nNodes, gray, goodColoring, badColoring, 
 	if(typeof(SN2_GI2color) === "undefined"){SN2_GI2color = "#ffa85c";}
 	greyedOut = "#c4c4c4";
 	if(gray){
-		d3.select(LRG1vLRG2).selectAll("circle")	      
-			.attr({
-					fill: greyedOut
-			  });
-		d3.select(LRG2vQSO).selectAll("circle")	      
-			.attr({
-					fill: greyedOut
-			  });
-		d3.select(SN2_G12vSN2_I12).selectAll("circle")	      
-			.attr({
-					fill: greyedOut
-			  });
-		d3.select(RAvDEC).selectAll("circle")	      
-			.attr({
-					fill: greyedOut
-			  });
+		d3.select(LRG1vLRG2).selectAll("circle").attr({fill: greyedOut});
+		d3.select(LRG2vQSO).selectAll("circle").attr({fill: greyedOut});
+		d3.select(SN2_G12vSN2_I12).selectAll("circle").attr({fill: greyedOut});
+		d3.select(RAvDEC).selectAll("circle").attr({fill: greyedOut});
 	}else{
 
-		for (var d = 0; d < nNodes.length; d++) {
-			d3.select("#LRG1vLRG2")
-			  .select("#LRG1vLRG2"+"_"+nNodes[d].PLATE+"_"+nNodes[d].MJD)
-		      .attr({
-				  fill: function(){
-					  if(nNodes[d].MJD<55171){
-						  return greyedOut;
-					  }else{
-						  if(nNodes[d].PLATEQUALITY=="good"){
-							  return goodColoring;
-						  }
-						  else{
-							  return badColoring;
-						  }
+	for (var d = 0; d < nNodes.length; d++) {
+		d3.select("#LRG1vLRG2")
+		  .select("#LRG1vLRG2"+"_"+nNodes[d].PLATE+"_"+nNodes[d].MJD)
+	      .attr({
+			  fill: function(){
+				  if(nNodes[d].MJD<55171){
+					  return greyedOut;
+				  }else{
+					  if(nNodes[d].PLATEQUALITY=="good"){
+						  return goodColoring;
+					  }
+					  else{
+						  return badColoring;
 					  }
 				  }
-			  });
+			  }
+		  });
 
-			d3.select("#LRG2vQSO")
-			  .select("#LRG2vQSO"+"_"+nNodes[d].PLATE+"_"+nNodes[d].MJD)
-		      .attr({
-				  fill: function(){
-					  if(nNodes[d].MJD<55171){
-						  return greyedOut;
-					  }else{
-						  if(nNodes[d].PLATEQUALITY=="good"){
-							  return goodColoring;
-						  }
-						  else{
-							  return badColoring;
-						  }
+		d3.select("#LRG2vQSO")
+		  .select("#LRG2vQSO"+"_"+nNodes[d].PLATE+"_"+nNodes[d].MJD)
+	      .attr({
+			  fill: function(){
+				  if(nNodes[d].MJD<55171){
+					  return greyedOut;
+				  }else{
+					  if(nNodes[d].PLATEQUALITY=="good"){
+						  return goodColoring;
+					  }
+					  else{
+						  return badColoring;
 					  }
 				  }
-			  });
+			  }
+		  });
 
-			d3.select("#SN2_G12vSN2_I12")
-			  .select("#SN2_G12vSN2_I12_"+nNodes[d].PLATE+"_"+nNodes[d].MJD)
-		      .attr({
-					fill: SN2_GI1color
-			  });
+		d3.select("#SN2_G12vSN2_I12")
+		  .select("#SN2_G12vSN2_I12_"+nNodes[d].PLATE+"_"+nNodes[d].MJD)
+	      .attr({
+				fill: SN2_GI1color
+		  });
 
-			d3.select("#SN2_G12vSN2_I12")
-			  .select("#ellipse_SN2_G12vSN2_I12_"+nNodes[d].PLATE+"_"+nNodes[d].MJD)
-		      .attr({
-					fill: SN2_GI2color
-			  });
+		d3.select("#SN2_G12vSN2_I12")
+		  .select("#ellipse_SN2_G12vSN2_I12_"+nNodes[d].PLATE+"_"+nNodes[d].MJD)
+	      .attr({
+				fill: SN2_GI2color
+		  });
 
-			d3.select("#RAvDEC")
-			  .select("#RAvDEC"+"_"+nNodes[d].PLATE+"_"+nNodes[d].MJD)
-		      .attr({
-				  fill: function(){
-					  if(nNodes[d].MJD<55171){
-						  return greyedOut;
-					  }else{
-						  if(nNodes[d].PLATEQUALITY=="good"){
-							  return goodColoring;
-						  }
-						  else{
-							  return badColoring;
-						  }
+		d3.select("#RAvDEC")
+		  .select("#RAvDEC"+"_"+nNodes[d].PLATE+"_"+nNodes[d].MJD)
+	      .attr({
+			  fill: function(){
+				  if(nNodes[d].MJD<55171){
+					  return greyedOut;
+				  }else{
+					  if(nNodes[d].PLATEQUALITY=="good"){
+						  return goodColoring;
+					  }
+					  else{
+						  return badColoring;
 					  }
 				  }
-			  });
+			  }
+		  });
 		}
   	}
 }
 
 function addFilteredPlotPoints(nNodes, filter, goodColoring, badColoring, SN2_GI1color, SN2_GI2color){
+	if(typeof(goodColoring) === "undefined"){ goodColoring = "#5cba57";}
 	if(typeof(badColoring) === "undefined"){badColoring = "#f76060";}
 	if(typeof(SN2_GI1color) === "undefined"){SN2_GI1color = "#5c69ff";}
 	if(typeof(SN2_GI2color) === "undefined"){SN2_GI2color = "#ffa85c";}
 	greyedOut = "#c4c4c4";
-	/*
-	var dataset;
-	d3.json("data/platelist.json", function(error, json){
-		if(error){
-			console.log(error);
-		}else{
-			dataset = json;
-			changeExistingPlotPointColors(dataset.aaData, true);
-		}
-	});
-	*/
   	drawData(nNodes, filter, goodColoring, badColoring, SN2_GI1color, SN2_GI2color);
 
 }
 
-/*
-function highlightPlots(rowIndex){
-	var dataset;
-	var row;
-	d3.json("data/platelist.json", function(error, json){
-			if(error){
-				console.log(error);
-			}else{
-
-				//Width and height
-				var w = 200;
-				var h = 200;
-				var padding = 10;
-
-				//colors
-				highlighterColor1 = "#fffb00";
-				highlighterColor2 = "#ff00fb";
-
-				highlightRadius = 3;
-
-				dataset = json;
-				row = dataset.aaData[rowIndex];
-				//LRG1vLRG2
-				//scale
-				var xMin = d3.min(dataset.aaData, function(d){return d.SUCCESS_LRG1;});
-				var xMax = d3.max(dataset.aaData, function(d){return d.SUCCESS_LRG1;});
-				var yMin = d3.min(dataset.aaData, function(d){return d.SUCCESS_LRG2;});
-				var yMax = d3.max(dataset.aaData, function(d){return d.SUCCESS_LRG2;});
-
-				var xScaleLRG1vLRG2 = d3.scale.linear()
-									 .domain([xMin,xMax])
-									 .range([4.5 * padding,w - padding]);
-				var yScaleLRG1vLRG2 = d3.scale.linear()
-									 .domain([yMin,yMax])
-									 .range([h-(3.5 * padding),padding]);
-
-				d3.select(LRG1vLRG2).append("circle")
-				  		.attr("class", "highlighter")
-				   		.attr({
-					   		cx: xScaleLRG1vLRG2(row.SUCCESS_LRG1),
-					   		cy: yScaleLRG1vLRG2(row.SUCCESS_LRG2),
-					   		r: highlightRadius,
-					   		fill: highlighterColor1,
-					   		stroke: "black",
-					   		//stroke-width: 0.5,
-						});
-
-
-				//%LRG2vQSO
-				//scale
-				var xMin = d3.min(dataset.aaData, function(d){return d.SUCCESS_LRG2;});
-				var xMax = d3.max(dataset.aaData, function(d){return d.SUCCESS_LRG2;});
-				var yMin = d3.min(dataset.aaData, function(d){return d.SUCCESS_QSO;});
-				var yMax = d3.max(dataset.aaData, function(d){return d.SUCCESS_QSO;});
-
-				var xScaleLRG2vQSO = d3.scale.linear()
-									 .domain([xMin,xMax])
-									 .range([4.5 * padding,w-padding]);
-				var yScaleLRG2vQSO = d3.scale.linear()
-									 .domain([yMin,yMax])
-									 .range([h-(3.5 * padding),padding]);
-
-
-				d3.select(LRG2vQSO).append("circle")
-				  		.attr("class", "highlighter")
-				   		.attr({
-					   		cx: xScaleLRG2vQSO(row.SUCCESS_LRG2),
-					   		cy: yScaleLRG2vQSO(row.SUCCESS_QSO),
-					   		r: highlightRadius,
-					   		fill: highlighterColor1,
-					   		stroke: "black",
-					   		//stroke-width: 0.5,
-						});
-
-				//SN2_G12vSN2_I12
-				//scale
-				var xMin = d3.min([d3.min(dataset.aaData, function(d){return d.DERED_SN2_G1;}), 
-								   d3.min(dataset.aaData, function(d){return d.DERED_SN2_G2;})]);
-				var xMax = d3.max([d3.max(dataset.aaData, function(d){return d.DERED_SN2_G1;}), 
-								  d3.max(dataset.aaData, function(d){return d.DERED_SN2_G2;})]);
-				var yMin = d3.min([d3.min(dataset.aaData, function(d){return d.DERED_SN2_I1;}), 
-								  d3.min(dataset.aaData, function(d){return d.DERED_SN2_I2;})]);
-				var yMax = d3.max([d3.max(dataset.aaData, function(d){return d.DERED_SN2_I1;}), 
-								  d3.max(dataset.aaData, function(d){return d.DERED_SN2_I2;})]);
-
-				var xScaleSN2_G12vSN2_I12 = d3.scale.linear()
-									 .domain([xMin,xMax])
-									 .range([4.5 * padding,w-padding]);
-				var yScaleSN2_G12vSN2_I12 = d3.scale.linear()
-									 .domain([yMin,yMax])
-									 .range([h-(3.5 * padding),padding]);
-
-				d3.select(SN2_G12vSN2_I12).append("circle")
-				  		.attr("class", "highlighter")
-				   		.attr({
-					   		cx: xScaleSN2_G12vSN2_I12(row.DERED_SN2_G2),
-					   		cy: yScaleSN2_G12vSN2_I12(row.DERED_SN2_I2),
-					   		r: highlightRadius,
-					   		fill: highlighterColor1,
-					   		stroke: "black",
-					   		//stroke-width: 0.5,
-						});
-
-				d3.select(SN2_G12vSN2_I12).append("circle")
-				  		.attr("class", "highlighter")
-				   		.attr({
-					   		cx: xScaleSN2_G12vSN2_I12(row.DERED_SN2_G1),
-					   		cy: yScaleSN2_G12vSN2_I12(row.DERED_SN2_I1),
-					   		r: highlightRadius,
-					   		fill: highlighterColor2,
-					   		stroke: "black",
-					   		//stroke-width: 0.5,
-						});
-
-				var w= 400;
-				//RAvDEC
-				//scale
-				var xMin = d3.min(dataset.aaData, function(d){return d.RACEN;});
-				var xMax = d3.max(dataset.aaData, function(d){return d.RACEN;});
-				var yMin = d3.min(dataset.aaData, function(d){return d.DECCEN;});
-				var yMax = d3.max(dataset.aaData, function(d){return d.DECCEN;});
-
-				var xScaleRAvDEC = d3.scale.linear()
-									 .domain([xMin,xMax])
-									 .range([4.5 * padding,w-padding]);
-				var yScaleRAvDEC = d3.scale.linear()
-									 .domain([yMin,yMax])
-									 .range([h-(3.5 * padding),padding]);
-
-				d3.select(RAvDEC).append("circle")
-				  		.attr("class", "highlighter")
-				   		.attr({
-					   		cx: xScaleRAvDEC(row.RACEN),
-					   		cy: yScaleRAvDEC(row.DECCEN),
-					   		r: highlightRadius,
-					   		fill: highlighterColor1,
-					   		stroke: "black",
-					   		//stroke-width: 0.5,
-						});	
-
-		}
-
-	});
-}
-*/
 
 function highlightPlots(identifier){
 	//colors
@@ -1846,11 +1609,10 @@ function highlightPlots(identifier){
 	   		r: highlightRadius,
 	   		fill: highlighterColor1,
 	   		stroke: "black",
-	   		//stroke-width: 0.5,
 		});
 
-	var xPosition = parseFloat(d3.select("#LRG2vQSO").select("#LRG2vQSO"+"_"+identifier).attr("cx")) ;
-    var yPosition = parseFloat(d3.select("#LRG2vQSO").select("#LRG2vQSO"+"_"+identifier).attr("cy")) ;
+	xPosition = parseFloat(d3.select("#LRG2vQSO").select("#LRG2vQSO"+"_"+identifier).attr("cx")) ;
+    yPosition = parseFloat(d3.select("#LRG2vQSO").select("#LRG2vQSO"+"_"+identifier).attr("cy")) ;
 	
 	d3.select(LRG2vQSO).append("circle")
   		.attr("class", "highlighter")
@@ -1860,11 +1622,10 @@ function highlightPlots(identifier){
 	   		r: highlightRadius,
 	   		fill: highlighterColor1,
 	   		stroke: "black",
-	   		//stroke-width: 0.5,
 		});
 
-	var xPosition = parseFloat(d3.select("#SN2_G12vSN2_I12").select("#SN2_G1vSN2_I1_"+identifier).attr("cx")) ;
-    var yPosition = parseFloat(d3.select("#SN2_G12vSN2_I12").select("#SN2_G1vSN2_I1_"+identifier).attr("cy")) ;
+	xPosition = parseFloat(d3.select("#SN2_G12vSN2_I12").select("#SN2_G1vSN2_I1_"+identifier).attr("cx")) ;
+    yPosition = parseFloat(d3.select("#SN2_G12vSN2_I12").select("#SN2_G1vSN2_I1_"+identifier).attr("cy")) ;
 	
 	d3.select(SN2_G12vSN2_I12).append("circle")
   		.attr("class", "highlighter")
@@ -1874,11 +1635,10 @@ function highlightPlots(identifier){
 	   		r: highlightRadius,
 	   		fill: highlighterColor2,
 	   		stroke: "black",
-	   		//stroke-width: 0.5,
 		});
 
-	var xPosition = parseFloat(d3.select("#SN2_G12vSN2_I12").select("#SN2_G2vSN2_I2_"+identifier).attr("cx")) ;
-    var yPosition = parseFloat(d3.select("#SN2_G12vSN2_I12").select("#SN2_G2vSN2_I2_"+identifier).attr("cy")) ;
+	xPosition = parseFloat(d3.select("#SN2_G12vSN2_I12").select("#SN2_G2vSN2_I2_"+identifier).attr("cx")) ;
+    yPosition = parseFloat(d3.select("#SN2_G12vSN2_I12").select("#SN2_G2vSN2_I2_"+identifier).attr("cy")) ;
 	
 	d3.select(SN2_G12vSN2_I12).append("circle")
   		.attr("class", "highlighter")
@@ -1888,12 +1648,11 @@ function highlightPlots(identifier){
 	   		r: highlightRadius,
 	   		fill: highlighterColor1,
 	   		stroke: "black",
-	   		//stroke-width: 0.5,
 		});
 
 
-	var xPosition = parseFloat(d3.select("#RAvDEC").select("#RAvDEC"+"_"+identifier).attr("cx")) ;
-    var yPosition = parseFloat(d3.select("#RAvDEC").select("#RAvDEC"+"_"+identifier).attr("cy")) ;
+	xPosition = parseFloat(d3.select("#RAvDEC").select("#RAvDEC"+"_"+identifier).attr("cx")) ;
+    yPosition = parseFloat(d3.select("#RAvDEC").select("#RAvDEC"+"_"+identifier).attr("cy")) ;
 	
 	d3.select(RAvDEC).append("circle")
   		.attr("class", "highlighter")
@@ -1903,7 +1662,6 @@ function highlightPlots(identifier){
 	   		r: highlightRadius,
 	   		fill: highlighterColor1,
 	   		stroke: "black",
-	   		//stroke-width: 0.5,
 		});
 
 }
@@ -1911,7 +1669,6 @@ function highlightPlots(identifier){
 function removePlotPointsWithClass(className){
 	d3.select(LRG1vLRG2).selectAll(className).remove();
 	d3.select(LRG2vQSO).selectAll(className).remove();
-	d3.select(SN2_G12vSN2_I12).selectAll(className).remove();
 	d3.select(SN2_G12vSN2_I12).selectAll(className).remove();
 	d3.select(RAvDEC).selectAll(className).remove();
 }
