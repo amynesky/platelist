@@ -11,6 +11,10 @@
 	margin-top: 5px;
 }
 
+#RAvDECLinks{
+	float:right;
+}
+
 a:link    {color: #238aaa; text-decoration: none;}
 a:visited {color:purple;}
 /*a:hover   {font-weight: bold;}*/

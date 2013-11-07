@@ -250,6 +250,7 @@ var xScaleSN2_G12vSN2_I12;
 var yScaleSN2_G12vSN2_I12;
 var xScaleRAvDEC;
 var yScaleRAvDEC;
+var colorAxis;
 
 
 function fnShowHide( iCol ){
@@ -611,6 +612,10 @@ $(document).ready(function() {
 				$("a.togglelinks").click(function(e) {
 					selectLink(e);
 				});
+
+				$("a.RAvDECLinks").click(function(e) {
+					selectLink(e);
+				});
 			} )
 		.on({ /*hovering over table row highlights row and plot points*/
 		    mouseenter: function () {
@@ -685,6 +690,14 @@ function createSVGs(){
 			})
 			.attr("class", "plot")
 			.attr("id", "RAvDEC");
+
+	var colorBar = d3.select("#plots")
+			.append("svg")
+			.attr({
+				width: 50,
+				height: h,
+			})
+			.attr("id", "colorBar");
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1344,17 +1357,47 @@ function drawData(nNodes, filter, goodColoring, badColoring, SN2_GI1color, SN2_G
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	drawRAvDECData(nNodes, "SUCCESS_LRG1", filter, goodColoring, badColoring, SN2_GI1color, SN2_GI2color , radius);
+	drawRAvDECData(nNodes, "DEREDSN2", filter, goodColoring, badColoring, SN2_GI1color, SN2_GI2color , radius);
 
+
+	var increments = (h - (2* padding))/3;
+
+    var colorBarScale = d3.scale.linear()
+      							.domain([0, increments])
+								.range([0, 510]);
+	for(var i=0; i< increments; i++){
+		d3.select(colorBar).selectAll("ellipse")
+		    .data(nNodes)
+		    .enter()
+		    .append("rect")
+		    .attr({
+		   		x: 30,
+		   		y: function(d) {				   			
+		   			return (3*i + padding);
+		   		},
+		   		width: 20,
+		   		height: 5,
+		   		fill: function(d){
+	   				if(colorBarScale(i) < 255){
+	   					return "rgb("+ (255- d3.round(colorBarScale(i))) +","+ (d3.round(colorBarScale(i))) +", 0)";
+	   				}else{
+						return "rgb(0,"+ (510 - d3.round(colorBarScale(i))) +","+ (d3.round(colorBarScale(i)) - 255) +")";
+	   				};
+		   			
+		   		}
+			})
+	}
 
 }
 
 function sortAndDrawRAvDECData(columnName){
-
+	d3.select(colorBar).select("#colorAxis").remove();
 	d3.select(RAvDEC).selectAll("circle").remove();
 	drawRAvDECData(dataset.aaData, columnName);
 
 }
+
+
 
 function drawRAvDECData(nNodes, columnName, filter, goodColoring, badColoring, SN2_GI1color, SN2_GI2color , radius){
 
@@ -1377,13 +1420,16 @@ function drawRAvDECData(nNodes, columnName, filter, goodColoring, badColoring, S
 
 	var Min = d3.min(dataset.aaData, function(d){return d[columnName];});
 	var Max = d3.max(dataset.aaData, function(d){return d[columnName];});
-	var colors = ["red", "orange", "yellow", "green", "blue", "violet"];
-	var intermediateScale = d3.scale.linear()
-      								.domain([Min, Max])
-      								.range([0, colors.length - 1]);					 
+	var middle = Min + (Max - Min) / 2;
+	//var colors = ["red", "#ff6200", "orange", "#ffcc00","yellow","#bbff00", "#2bff00","#00ff77","#00fbff","#00a6ff","#006eff", "blue"];
 	var colorScale = d3.scale.linear()
-      						.domain([0, 1, 2, 3, 4, 5])
-      						.range(["red", "orange", "yellow", "green", "blue", "violet"]);
+      							.domain([Min, Max])
+      							.range([0, 510]);	
+      								/*				 
+	var colorScale = d3.scale.linear()
+      						.domain([0, 1, 2, 3, 4,5,6,7,8,9,11])
+      						.range(colors);
+      						*/
 	//scatter plot
 	d3.select(RAvDEC).selectAll("ellipse")
 	    .data(nodes)
@@ -1418,12 +1464,11 @@ function drawRAvDECData(nNodes, columnName, filter, goodColoring, badColoring, S
 		   				}
 		   			//}
 	   			}else{
-	   				//console.log(d3.round(colorScale(d[columnName])));
-	   				//console.log(d.PLATE);
-	   				//return "rgb("+ (255- d3.round(colorScale(d[columnName]))) +", 0,"+ (d3.round(colorScale(d[columnName]))) +")";
-	   				//console.log(d3.round(intermediateScale(d[columnName])));
-	   				//console.log(colorScale(d3.round(intermediateScale(d[columnName]))));
-	   				return colorScale(d3.round(intermediateScale(d[columnName])));
+	   				if(d[columnName] < middle){
+	   					return "rgb("+ (255- d3.round(colorScale(d[columnName]))) +","+ (d3.round(colorScale(d[columnName]))) +", 0)";
+	   				}else{
+						return "rgb(0,"+ (510 - d3.round(colorScale(d[columnName]))) +","+ (d3.round(colorScale(d[columnName])) - 255) +")";
+	   				};
 	   			}
 	   		}
 		})
@@ -1494,6 +1539,23 @@ function drawRAvDECData(nNodes, columnName, filter, goodColoring, badColoring, S
 	   .on("mouseout", function() {
 			removePlotPointsWithClass(".highlighter");
 	   });
+
+	var axisScale = d3.scale.linear()
+      							.domain([Min, Max])
+      							.range([h - padding, padding]);
+
+	colorAxis= d3.svg.axis()
+				 .scale(axisScale)
+				 .orient("left");
+
+	/*colorBar*/
+	d3.select(colorBar).append("g")
+	   .attr({
+	   		class: "axis",
+	   		id: "colorAxis",
+	   		transform: "translate(" + (3 * padding) + ",0)",
+		})
+	   .call(colorAxis);
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
