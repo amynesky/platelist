@@ -249,6 +249,7 @@ var yScaleLRG2vQSO;
 var xScaleSN2_G12vSN2_I12;
 var yScaleSN2_G12vSN2_I12;
 var xScaleRAvDEC;
+var xAxisScaleRAvDEC;
 var yScaleRAvDEC;
 var colorAxis;
 
@@ -597,6 +598,9 @@ $(document).ready(function() {
 						xScaleRAvDEC = d3.scale.linear()
 											 .domain([xMin,xMax])
 											 .range([4.5 * padding,RAvDECwidth-padding]);
+						xAxisScaleRAvDEC = d3.scale.linear()
+											 .domain([xMin,xMax])
+											 .range([RAvDECwidth-padding,4.5 * padding]);
 						yScaleRAvDEC = d3.scale.linear()
 											 .domain([yMin,yMax])
 											 .range([h-(3.5 * padding),padding]);
@@ -872,7 +876,7 @@ function drawAxes(){
 
 	//RAvDEC
 	var xAxis= d3.svg.axis()
-					 .scale(xScaleRAvDEC)
+					 .scale(xAxisScaleRAvDEC)
 					 .orient("bottom");
 	var yAxis= d3.svg.axis()
 				 .scale(yScaleRAvDEC)
@@ -1359,35 +1363,33 @@ function drawData(nNodes, filter, goodColoring, badColoring, SN2_GI1color, SN2_G
 
 	drawRAvDECData(nNodes, "DEREDSN2", filter, goodColoring, badColoring, SN2_GI1color, SN2_GI2color , radius);
 
-
-	var increments = (h - (2* padding))/3;
+	var increment = 6
+	var numberOfIncrements = (h - (2* padding))/increment;
 
     var colorBarScale = d3.scale.linear()
-      							.domain([0, increments])
+      							.domain([0, numberOfIncrements])
 								.range([0, 510]);
-	for(var i=0; i< increments; i++){
-		d3.select(colorBar).selectAll("ellipse")
-		    .data(nNodes)
-		    .enter()
-		    .append("rect")
-		    .attr({
-		   		x: 30,
-		   		y: function(d) {				   			
-		   			return (3*i + padding);
-		   		},
-		   		width: 20,
-		   		height: 5,
-		   		fill: function(d){
-	   				if(colorBarScale(i) < 255){
-	   					return "rgb("+ (255- d3.round(colorBarScale(i))) +","+ (d3.round(colorBarScale(i))) +", 0)";
-	   				}else{
-						return "rgb(0,"+ (510 - d3.round(colorBarScale(i))) +","+ (d3.round(colorBarScale(i)) - 255) +")";
-	   				};
-		   			
-		   		}
-			})
-	}
-
+	for(var i=0; i< numberOfIncrements; i++){
+		if(colorBarScale(i) < 255){
+			d3.select(colorBar).append("rect")
+			    .attr({
+			   		x: 30,
+			   		y: h-(increment*(i+1) + padding),
+			   		width: 20,
+			   		height: (increment +1),
+			   		fill: "rgb("+ (255- d3.round(colorBarScale(i))) +","+ (d3.round(colorBarScale(i))) +", 0)",
+				});
+		}else{
+			d3.select(colorBar).append("rect")
+			    .attr({
+			   		x: 30,
+			   		y: h- (increment*(i+1) + padding),
+			   		width: 20,
+			   		height: (increment+1),
+			   		fill: "rgb(0,"+ (510 - d3.round(colorBarScale(i))) +","+ (d3.round(colorBarScale(i)) - 255) +")",
+				});
+		};
+	};
 }
 
 function sortAndDrawRAvDECData(columnName){
@@ -1539,23 +1541,24 @@ function drawRAvDECData(nNodes, columnName, filter, goodColoring, badColoring, S
 	   .on("mouseout", function() {
 			removePlotPointsWithClass(".highlighter");
 	   });
+	if(!filter){
+		var axisScale = d3.scale.linear()
+	      							.domain([Min, Max])
+	      							.range([h - padding, padding]);
 
-	var axisScale = d3.scale.linear()
-      							.domain([Min, Max])
-      							.range([h - padding, padding]);
+		colorAxis= d3.svg.axis()
+					 .scale(axisScale)
+					 .orient("left");
 
-	colorAxis= d3.svg.axis()
-				 .scale(axisScale)
-				 .orient("left");
-
-	/*colorBar*/
-	d3.select(colorBar).append("g")
-	   .attr({
-	   		class: "axis",
-	   		id: "colorAxis",
-	   		transform: "translate(" + (3 * padding) + ",0)",
-		})
-	   .call(colorAxis);
+		/*colorBar*/
+		d3.select(colorBar).append("g")
+		   .attr({
+		   		class: "axis",
+		   		id: "colorAxis",
+		   		transform: "translate(" + (3 * padding) + ",0)",
+			})
+		   .call(colorAxis);
+	}
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
