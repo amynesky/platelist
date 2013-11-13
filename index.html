@@ -63,7 +63,7 @@
 		-->
 	    
 
-	
+		<div id="rangeSlider"></div>
 		<div id="plots"></div>
 		<div id="tooltip">
 			<div id="tooltipHover">
@@ -203,7 +203,21 @@
 		<script src="js/jquery.dataTables.js"></script>
 		<script src="js/DT_bootstrap.js"></script>
 		<script src="d3/d3.v3.js"></script>	
-	
+
+	    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+	    <script type="text/javascript">
+
+	      // Load the Visualization API and the controls package.
+	      google.load('visualization', '1.0', {'packages':['controls']});
+
+	      // Set a callback to run when the Google Visualization API is loaded.
+	      google.setOnLoadCallback(drawDashboard);
+
+	      // Callback that creates and populates a data table,
+	      // instantiates a dashboard, a range slider and a pie chart,
+	      // passes in the data and draws it.
+
+	    </script>
 
   	</body>
 </html>

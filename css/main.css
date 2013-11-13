@@ -15,6 +15,9 @@
 	display: inline;
 	float:right;
 }
+#rangeSlider{
+	display: inline;
+}
 
 a:link    {color: #238aaa; text-decoration: none;}
 a:visited {color:purple;}

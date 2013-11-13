@@ -221,7 +221,8 @@ if ( typeof $.fn.dataTable == "function" && typeof $.fn.dataTableExt.fnVersionCh
         $(oSettings.nTableWrapper).find('div.dataTables_filter').append(clearSearch);
         $(oSettings.nTableWrapper).find('div.dataTables_filter label').css('margin-right', '-16px');//16px the image width
         $(oSettings.nTableWrapper).find('div.dataTables_filter input').css('padding-right', '16px');
-        $("#project_table_filter").append("<span>  Press enter to plot filtered results.</span>");
+        $("#project_table_filter").append("<span id='pressEnterToFilterPlots'>  Press enter to plot filtered results.</span>");
+        //$("#pressEnterToFilterPlots").append("<div id='rangeSlider'></div>");
     }
  
     //auto-execute, no code needs to be added
@@ -651,6 +652,36 @@ $(document).ready(function() {
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+function drawDashboard() {
+		
+		//var dog = d3.select("#rangeSlider")
+		//			.append("text")
+		//			.text("Wonderful")
+		
+	// Create a dashboard.
+	var dashboard = new google.visualization.Dashboard(
+	    document.getElementById('rangeSlider'));
+
+	// Create a range slider, passing some options
+	var donutRangeSlider = new google.visualization.ControlWrapper({
+	  'controlType': 'NumberRangeFilter',
+	  'containerId': 'rangeSlider',
+	  'options': {
+	    'filterColumnLabel': 'MJD'
+	  }
+	});
+
+	// Establish dependencies, declaring that 'filter' drives 'pieChart',
+	// so that the pie chart will only display entries that are let through
+	// given the chosen slider range.
+	//dashboard.bind(donutRangeSlider, pieChart);
+
+	// Draw the dashboard.
+	console.log(dataset);
+	//dashboard.draw(dataset.aaData);
+	
+}
 
 
 function createSVGs(){
