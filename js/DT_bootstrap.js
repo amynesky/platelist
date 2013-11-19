@@ -31,7 +31,7 @@ $.fn.dataTableExt.oApi.fnPagingInfo = function ( oSettings ){
     		filteredPlots = true;
     		/* this is a hook to retrieve the nodes that are filters */ 
         	nNodes = oTable._('tr', {"filter":"applied"}); /* get all the filtered table rows */
-    		addFilteredPlotPoints(nNodes, true, "#00780e", "#ff0000", "#1e00b3", "#ff5900");
+    		addFilteredPlotPoints(nNodes, true, "#00fffb", "#00fffb", "#00fffb", "#ff00fb", 3);
     				/*
     				var w = $(window);
     				var row = $('table').find('tr')
@@ -222,7 +222,7 @@ if ( typeof $.fn.dataTable == "function" && typeof $.fn.dataTableExt.fnVersionCh
         $(oSettings.nTableWrapper).find('div.dataTables_filter label').css('margin-right', '-16px');//16px the image width
         $(oSettings.nTableWrapper).find('div.dataTables_filter input').css('padding-right', '16px');
         $("#project_table_filter").append("<span id='pressEnterToFilterPlots'>  Press enter to plot filtered results.</span>");
-        //$("#pressEnterToFilterPlots").append("<div id='rangeSlider'></div>");
+        $("#pressEnterToFilterPlots").append("<div id='rangeSlider'></div>");
     }
  
     //auto-execute, no code needs to be added
@@ -253,6 +253,7 @@ var xScaleRAvDEC;
 var xAxisScaleRAvDEC;
 var yScaleRAvDEC;
 var colorAxis;
+var colorOfHoverDot;
 
 
 function fnShowHide( iCol ){
@@ -443,13 +444,13 @@ $(document).ready(function() {
 					        } 
 				        	var visibleSN2_I1Index = getVisibleIndexofColumn (40); 
 					    	if(index == visibleSN2_I1Index){ /*sn2_i1*/
-					            if ($(td).html() < 10.0) {
+					            if ($(td).html() < 22.0) {
 					                $(td).css("color", "#FF3229");
 					            };
 					        } 
 				        	var visibleSN2_G2Index = getVisibleIndexofColumn (41);
 					    	if(index == visibleSN2_G2Index){ /*sn2_g2*/
-					            if ($(td).html() < 22.0) {
+					            if ($(td).html() < 10.0) {
 					                $(td).css("color", "#FF3229");
 					            };
 					        } 
@@ -526,12 +527,14 @@ $(document).ready(function() {
 					    return nRow;
 				    },
 				} );
-				new FixedColumns(oTable);
-				//, {
-					//"iLeftColumns": 2,
-					//"sLeftWidth": 'relative',
-					//"iLeftWidth": 160
-				//} );
+				
+				new FixedColumns( oTable);
+/*
+				, {
+					"iLeftColumns": 1,
+					"sLeftWidth": 'relative',
+					"iLeftWidth": 160
+				} );*/
 
 				$(window).resize( function () {
 			  		oTable.fnAdjustColumnSizing();
@@ -608,7 +611,11 @@ $(document).ready(function() {
 
 						createSVGs();
 						drawAxes();
-						drawData(dataset.aaData);	
+						drawData(dataset.aaData);
+
+
+
+						//drawDashboard();	
 					}
 											
 
@@ -652,12 +659,12 @@ $(document).ready(function() {
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
+/*
 function drawDashboard() {
 		
-		//var dog = d3.select("#rangeSlider")
-		//			.append("text")
-		//			.text("Wonderful")
+		var dog = d3.select("#rangeSlider")
+					.append("text")
+					.text("Wonderful")
 		
 	// Create a dashboard.
 	var dashboard = new google.visualization.Dashboard(
@@ -678,11 +685,11 @@ function drawDashboard() {
 	//dashboard.bind(donutRangeSlider, pieChart);
 
 	// Draw the dashboard.
-	console.log(dataset);
-	//dashboard.draw(dataset.aaData);
+	//console.log(dataset);
+	dashboard.draw(dataset.aaData);
 	
 }
-
+*/
 
 function createSVGs(){
 	//Create SVG element for %LRG1v%LRG2
@@ -964,13 +971,14 @@ function drawAxes(){
 
 function drawData(nNodes, filter, goodColoring, badColoring, SN2_GI1color, SN2_GI2color , radius){
 	//colors
-	if(typeof(goodColoring) === "undefined"){ goodColoring = "#5cba57";}
-	if(typeof(badColoring) === "undefined"){badColoring = "#f76060";}
-	if(typeof(SN2_GI1color) === "undefined"){SN2_GI1color = "#5c69ff";}
-	if(typeof(SN2_GI2color) === "undefined"){SN2_GI2color = "#ffa85c";}
+	if(typeof(goodColoring) === "undefined"){ goodColoring = "#10c400";}
+	if(typeof(badColoring) === "undefined"){badColoring = "#ff0000";}
+	if(typeof(SN2_GI1color) === "undefined"){SN2_GI1color = "#0004ff";} /*blue*/
+	if(typeof(SN2_GI2color) === "undefined"){SN2_GI2color = "#ff9500";}
 	greyedOut = "#c4c4c4";
 	highlighterColor1 = "#fffb00"; /*yellow*/
-	highlighterColor2 = "#ff00fb"; /*purple*/
+	highlighterColor2 = highlighterColor1;
+	//highlighterColor2 = "#bf00ff"; /*purple*/
 
 	if(typeof(filter) === "undefined"){filter = false;}
 
@@ -1010,8 +1018,18 @@ function drawData(nNodes, filter, goodColoring, badColoring, SN2_GI1color, SN2_G
 	   				}
 	   			//}
 	   		},
+	   		stroke: function(d){
+	   			if (filter){return "black";};
+	   		},
 		})
 	   .on("mouseover", function(d) {
+	   		colorOfHoverDot = d3.select(this).attr("fill");
+	   		d3.select(this)
+	   			.attr({
+				   	fill: highlighterColor1,
+				   	stroke: "black",
+				   	r: highlightRadius,
+				});
 			//Update the tooltip value
 			d3.select("#tooltip")						
 				.select("#tooltipLine1")
@@ -1072,6 +1090,12 @@ function drawData(nNodes, filter, goodColoring, badColoring, SN2_GI1color, SN2_G
 				.text(", MJD: " + d.MJD);
 	   })
 	   .on("mouseout", function() {
+	   		d3.select(this)
+	   			.attr({
+				   	fill: colorOfHoverDot,
+				   	stroke: "clear",
+					r: radius,
+				});
 			removePlotPointsWithClass(".highlighter");
 			
 	   });
@@ -1118,9 +1142,18 @@ function drawData(nNodes, filter, goodColoring, badColoring, SN2_GI1color, SN2_G
 	   				}
 	   			//}
 	   		},
+	   		stroke: function(d){
+	   			if (filter){return "black";};
+	   		},
 		})
 	   .on("mouseover", function(d) {
-
+	   		colorOfHoverDot = d3.select(this).attr("fill");
+	   		d3.select(this)
+	   			.attr({
+				   	fill: highlighterColor1,
+				   	stroke: "black",
+				   	r: highlightRadius,
+				});
 			//Update the tooltip value
 			d3.select("#tooltip")					
 				.select("#tooltipLine1")
@@ -1183,6 +1216,12 @@ function drawData(nNodes, filter, goodColoring, badColoring, SN2_GI1color, SN2_G
 			
 	   })
 	   .on("mouseout", function() {
+	   		d3.select(this)
+	   			.attr({
+				   	fill: colorOfHoverDot,
+				   	stroke: "clear",
+					r: radius,
+				});
 			removePlotPointsWithClass(".highlighter");
 	   });
 
@@ -1221,9 +1260,19 @@ function drawData(nNodes, filter, goodColoring, badColoring, SN2_GI1color, SN2_G
 	   			return y;
 	   		},
 	   		r: radius,
-	   		fill: SN2_GI1color
+	   		fill: SN2_GI1color,
+	   		stroke: function(d){
+	   			if (filter){return "black";};
+	   		},
 		})
 		.on("mouseover", function(d) {
+			colorOfHoverDot = d3.select(this).attr("fill");
+	   		d3.select(this)
+	   			.attr({
+				   	fill: highlighterColor1,
+				   	stroke: "black",
+				   	r: highlightRadius,
+				});
 			//Update the tooltip value
 			d3.select("#tooltip")				
 				.select("#tooltipLine1")
@@ -1287,6 +1336,12 @@ function drawData(nNodes, filter, goodColoring, badColoring, SN2_GI1color, SN2_G
 			
 	   })
 	   .on("mouseout", function() {
+	   		d3.select(this)
+	   			.attr({
+				   	fill: colorOfHoverDot,
+				   	stroke: "clear",
+					r: radius,
+				});
 			removePlotPointsWithClass(".highlighter");
 			
 	   });
@@ -1318,9 +1373,19 @@ function drawData(nNodes, filter, goodColoring, badColoring, SN2_GI1color, SN2_G
 	   			return y;
 	   		},
 	   		r: radius,
-	   		fill: SN2_GI2color
+	   		fill: SN2_GI2color,
+	   		stroke: function(d){
+	   			if (filter){return "black";};
+	   		},
 		})
 		.on("mouseover", function(d) {
+			colorOfHoverDot = d3.select(this).attr("fill");
+	   		d3.select(this)
+	   			.attr({
+				   	fill: highlighterColor1,
+				   	stroke: "black",
+				   	r: highlightRadius,
+				});
 			//Update the tooltip value
 			d3.select("#tooltip")				
 				.select("#tooltipLine1")
@@ -1382,6 +1447,12 @@ function drawData(nNodes, filter, goodColoring, badColoring, SN2_GI1color, SN2_G
 			
 	   })
 	   .on("mouseout", function() {
+	   		d3.select(this)
+	   			.attr({
+				   	fill: colorOfHoverDot,
+				   	stroke: "clear",
+					r: radius,
+				});
 			removePlotPointsWithClass(".highlighter");
 			
 	   });
@@ -1435,13 +1506,14 @@ function sortAndDrawRAvDECData(columnName){
 function drawRAvDECData(nNodes, columnName, filter, goodColoring, badColoring, SN2_GI1color, SN2_GI2color , radius){
 
 	//colors
-	if(typeof(goodColoring) === "undefined"){ goodColoring = "#5cba57";}
-	if(typeof(badColoring) === "undefined"){badColoring = "#f76060";}
-	if(typeof(SN2_GI1color) === "undefined"){SN2_GI1color = "#5c69ff";}
-	if(typeof(SN2_GI2color) === "undefined"){SN2_GI2color = "#ffa85c";}
+	if(typeof(goodColoring) === "undefined"){ goodColoring = "#10c400";}
+	if(typeof(badColoring) === "undefined"){badColoring = "#ff0000";}
+	if(typeof(SN2_GI1color) === "undefined"){SN2_GI1color = "#0004ff";}
+	if(typeof(SN2_GI2color) === "undefined"){SN2_GI2color = "#ff9500";}
 	greyedOut = "#c4c4c4";
 	highlighterColor1 = "#fffb00"; /*yellow*/
-	highlighterColor2 = "#ff00fb"; /*purple*/
+	highlighterColor2 = highlighterColor1;
+	//highlighterColor2 = "#bf00ff"; /*purple*/
 
 	if(typeof(filter) === "undefined"){filter = false;}
 
@@ -1503,9 +1575,20 @@ function drawRAvDECData(nNodes, columnName, filter, goodColoring, badColoring, S
 						return "rgb(0,"+ (510 - d3.round(colorScale(d[columnName]))) +","+ (d3.round(colorScale(d[columnName])) - 255) +")";
 	   				};
 	   			}
-	   		}
+	   		},
+	   		stroke: function(d){
+	   			if (filter){return "black";};
+	   		},
 		})
 	   .on("mouseover", function(d) {
+	   		colorOfHoverDot = d3.select(this).attr("fill");
+	   		d3.select(this)
+	   			.attr({
+				   	fill: highlighterColor1,
+				   	stroke: "black",
+				   	r: highlightRadius,
+				});
+
 			//Update the tooltip value
 			d3.select("#tooltip")					
 				.select("#tooltipLine1")
@@ -1570,12 +1653,20 @@ function drawRAvDECData(nNodes, columnName, filter, goodColoring, badColoring, S
 			
 	   })
 	   .on("mouseout", function() {
+	   		d3.select(this)
+	   			.attr({
+				   	fill: colorOfHoverDot,
+				   	stroke: "clear",
+					r: radius,
+				});
 			removePlotPointsWithClass(".highlighter");
+
 	   });
+
 	if(!filter){
 		var axisScale = d3.scale.linear()
-	      							.domain([Min, Max])
-	      							.range([h - padding, padding]);
+	      						.domain([Min, Max])
+	      						.range([h - padding, padding]);
 
 		colorAxis= d3.svg.axis()
 					 .scale(axisScale)
@@ -1598,9 +1689,9 @@ function drawRAvDECData(nNodes, columnName, filter, goodColoring, badColoring, S
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 function changeExistingPlotPointColors(nNodes, gray, goodColoring, badColoring, SN2_GI1color, SN2_GI2color){
-	if(typeof(badColoring) === "undefined"){badColoring = "#f76060";}
-	if(typeof(SN2_GI1color) === "undefined"){SN2_GI1color = "#5c69ff";}
-	if(typeof(SN2_GI2color) === "undefined"){SN2_GI2color = "#ffa85c";}
+	if(typeof(badColoring) === "undefined"){badColoring = "#ff0000";}
+	if(typeof(SN2_GI1color) === "undefined"){SN2_GI1color = "#0004ff";}
+	if(typeof(SN2_GI2color) === "undefined"){SN2_GI2color = "#ff9500";}
 	greyedOut = "#c4c4c4";
 	if(gray){
 		d3.select(LRG1vLRG2).selectAll("circle").attr({fill: greyedOut});
@@ -1676,13 +1767,13 @@ function changeExistingPlotPointColors(nNodes, gray, goodColoring, badColoring, 
   	}
 }
 
-function addFilteredPlotPoints(nNodes, filter, goodColoring, badColoring, SN2_GI1color, SN2_GI2color){
-	if(typeof(goodColoring) === "undefined"){ goodColoring = "#5cba57";}
-	if(typeof(badColoring) === "undefined"){badColoring = "#f76060";}
-	if(typeof(SN2_GI1color) === "undefined"){SN2_GI1color = "#5c69ff";}
-	if(typeof(SN2_GI2color) === "undefined"){SN2_GI2color = "#ffa85c";}
+function addFilteredPlotPoints(nNodes, filter, goodColoring, badColoring, SN2_GI1color, SN2_GI2color, radius){
+	if(typeof(goodColoring) === "undefined"){ goodColoring = "#10c400";}
+	if(typeof(badColoring) === "undefined"){badColoring = "#ff0000";}
+	if(typeof(SN2_GI1color) === "undefined"){SN2_GI1color = "#0004ff";}
+	if(typeof(SN2_GI2color) === "undefined"){SN2_GI2color = "#ff9500";}
 	greyedOut = "#c4c4c4";
-  	drawData(nNodes, filter, goodColoring, badColoring, SN2_GI1color, SN2_GI2color);
+  	drawData(nNodes, filter, goodColoring, badColoring, SN2_GI1color, SN2_GI2color, radius);
 
 }
 
@@ -1690,7 +1781,8 @@ function addFilteredPlotPoints(nNodes, filter, goodColoring, badColoring, SN2_GI
 function highlightPlots(identifier){
 	//colors
 	highlighterColor1 = "#fffb00";
-	highlighterColor2 = "#ff00fb";
+	highlighterColor2 = highlighterColor1;
+	//highlighterColor2 = "#bf00ff"; /*purple*/
 
 	highlightRadius = 3;
 
