@@ -70,7 +70,7 @@
 				<p><strong>Current Plate: </strong><span id="tooltipLine1"></span><span id="tooltipLine2"></span>
 			</div>
 			<div id="tooltipSelect">
-				<strong>Selected Plate: </strong><span id="selectedTooltipLine1"></span><span id="selectedTooltipLine2"></span></p>
+				<strong>Selected Plate: </strong><span id="selectedTooltipLine1"></span><span id="selectedTooltipLine2"></span><p></p>
 			</div>
 		</div>
 
@@ -198,12 +198,14 @@
 		<!-- Include all compiled plugins (below), or include individual files as needed -->
 		<!-- <script src="js/bootstrap.js"></script>
 		<script src="js/bootstrap-paginator.js"></script> -->
-		<script src="js/FixedColumns_v2.js"></script>
-		<script src="js/jquery.js"></script>
+		<script src="http://code.jquery.com/jquery-latest.js"></script>
+<!--		<script src="js/jquery.js"></script>
+-->	
 		<script src="js/jquery.dataTables.js"></script>
-		<script src="js/DT_bootstrap.js"></script>
 		<script src="d3/d3.v3.js"></script>	
 
+		<script src="js/FixedColumns_v2.js"></script>
+		<script src="js/DT_bootstrap.js"></script>
 	    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
 	    <script type="text/javascript">
 
@@ -217,7 +219,10 @@
 	      // instantiates a dashboard, a range slider and a pie chart,
 	      // passes in the data and draws it.
 
-	    </script>
+			jQuery.browser={};(function(){jQuery.browser.msie=false;
+			jQuery.browser.version=0;if(navigator.userAgent.match(/MSIE ([0-9]+)\./)){
+			jQuery.browser.msie=true;jQuery.browser.version=RegExp.$1;}})();	    
+		</script>
 
   	</body>
 </html>

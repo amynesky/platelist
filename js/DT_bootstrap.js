@@ -528,13 +528,11 @@ $(document).ready(function() {
 				    },
 				} );
 				
-				new FixedColumns( oTable);
-/*
-				, {
-					"iLeftColumns": 1,
+				new FixedColumns( oTable, {
+					"iLeftColumns": 2,
 					"sLeftWidth": 'relative',
-					"iLeftWidth": 160
-				} );*/
+					"iLeftWidth": 8
+				} );
 
 				$(window).resize( function () {
 			  		oTable.fnAdjustColumnSizing();
