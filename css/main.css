@@ -99,7 +99,7 @@ table tr.odd.hover{
 	background-color: #DDFF75;
 }*/
 table tr.hover{
-	background-color: #DDFF75;
+	background-color: #DDFF75 !important;
 }
 
 

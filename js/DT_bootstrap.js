@@ -631,8 +631,8 @@ $(document).ready(function() {
 		    mouseenter: function () {
 		        trIndex = $(this).index()+1;
 		        try{
-		        	var plate = $(this).find('td').eq(0).html();
-		        	var mjd = $(this).find('td').eq(1).html();
+		        	var plate = $("table.table-striped.table-bordered.dataTable.DTFC_Cloned").find("tr:eq("+trIndex+")").find('td').eq(0).html();
+		        	var mjd = $("table.table-striped.table-bordered.dataTable.DTFC_Cloned").find("tr:eq("+trIndex+")").find('td').eq(1).html();
 		        	var identifier = plate + "_" + mjd;
 		        	highlightPlots(identifier);
 		   		}catch(err){};
