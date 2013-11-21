@@ -1091,9 +1091,14 @@ function drawData(nNodes, filter, goodColoring, badColoring, SN2_GI1color, SN2_G
 	   		d3.select(this)
 	   			.attr({
 				   	fill: colorOfHoverDot,
-				   	stroke: "clear",
 					r: radius,
-				});
+				})
+				.attr("stroke", function() {
+	  				if(!filter){
+	  					return "clear";
+	  				}
+	  				else{return "black";};
+	  			});
 			removePlotPointsWithClass(".highlighter");
 			
 	   });
@@ -1217,10 +1222,16 @@ function drawData(nNodes, filter, goodColoring, badColoring, SN2_GI1color, SN2_G
 	   		d3.select(this)
 	   			.attr({
 				   	fill: colorOfHoverDot,
-				   	stroke: "clear",
 					r: radius,
-				});
+				})
+				.attr("stroke", function() {
+	  				if(!filter){
+	  					return "clear";
+	  				}
+	  				else{return "black";};
+	  			});
 			removePlotPointsWithClass(".highlighter");
+			
 	   });
 
 
@@ -1337,9 +1348,14 @@ function drawData(nNodes, filter, goodColoring, badColoring, SN2_GI1color, SN2_G
 	   		d3.select(this)
 	   			.attr({
 				   	fill: colorOfHoverDot,
-				   	stroke: "clear",
 					r: radius,
-				});
+				})
+				.attr("stroke", function() {
+	  				if(!filter){
+	  					return "clear";
+	  				}
+	  				else{return "black";};
+	  			});
 			removePlotPointsWithClass(".highlighter");
 			
 	   });
@@ -1448,9 +1464,14 @@ function drawData(nNodes, filter, goodColoring, badColoring, SN2_GI1color, SN2_G
 	   		d3.select(this)
 	   			.attr({
 				   	fill: colorOfHoverDot,
-				   	stroke: "clear",
 					r: radius,
-				});
+				})
+				.attr("stroke", function() {
+	  				if(!filter){
+	  					return "clear";
+	  				}
+	  				else{return "black";};
+	  			});
 			removePlotPointsWithClass(".highlighter");
 			
 	   });
@@ -1654,11 +1675,16 @@ function drawRAvDECData(nNodes, columnName, filter, goodColoring, badColoring, S
 	   		d3.select(this)
 	   			.attr({
 				   	fill: colorOfHoverDot,
-				   	stroke: "clear",
 					r: radius,
-				});
+				})
+				.attr("stroke", function() {
+	  				if(!filter){
+	  					return "clear";
+	  				}
+	  				else{return "black";};
+	  			});
 			removePlotPointsWithClass(".highlighter");
-
+			
 	   });
 
 	if(!filter){
