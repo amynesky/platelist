@@ -15,6 +15,11 @@
 	    <!-- Custom styles -->
 	    <link href="./css/main.css" rel="stylesheet">
 		<link href="./css/datatables.css" rel="stylesheet">
+		
+		<!--Slider Stuff-->
+
+
+  		
   	</head>
   	<body>
   		<div id = "header">
@@ -37,6 +42,13 @@
 			</div>
 			
 	  	</div>
+	  	
+	  	<p>
+  			<label for="amount">Range:</label>
+  			<input type="text" id="amount" style="border:0; color:#f6931f; font-weight:bold;">
+		</p>
+	
+	  	<div id="slider"></div>
 
 	  	<!--
 	    <div class="navbar navbar-inverse navbar-fixed-top">
@@ -205,6 +217,7 @@
 		<script src="d3/d3.v3.js"></script>	
 
 		<script src="js/FixedColumns_v2.js"></script>
+		<!--<script src="js/jquery.slider.js"></script>-->
 		<script src="js/DT_bootstrap.js"></script>
 	    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
 	    <script type="text/javascript">
@@ -223,6 +236,8 @@
 			jQuery.browser.version=0;if(navigator.userAgent.match(/MSIE ([0-9]+)\./)){
 			jQuery.browser.msie=true;jQuery.browser.version=RegExp.$1;}})();	    
 		</script>
+		<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css">
+  		<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
 
   	</body>
 </html>
