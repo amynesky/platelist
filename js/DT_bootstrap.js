@@ -32,6 +32,7 @@ $.fn.dataTableExt.oApi.fnPagingInfo = function ( oSettings ){
     		/* this is a hook to retrieve the nodes that are filters */ 
         	filteredNodes = oTable._('tr', {"filter":"applied"}); /* get all the filtered table rows */
         	changeExistingPlotPointColors(dataset, true);
+        	/* NEED A HOOK. WHAT IS CURRENT COLORING OF DECvRA PLOT???? *////////////////////////////////////////
     		addFilteredPlotPoints(filteredNodes, true);
     	}
     });
@@ -201,10 +202,10 @@ if ( typeof $.fn.dataTable == "function" && typeof $.fn.dataTableExt.fnVersionCh
                     if(filteredPlots){
 						removePlotPointsWithClass(".filter");
 						filteredPlots = false;
-						console.log("filtered pointed should be removed...");
+						/* NEED A HOOK. WHAT IS CURRENT COLORING OF DECvRA PLOT???? *////////////////////////////////////////
+                    	//$( ".currrent.RAvDECLinks" ).
                     	changeExistingPlotPointColors(dataset, false);
-
-					}
+						}
                 });
         $(oSettings.nTableWrapper).find('div.dataTables_filter').append(clearSearch);
         $(oSettings.nTableWrapper).find('div.dataTables_filter label').css('margin-right', '-16px');//16px the image width
@@ -999,7 +1000,7 @@ function drawAxes(){
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-function drawData(nNodes, filter, goodColoring, badColoring, SN2_GI1color, SN2_GI2color , radius){
+function drawData(nNodes, filter, columnName, goodColoring, badColoring, SN2_GI1color, SN2_GI2color , radius){
 	//colors
 	if(typeof(goodColoring) === "undefined"){ goodColoring = "#10c400";}
 	if(typeof(badColoring) === "undefined"){badColoring = "#ff0000";}
@@ -1009,6 +1010,8 @@ function drawData(nNodes, filter, goodColoring, badColoring, SN2_GI1color, SN2_G
 	highlighterColor1 = "#fffb00"; /*yellow*/
 	highlighterColor2 = highlighterColor1;
 	//highlighterColor2 = "#bf00ff"; /*purple*/
+
+	if(typeof(columnName) === "undefined"){columnName = "DEREDSN2";}
 
 	if(typeof(filter) === "undefined"){filter = false;}
 
@@ -1495,7 +1498,7 @@ function drawData(nNodes, filter, goodColoring, badColoring, SN2_GI1color, SN2_G
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	drawRAvDECData(nNodes, "DEREDSN2", filter, radius);
+	drawRAvDECData(nNodes, columnName, filter, radius);
 
 	var increment = 6
 	var numberOfIncrements = (h - (2* padding))/increment;
@@ -1527,22 +1530,22 @@ function drawData(nNodes, filter, goodColoring, badColoring, SN2_GI1color, SN2_G
 }
 
 function sortAndDrawRAvDECData(columnName){
-	if(!filteredPlots){
-		d3.select(colorBar).select("#colorAxis").remove();
-		d3.select(RAvDEC).selectAll("circle").remove();
-		drawRAvDECData(dataset, columnName);
-	}else{
-		d3.select(colorBar).select("#colorAxis").remove();
-		d3.select(RAvDEC).selectAll(".filter").remove();
-		drawRAvDECData(filteredNodes, columnName);
-	}
+        if(!filteredPlots){
+                drawRAvDECData(dataset, columnName);
+        }else{
+                drawRAvDECData(filteredNodes, columnName);
+        }
 
 }
 
 
-
 function drawRAvDECData(nNodes, columnName, filter, radius){
-
+	d3.select(colorBar).select("#colorAxis").remove();
+	if(!filteredPlots){
+		d3.select(RAvDEC).selectAll("circle").remove();
+	}else{
+		d3.select(RAvDEC).selectAll(".filter").remove();
+	}
 	highlighterColor1 = "#fffb00"; /*yellow*/
 	highlighterColor2 = highlighterColor1;
 	//highlighterColor2 = "#bf00ff"; /*purple*/
@@ -1683,7 +1686,7 @@ function drawRAvDECData(nNodes, columnName, filter, radius){
 			
 	   });
 
-	if(!filter){
+	//if(!filter){
 		var axisScale = d3.scale.linear()
 	      						.domain([Min, Max])
 	      						.range([h - padding, padding]);
@@ -1700,7 +1703,7 @@ function drawRAvDECData(nNodes, columnName, filter, radius){
 		   		transform: "translate(" + (3 * padding) + ",0)",
 			})
 		   .call(colorAxis);
-	}
+	//}
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1709,8 +1712,6 @@ function drawRAvDECData(nNodes, columnName, filter, radius){
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 function changeExistingPlotPointColors(nNodes, gray, goodColoring, badColoring, SN2_GI1color, SN2_GI2color){
-	console.log("changing color of existing plot points");
-	console.log("gray is"+ gray);
 	//colors
 	if(typeof(goodColoring) === "undefined"){ goodColoring = "#10c400";}
 	if(typeof(badColoring) === "undefined"){badColoring = "#ff0000";}
@@ -1724,13 +1725,15 @@ function changeExistingPlotPointColors(nNodes, gray, goodColoring, badColoring, 
 		d3.select(SN2_G12vSN2_I12).selectAll("circle").attr({fill: greyedOut});
 		d3.select(RAvDEC).selectAll("circle").attr({fill: greyedOut});
 	}else{
-
+		clearPlots();
+		drawData(dataset);
+	/*
 		for (var d = 0; d < nNodes.length; d++) {
 			d3.select("#LRG1vLRG2")
 			  .select("#LRG1vLRG2"+"_"+nNodes[d].PLATE+"_"+nNodes[d].MJD)
 		      .attr({
 				  fill: function(){
-				  	//console.log("trying");
+				  	console.log("trying");
 					  if(nNodes[d].PLATEQUALITY=="good"){
 						  return goodColoring;
 					  }
@@ -1767,8 +1770,11 @@ function changeExistingPlotPointColors(nNodes, gray, goodColoring, badColoring, 
 
 			sortAndDrawRAvDECData("DEREDSN2");
 
+			
 		}
+	*/
   	}
+
 }
 
 function addFilteredPlotPoints(nNodes, filter, goodColoring, badColoring, SN2_GI1color, SN2_GI2color, radius){
@@ -1776,8 +1782,8 @@ function addFilteredPlotPoints(nNodes, filter, goodColoring, badColoring, SN2_GI
 	if(typeof(badColoring) === "undefined"){badColoring = "#ff0000";}
 	if(typeof(SN2_GI1color) === "undefined"){SN2_GI1color = "#0004ff";}
 	if(typeof(SN2_GI2color) === "undefined"){SN2_GI2color = "#ff9500";}
-	greyedOut = "#c4c4c4";
-  	drawData(nNodes, filter, goodColoring, badColoring, SN2_GI1color, SN2_GI2color, radius);
+	if(typeof(columnName) === "undefined"){columnName = "DEREDSN2";}
+  	drawData(nNodes, filter, columnName, goodColoring, badColoring, SN2_GI1color, SN2_GI2color, radius);
 
 }
 
@@ -1863,6 +1869,13 @@ function removePlotPointsWithClass(className){
 	d3.select(LRG2vQSO).selectAll(className).remove();
 	d3.select(SN2_G12vSN2_I12).selectAll(className).remove();
 	d3.select(RAvDEC).selectAll(className).remove();
+}
+
+function clearPlots(){
+	d3.select(LRG1vLRG2).selectAll("circle").remove();
+	d3.select(LRG2vQSO).selectAll("circle").remove();
+	d3.select(SN2_G12vSN2_I12).selectAll("circle").remove();
+	d3.select(RAvDEC).selectAll("circle").remove();
 }
 
 
