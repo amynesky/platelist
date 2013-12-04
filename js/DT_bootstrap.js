@@ -33,7 +33,20 @@ $.fn.dataTableExt.oApi.fnPagingInfo = function ( oSettings ){
         	filteredNodes = oTable._('tr', {"filter":"applied"}); /* get all the filtered table rows */
         	changeExistingPlotPointColors(dataset, true);
         	/* NEED A HOOK. WHAT IS CURRENT COLORING OF DECvRA PLOT???? *////////////////////////////////////////
-    		addFilteredPlotPoints(filteredNodes, true);
+            if($( ".current.RAvDECLinks" ).text()==="Color by DEREDSN2"){
+        		addFilteredPlotPoints(filteredNodes, true, "DEREDSN2");
+        	}else{
+        		if($( ".current.RAvDECLinks" ).text()==="Color by %LRG1"){
+        			addFilteredPlotPoints(filteredNodes, true, "SUCCESS_LRG1");
+        		}else{
+        		    if($( ".current.RAvDECLinks" ).text()==="Color by %LRG2"){
+        				addFilteredPlotPoints(filteredNodes, true, "SUCCESS_LRG2");
+        			}else{
+        				addFilteredPlotPoints(filteredNodes, true, "SUCCESS_QSO");
+        			}
+        		}
+        	}
+    		//addFilteredPlotPoints(filteredNodes, true);
     	}
     });
     return {
@@ -203,8 +216,20 @@ if ( typeof $.fn.dataTable == "function" && typeof $.fn.dataTableExt.fnVersionCh
 						removePlotPointsWithClass(".filter");
 						filteredPlots = false;
 						/* NEED A HOOK. WHAT IS CURRENT COLORING OF DECvRA PLOT???? *////////////////////////////////////////
-                    	//$( ".currrent.RAvDECLinks" ).
-                    	changeExistingPlotPointColors(dataset, false);
+                    	if($( ".current.RAvDECLinks" ).text()==="Color by DEREDSN2"){
+                    		changeExistingPlotPointColors(dataset, false, "DEREDSN2");
+                    	}else{
+                    		if($( ".current.RAvDECLinks" ).text()==="Color by %LRG1"){
+                    			changeExistingPlotPointColors(dataset, false, "SUCCESS_LRG1");
+                    		}else{
+                    		    if($( ".current.RAvDECLinks" ).text()==="Color by %LRG2"){
+                    				changeExistingPlotPointColors(dataset, false, "SUCCESS_LRG2");
+                    			}else{
+                    				changeExistingPlotPointColors(dataset, false, "SUCCESS_QSO");
+                    			}
+                    		}
+                    	}
+                    	
 						}
                 });
         $(oSettings.nTableWrapper).find('div.dataTables_filter').append(clearSearch);
@@ -1711,7 +1736,7 @@ function drawRAvDECData(nNodes, columnName, filter, radius){
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-function changeExistingPlotPointColors(nNodes, gray, goodColoring, badColoring, SN2_GI1color, SN2_GI2color){
+function changeExistingPlotPointColors(nNodes, gray, columnName, goodColoring, badColoring, SN2_GI1color, SN2_GI2color){
 	//colors
 	if(typeof(goodColoring) === "undefined"){ goodColoring = "#10c400";}
 	if(typeof(badColoring) === "undefined"){badColoring = "#ff0000";}
@@ -1726,7 +1751,7 @@ function changeExistingPlotPointColors(nNodes, gray, goodColoring, badColoring, 
 		d3.select(RAvDEC).selectAll("circle").attr({fill: greyedOut});
 	}else{
 		clearPlots();
-		drawData(dataset);
+		drawData(dataset, gray, columnName, goodColoring, badColoring, SN2_GI1color, SN2_GI2color);
 	/*
 		for (var d = 0; d < nNodes.length; d++) {
 			d3.select("#LRG1vLRG2")
@@ -1777,7 +1802,7 @@ function changeExistingPlotPointColors(nNodes, gray, goodColoring, badColoring, 
 
 }
 
-function addFilteredPlotPoints(nNodes, filter, goodColoring, badColoring, SN2_GI1color, SN2_GI2color, radius){
+function addFilteredPlotPoints(nNodes, filter, columnName, goodColoring, badColoring, SN2_GI1color, SN2_GI2color, radius){
 	if(typeof(goodColoring) === "undefined"){ goodColoring = "#10c400";}
 	if(typeof(badColoring) === "undefined"){badColoring = "#ff0000";}
 	if(typeof(SN2_GI1color) === "undefined"){SN2_GI1color = "#0004ff";}
