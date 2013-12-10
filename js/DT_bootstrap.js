@@ -681,6 +681,13 @@ $(document).ready(function() {
 		        	var mjd = $("table.table-striped.table-bordered.dataTable.DTFC_Cloned").find("tr:eq("+trIndex+")").find('td').eq(1).html();
 		        	var identifier = plate + "_" + mjd;
 		        	highlightPlots(identifier);
+		        	d3.select("#tooltip")						
+						.select("#tooltipLine1")
+						.text("Plate: " + plate);
+
+					d3.select("#tooltip")					
+						.select("#tooltipLine2")
+						.text(", MJD: " + mjd);
 		   		}catch(err){};
 		        $("table.dataTable").each(function(index) {
 		            $(this).find("tr:eq("+trIndex+")").addClass("hover") 
