@@ -686,6 +686,21 @@ $(document).ready(function() {
 		            $(this).find("tr:eq("+trIndex+")").addClass("hover") 
 		        });
 		    },
+		    click: function(){
+		    	removePlotPointsWithClass(".selected");
+		    	var plate = $("table.table-striped.table-bordered.dataTable.DTFC_Cloned").find("tr:eq("+trIndex+")").find('td').eq(0).html();
+		       	var mjd = $("table.table-striped.table-bordered.dataTable.DTFC_Cloned").find("tr:eq("+trIndex+")").find('td').eq(1).html();
+		       	var identifier = plate + "_" + mjd;
+		    	highlightPlots(identifier, "selected", "#00EEFF", "#00EEFF")
+
+			    d3.select("#tooltip")				
+					.select("#selectedTooltipLine1")
+					.text(" Plate: " + plate)
+
+				d3.select("#tooltip")					
+					.select("#selectedTooltipLine2")
+					.text(", MJD: " + mjd);
+		    },
 		    mouseleave: function () {
 		        trIndex = $(this).index()+1;
 		        $("table.dataTable").each(function(index) {
@@ -2177,19 +2192,21 @@ function addFilteredPlotPoints(nNodes, filter, columnName, goodColoring, badColo
 }
 
 
-function highlightPlots(identifier){
+function highlightPlots(identifier, className, highlighterColor1, highlighterColor2){
 	//colors
-	highlighterColor1 = "#fffb00";
-	highlighterColor2 = highlighterColor1;
+	if(typeof(highlighterColor1) === "undefined"){ highlighterColor1 = "#fffb00";}
+	if(typeof(highlighterColor2) === "undefined"){ highlighterColor2 = "#fffb00";}
 	//highlighterColor2 = "#bf00ff"; /*purple*/
 
 	highlightRadius = 3;
+
+	if(typeof(className) === "undefined"){ className = "highlighter";}
 
 	var xPosition = parseFloat(d3.select("#LRG1vLRG2").select("#LRG1vLRG2"+"_"+identifier).attr("cx")) ;
     var yPosition = parseFloat(d3.select("#LRG1vLRG2").select("#LRG1vLRG2"+"_"+identifier).attr("cy")) ;
 	
 	d3.select(LRG1vLRG2).append("circle")
-  		.attr("class", "highlighter")
+  		.attr("class", className)
    		.attr({
 	   		cx: xPosition,
 	   		cy: yPosition,
@@ -2202,7 +2219,7 @@ function highlightPlots(identifier){
     yPosition = parseFloat(d3.select("#LRG2vQSO").select("#LRG2vQSO"+"_"+identifier).attr("cy")) ;
 	
 	d3.select(LRG2vQSO).append("circle")
-  		.attr("class", "highlighter")
+  		.attr("class", className)
    		.attr({
 	   		cx: xPosition,
 	   		cy: yPosition,
@@ -2215,7 +2232,7 @@ function highlightPlots(identifier){
     yPosition = parseFloat(d3.select("#SN2_G12vSN2_I12").select("#SN2_G1vSN2_I1_"+identifier).attr("cy")) ;
 	
 	d3.select(SN2_G12vSN2_I12).append("circle")
-  		.attr("class", "highlighter")
+  		.attr("class", className)
    		.attr({
 	   		cx: xPosition,
 	   		cy: yPosition,
@@ -2228,7 +2245,7 @@ function highlightPlots(identifier){
     yPosition = parseFloat(d3.select("#SN2_G12vSN2_I12").select("#SN2_G2vSN2_I2_"+identifier).attr("cy")) ;
 	
 	d3.select(SN2_G12vSN2_I12).append("circle")
-  		.attr("class", "highlighter")
+  		.attr("class", className)
    		.attr({
 	   		cx: xPosition,
 	   		cy: yPosition,
@@ -2242,7 +2259,7 @@ function highlightPlots(identifier){
     yPosition = parseFloat(d3.select("#RAvDEC").select("#RAvDEC"+"_"+identifier).attr("cy")) ;
 	
 	d3.select(RAvDEC).append("circle")
-  		.attr("class", "highlighter")
+  		.attr("class", className)
    		.attr({
 	   		cx: xPosition,
 	   		cy: yPosition,
