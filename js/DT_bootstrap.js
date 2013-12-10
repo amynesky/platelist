@@ -579,10 +579,10 @@ $(document).ready(function() {
 											 .range([h-(3.5 * padding),padding]);
 
 						//%LRG2vQSO			
-						xMin = d3.min(dataset, function(d){return d.SUCCESS_LRG2;});
-						xMax = d3.max(dataset, function(d){return d.SUCCESS_LRG2;});
-						yMin = d3.min(dataset, function(d){return d.SUCCESS_QSO;});
-						yMax = d3.max(dataset, function(d){return d.SUCCESS_QSO;});
+						yMin = d3.min(dataset, function(d){return d.SUCCESS_LRG2;});
+						yMax = d3.max(dataset, function(d){return d.SUCCESS_LRG2;});
+						xMin = d3.min(dataset, function(d){return d.SUCCESS_QSO;});
+						xMax = d3.max(dataset, function(d){return d.SUCCESS_QSO;});
 
 						xScaleLRG2vQSO = d3.scale.linear()
 											 .domain([xMin,xMax])
@@ -974,7 +974,7 @@ function drawAxes(){
 	   .attr("text-anchor", "middle")
 	   .attr("x", w /2 )
 	   .attr("y", h - 6)
-	   .text("%LRG2")
+	   .text("%QSO")
 	   .attr("font-family", "sans-serif")
 	   .attr("font-size", "11px")
 	   .attr("fill", "black");
@@ -987,7 +987,7 @@ function drawAxes(){
 	   .attr("y", 6)
 	   .attr("dy", ".75em")
 	   .attr("transform", "rotate(-90)")
-	   .text("%QSO")
+	   .text("%LRG2")
 	   .attr("font-family", "sans-serif")
 	   .attr("font-size", "11px")
 	   .attr("fill", "black");
@@ -1196,8 +1196,8 @@ function drawData(nNodes, filter, columnName, goodColoring, badColoring, SN2_GI1
 			d3.select(LRG2vQSO).append("circle")
 			  		.attr("class", "highlighter")
 			   		.attr({
-				   		cx: xScaleLRG2vQSO(d.SUCCESS_LRG2),
-				   		cy: yScaleLRG2vQSO(d.SUCCESS_QSO),
+				   		cx: xScaleLRG2vQSO(d.SUCCESS_QSO),
+				   		cy: yScaleLRG2vQSO(d.SUCCESS_LRG2),
 				   		r: highlightRadius,
 				   		fill: highlighterColor1,
 				   		stroke: "black",
@@ -1263,8 +1263,8 @@ function drawData(nNodes, filter, columnName, goodColoring, badColoring, SN2_GI1
 			d3.select(LRG2vQSO).append("circle")
 			  		.attr("class", "selected")
 			   		.attr({
-				   		cx: xScaleLRG2vQSO(d.SUCCESS_LRG2),
-				   		cy: yScaleLRG2vQSO(d.SUCCESS_QSO),
+				   		cx: xScaleLRG2vQSO(d.SUCCESS_QSO),
+				   		cy: yScaleLRG2vQSO(d.SUCCESS_LRG2),
 				   		r: highlightRadius,
 				   		fill: selectedColor,
 				   		stroke: "black",
@@ -1332,11 +1332,11 @@ function drawData(nNodes, filter, columnName, goodColoring, badColoring, SN2_GI1
   		})
 	    .attr({
 	   		cx: function(d) {
-	   			var x= xScaleLRG2vQSO(d.SUCCESS_LRG2); 
+	   			var x= xScaleLRG2vQSO(d.SUCCESS_QSO); 
 	   			return x;
 	   		},
 	   		cy: function(d) {				   			
-	   			var y= yScaleLRG2vQSO(d.SUCCESS_QSO); 
+	   			var y= yScaleLRG2vQSO(d.SUCCESS_LRG2); 
 	   			return y;
 	   		},
 	   		r: radius,
@@ -1445,8 +1445,8 @@ function drawData(nNodes, filter, columnName, goodColoring, badColoring, SN2_GI1
 			d3.select(LRG2vQSO).append("circle")
 			  		.attr("class", "selected")
 			   		.attr({
-				   		cx: xScaleLRG2vQSO(d.SUCCESS_LRG2),
-				   		cy: yScaleLRG2vQSO(d.SUCCESS_QSO),
+				   		cx: xScaleLRG2vQSO(d.SUCCESS_QSO),
+				   		cy: yScaleLRG2vQSO(d.SUCCESS_LRG2),
 				   		r: highlightRadius,
 				   		fill: selectedColor,
 				   		stroke: "black",
@@ -1564,8 +1564,8 @@ function drawData(nNodes, filter, columnName, goodColoring, badColoring, SN2_GI1
 			d3.select(LRG2vQSO).append("circle")
 			  		.attr("class", "highlighter")
 			   		.attr({
-				   		cx: xScaleLRG2vQSO(d.SUCCESS_LRG2),
-				   		cy: yScaleLRG2vQSO(d.SUCCESS_QSO),
+				   		cx: xScaleLRG2vQSO(d.SUCCESS_QSO),
+				   		cy: yScaleLRG2vQSO(d.SUCCESS_LRG2),
 				   		r: highlightRadius,
 				   		fill: highlighterColor1,
 				   		stroke: "black",
@@ -1623,8 +1623,8 @@ function drawData(nNodes, filter, columnName, goodColoring, badColoring, SN2_GI1
 			d3.select(LRG2vQSO).append("circle")
 			  		.attr("class", "selected")
 			   		.attr({
-				   		cx: xScaleLRG2vQSO(d.SUCCESS_LRG2),
-				   		cy: yScaleLRG2vQSO(d.SUCCESS_QSO),
+				   		cx: xScaleLRG2vQSO(d.SUCCESS_QSO),
+				   		cy: yScaleLRG2vQSO(d.SUCCESS_LRG2),
 				   		r: highlightRadius,
 				   		fill: selectedColor,
 				   		stroke: "black",
@@ -1734,8 +1734,8 @@ function drawData(nNodes, filter, columnName, goodColoring, badColoring, SN2_GI1
 			d3.select(LRG2vQSO).append("circle")
 			  		.attr("class", "highlighter")
 			   		.attr({
-				   		cx: xScaleLRG2vQSO(d.SUCCESS_LRG2),
-				   		cy: yScaleLRG2vQSO(d.SUCCESS_QSO),
+				   		cx: xScaleLRG2vQSO(d.SUCCESS_QSO),
+				   		cy: yScaleLRG2vQSO(d.SUCCESS_LRG2),
 				   		r: highlightRadius,
 				   		fill: highlighterColor1,
 				   		stroke: "black",
@@ -1791,8 +1791,8 @@ function drawData(nNodes, filter, columnName, goodColoring, badColoring, SN2_GI1
 			d3.select(LRG2vQSO).append("circle")
 			  		.attr("class", "selected")
 			   		.attr({
-				   		cx: xScaleLRG2vQSO(d.SUCCESS_LRG2),
-				   		cy: yScaleLRG2vQSO(d.SUCCESS_QSO),
+				   		cx: xScaleLRG2vQSO(d.SUCCESS_QSO),
+				   		cy: yScaleLRG2vQSO(d.SUCCESS_LRG2),
 				   		r: highlightRadius,
 				   		fill: selectedColor,
 				   		stroke: "black",
@@ -1983,8 +1983,8 @@ function drawRAvDECData(nNodes, columnName, filter, radius){
 			d3.select(LRG2vQSO).append("circle")
 			  		.attr("class", "highlighter")
 			   		.attr({
-				   		cx: xScaleLRG2vQSO(d.SUCCESS_LRG2),
-				   		cy: yScaleLRG2vQSO(d.SUCCESS_QSO),
+				   		cx: xScaleLRG2vQSO(d.SUCCESS_QSO),
+				   		cy: yScaleLRG2vQSO(d.SUCCESS_LRG2),
 				   		r: highlightRadius,
 				   		fill: highlighterColor1,
 				   		stroke: "black",
@@ -2042,8 +2042,8 @@ function drawRAvDECData(nNodes, columnName, filter, radius){
 			d3.select(LRG2vQSO).append("circle")
 			  		.attr("class", "selected")
 			   		.attr({
-				   		cx: xScaleLRG2vQSO(d.SUCCESS_LRG2),
-				   		cy: yScaleLRG2vQSO(d.SUCCESS_QSO),
+				   		cx: xScaleLRG2vQSO(d.SUCCESS_QSO),
+				   		cy: yScaleLRG2vQSO(d.SUCCESS_LRG2),
 				   		r: highlightRadius,
 				   		fill: selectedColor,
 				   		stroke: "black",
