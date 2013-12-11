@@ -760,7 +760,7 @@ function drawDashboard() {
 
 function createSVGs(){
 	//Create SVG element for %LRG1v%LRG2
-	var LRG1vLRG2 = d3.select("#plots")
+	var LRG1vLRG2 = d3.select("#threePlots")
 					.append("svg")
 					.attr("class", "plot")
 					.attr("id", "LRG1vLRG2")
@@ -783,7 +783,7 @@ function createSVGs(){
 
 
 	//Create SVG element for %LRG2v%QSO
-    var LRG2vQSO = d3.select("#plots")
+    var LRG2vQSO = d3.select("#threePlots")
 			.append("svg")
 			.attr({
 				width: w,
@@ -793,7 +793,7 @@ function createSVGs(){
 			.attr("id", "LRG2vQSO");
 
 	//Create SVG element for SN2_G1vSN2_I1 on top of SN2_G2vSN2_I2
-    var SN2_G12vSN2_I12 = d3.select("#plots")
+    var SN2_G12vSN2_I12 = d3.select("#threePlots")
 			.append("svg")
 			.attr({
 				width: w,
@@ -803,7 +803,7 @@ function createSVGs(){
 			.attr("id", "SN2_G12vSN2_I12");
 
 	//Create SVG element for RAvDEC
-    var RAvDEC = d3.select("#plots")
+    var RAvDEC = d3.select("#RAvDECplot")
 			.append("svg")
 			.attr({
 				width: RAvDECwidth,
@@ -812,7 +812,7 @@ function createSVGs(){
 			.attr("class", "plot")
 			.attr("id", "RAvDEC");
 
-	var colorBar = d3.select("#plots")
+	var colorBar = d3.select("#RAvDECplot")
 			.append("svg")
 			.attr({
 				width: 50,
