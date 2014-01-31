@@ -253,9 +253,9 @@ var dataset;
 var MJDRangeDataset;
 
 /*plot width, height and padding*/
-var w = 200;
-var RAvDECwidth = 400;
-var h = 200;
+var w = 180;
+var RAvDECwidth = 2*w;
+var h = 180;
 var padding = 10;
 /*plot scales*/
 var xScaleLRG1vLRG2;
@@ -339,11 +339,11 @@ $(document).ready(function() {
 			   		"aoColumns": [
 						{ "mData": "PLATE", "sWidth": "40px"},
 						{ "mData": "MJD", "sWidth": "40px"},      
-						{ "mData": "TILEID" , "bVisible": false, "sWidth": "45px"},  
-						{ "mData": "RUN2D" ,"bSearchable": false, "sWidth": "55px"}, 
-						{ "mData": "RUN1D" ,"bSearchable": false, "sWidth": "55px"}, 
-						{ "mData": "RACEN" ,"bSearchable": false, "bVisible": false, "sWidth": "50px"}, /*5*/
-						{ "mData": "DECCEN" ,"bSearchable": false, "bVisible": false, "sWidth": "65px"},
+						{ "mData": "TILEID" , "bVisible": false, "sWidth": "40px"},  
+						{ "mData": "RUN2D" ,"bSearchable": false, "sWidth": "45px"}, 
+						{ "mData": "RUN1D" ,"bSearchable": false, "sWidth": "45px"}, 
+						{ "mData": "RACEN" ,"bSearchable": false, "bVisible": false, "sWidth": "40px"}, /*5*/
+						{ "mData": "DECCEN" ,"bSearchable": false, "bVisible": false, "sWidth": "40px"},
 						{ "mData": "EPOCH" ,"bSearchable": false, "bVisible": false},
 						{ "mData": "CARTID" ,"bSearchable": false, "bVisible": false},
 						{ "mData": "TAI" ,"bSearchable": false, "bVisible": false},
@@ -375,12 +375,12 @@ $(document).ready(function() {
 						{ "mData": "SN2_G2" ,"bSearchable": false, "bVisible": false}, /*35*/
 						{ "mData": "SN2_R2" ,"bSearchable": false, "bVisible": false},
 						{ "mData": "SN2_I2" ,"bSearchable": false, "bVisible": false},
-						{ "mData": "DERED_SN2_G1" ,"bSearchable": false, "sWidth": "60px"}, 
+						{ "mData": "DERED_SN2_G1" ,"bSearchable": false, "sWidth": "42px"}, 
 						{ "mData": "DERED_SN2_R1" ,"bSearchable": false, "bVisible": false},
-						{ "mData": "DERED_SN2_I1" ,"bSearchable": false, "sWidth": "60px"}, /*40*/
-						{ "mData": "DERED_SN2_G2" ,"bSearchable": false, "sWidth": "60px"},
+						{ "mData": "DERED_SN2_I1" ,"bSearchable": false, "sWidth": "42px"}, /*40*/
+						{ "mData": "DERED_SN2_G2" ,"bSearchable": false, "sWidth": "42px"},
 						{ "mData": "DERED_SN2_R2" ,"bSearchable": false, "bVisible": false}, 
-						{ "mData": "DERED_SN2_I2" ,"bSearchable": false, "sWidth": "60px"},
+						{ "mData": "DERED_SN2_I2" ,"bSearchable": false, "sWidth": "42px"},
 						{ "mData": "GOFFSTD" ,"bSearchable": false, "bVisible": false},
 						{ "mData": "GRMSSTD" ,"bSearchable": false, "bVisible": false}, /*45*/
 						{ "mData": "ROFFSTD" ,"bSearchable": false, "bVisible": false},
@@ -421,7 +421,7 @@ $(document).ready(function() {
 						{ "mData": "SKYCHI2" ,"bSearchable": false, "bVisible": false},
 						{ "mData": "SCHI2MIN" ,"bSearchable": false, "bVisible": false},
 						{ "mData": "SCHI2MAX" ,"bSearchable": false, "bVisible": false},
-						{ "mData": "FBADPIX" ,"bSearchable": false, "sWidth": "75px"}, 
+						{ "mData": "FBADPIX" ,"bSearchable": false, "sWidth": "45px"}, 
 						{ "mData": "FBADPIX1" ,"bSearchable": false, "bVisible": false}, /*85*/
 						{ "mData": "FBADPIX2" ,"bSearchable": false, "bVisible": false},
 						{ "mData": "N_TOTAL" ,"bSearchable": false, "bVisible": false},
@@ -435,9 +435,9 @@ $(document).ready(function() {
 						{ "mData": "N_TARGET_LRG2" ,"bSearchable": false, "bVisible": false, "sWidth": "40px"}, /*95*/
 						{ "mData": "N_TARGET_QSO" ,"bSearchable": false, "bVisible": false, "sWidth": "40px"},
 						{ "mData": "SUCCESS_MAIN" ,"bSearchable": false, "bVisible": false}, 
-						{ "mData": "SUCCESS_LRG1" ,"bSearchable": false, "sWidth": "65px"}, 
-						{ "mData": "SUCCESS_LRG2" ,"bSearchable": false, "sWidth": "65px"},  
-						{ "mData": "SUCCESS_QSO" ,"bSearchable": false, "sWidth": "60px"}, /*100*/
+						{ "mData": "SUCCESS_LRG1" ,"bSearchable": false, "sWidth": "50px"}, 
+						{ "mData": "SUCCESS_LRG2" ,"bSearchable": false, "sWidth": "50px"},  
+						{ "mData": "SUCCESS_QSO" ,"bSearchable": false, "sWidth": "50px"}, /*100*/
 						{ "mData": "STATUS2D" , "sWidth": "30px"}, 
 						{ "mData": "STATUSCOMBINE" , "sWidth": "60px"}, 
 						{ "mData": "STATUS1D" , "sWidth": "30px"}, 
@@ -815,7 +815,7 @@ function createSVGs(){
 	var colorBar = d3.select("#RAvDECplot")
 			.append("svg")
 			.attr({
-				width: 50,
+				width: 40,
 				height: h,
 			})
 			.attr("id", "colorBar");
